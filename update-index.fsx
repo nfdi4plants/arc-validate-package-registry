@@ -24,8 +24,12 @@ let executeProcess (processName: string) (processArgs: string) =
     proc.WaitForExit()
     { ExitCode = proc.ExitCode; StdOut = output.ToString(); StdErr = error.ToString() }
 
-let truncateDateTime (date: System.DateTime)=
-    DateTime.ParseExact(date.ToString("yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+let truncateDateTime (date: System.DateTimeOffset)=
+    DateTimeOffset.ParseExact(
+        date.ToString("yyyy-MM-dd HH:mm:ss zzzz"), 
+        "yyyy-MM-dd HH:mm:ss zzzz", 
+        System.Globalization.CultureInfo.InvariantCulture
+    )
 
 
 
@@ -43,7 +47,7 @@ Directory.GetFiles("validation_packages", "*.fsx")
         Console.ForegroundColor <- ConsoleColor.Green
         printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
         Console.ForegroundColor <- ConsoleColor.White
-        { Name = package; LastUpdated = System.DateTimeOffset.Now}
+        { Name = package; LastUpdated = truncateDateTime System.DateTimeOffset.Now}
     else
         printfn $"{package} was not changed in this commit."
         printfn $"getting history for {package}"
