@@ -43,7 +43,7 @@ Directory.GetFiles("validation_packages", "*.fsx")
         Console.ForegroundColor <- ConsoleColor.Green
         printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
         Console.ForegroundColor <- ConsoleColor.White
-        { Name = package; LastUpdated = System.DateTimeOffset.UtcNow}
+        { Name = package; LastUpdated = System.DateTimeOffset.Now}
     else
         printfn $"{package} was not changed in this commit."
         printfn $"getting history for {package}"
