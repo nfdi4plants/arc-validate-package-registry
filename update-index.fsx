@@ -51,7 +51,7 @@ Directory.GetFiles("validation_packages", "*.fsx")
         let history = executeProcess "git" $"log -1 --pretty=format:'%%ci' {package}"
         let time = 
             System.DateTimeOffset.ParseExact(
-                history.StdOut, 
+                history.StdOut.Replace("'",""), 
                 "yyyy-MM-dd HH:mm:ss zzz", 
                 System.Globalization.CultureInfo.InvariantCulture
             )
