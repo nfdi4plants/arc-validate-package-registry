@@ -42,7 +42,7 @@ type ValidationPackageIndex =
     } with
         static member create (name: string, lastUpdated: System.DateTimeOffset) = { Name = name; LastUpdated = lastUpdated }
 
-Directory.GetFiles("validation_packages", "*.fsx")
+Directory.GetFiles("arc-validate-packages", "*.fsx")
 |> Array.map (fun package ->
     if changed_files.Contains(package) then
         
@@ -74,5 +74,5 @@ Directory.GetFiles("validation_packages", "*.fsx")
         )
 )
 |> fun packages -> JsonSerializer.Serialize(packages, options = JsonSerializerOptions(WriteIndented = true))
-|> fun json -> File.WriteAllText("validation_packages.json", json)
+|> fun json -> File.WriteAllText("arc-validate-package-index.json", json)
 
