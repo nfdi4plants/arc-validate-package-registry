@@ -24,6 +24,10 @@ let executeProcess (processName: string) (processArgs: string) =
     proc.WaitForExit()
     { ExitCode = proc.ExitCode; StdOut = output.ToString(); StdErr = error.ToString() }
 
+let truncateDateTime (date: System.DateTime)=
+    DateTime.ParseExact(date.ToString("yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+
 
 let changed_files = File.ReadAllLines("file_changes.txt") |> set |> Set.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
 
@@ -39,13 +43,23 @@ Directory.GetFiles("validation_packages", "*.fsx")
         Console.ForegroundColor <- ConsoleColor.Green
         printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
         Console.ForegroundColor <- ConsoleColor.White
-        { Name = package; LastUpdated = System.DateTime.Now}
+        { Name = package; LastUpdated = System.DateTime.Now |> truncateDateTime}
     else
         printfn $"{package} was not changed in this commit."
         printfn $"getting history for {package}"
+
         let history = executeProcess "git" $"log -1 --pretty=format:'%%ci' {package}"
-        printfn $"history is at {history.StdOut}{System.Environment.NewLine}"
-        { Name = package; LastUpdated = System.DateTime.ParseExact(history.StdOut.Split(" ").[0].Replace("'",""), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)}
+        let time = 
+            System.DateTime.ParseExact(
+                history.StdOut.Split(" ").[0].Replace("'",""), 
+                "yyyy-MM-dd", 
+                System.Globalization.CultureInfo.InvariantCulture
+            )
+            |> truncateDateTime
+        
+        printfn $"history is at {time}{System.Environment.NewLine}"
+
+        { Name = package; LastUpdated = time}
 )
 |> fun packages -> JsonSerializer.Serialize(packages, options = JsonSerializerOptions(WriteIndented = true))
 |> fun json -> File.WriteAllText("validation_packages.json", json)
