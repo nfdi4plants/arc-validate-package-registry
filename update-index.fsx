@@ -47,6 +47,6 @@ Directory.GetFiles("validation_packages", "*.fsx")
         printfn $"history is {history.StdOut}"
         { Name = package; LastUpdated = System.DateTime.ParseExact(history.StdOut.Split(" ").[0].Replace("'",""), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)}
 )
-|> fun packages -> JsonSerializer.Serialize(packages)
+|> fun packages -> JsonSerializer.Serialize(packages, options = JsonSerializerOptions(WriteIndented = true))
 |> fun json -> File.WriteAllText("validation_packages.json", json)
 
