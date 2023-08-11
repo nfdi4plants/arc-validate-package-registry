@@ -1,2 +1,3 @@
-printfn $"hi 2"
-//soos
+printfn $"hi 2" 
+
+//lol?

@@ -36,7 +36,9 @@ type ValidationPackageIndex =
 Directory.GetFiles("validation_packages", "*.fsx")
 |> Array.map (fun package ->
     if changed_files.Contains(package) then
+        Console.ForegroundColor <- ConsoleColor.Green
         printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
+        Console.ForegroundColor <- ConsoleColor.White
         { Name = package; LastUpdated = System.DateTime.Now}
     else
         printfn $"{package} was not changed in this commit."
