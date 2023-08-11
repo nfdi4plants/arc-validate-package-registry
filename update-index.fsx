@@ -34,7 +34,7 @@ let changed_files = File.ReadAllLines("file_changes.txt") |> set |> Set.map (fun
 type ValidationPackageIndex =
     {
         Name: string
-        LastUpdated: System.DateTime
+        LastUpdated: System.DateTimeOffset
     }
 
 Directory.GetFiles("validation_packages", "*.fsx")
@@ -43,19 +43,18 @@ Directory.GetFiles("validation_packages", "*.fsx")
         Console.ForegroundColor <- ConsoleColor.Green
         printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
         Console.ForegroundColor <- ConsoleColor.White
-        { Name = package; LastUpdated = System.DateTime.Now |> truncateDateTime}
+        { Name = package; LastUpdated = System.DateTimeOffset.UtcNow}
     else
         printfn $"{package} was not changed in this commit."
         printfn $"getting history for {package}"
 
         let history = executeProcess "git" $"log -1 --pretty=format:'%%ci' {package}"
         let time = 
-            System.DateTime.ParseExact(
-                history.StdOut.Split(" ").[0].Replace("'",""), 
-                "yyyy-MM-dd", 
+            System.DateTimeOffset.ParseExact(
+                history.StdOut, 
+                "yyyy-MM-dd HH:mm:ss zzz", 
                 System.Globalization.CultureInfo.InvariantCulture
             )
-            |> truncateDateTime
         
         printfn $"history is at {time}{System.Environment.NewLine}"
 
