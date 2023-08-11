@@ -39,16 +39,22 @@ type ValidationPackageIndex =
     {
         Name: string
         LastUpdated: System.DateTimeOffset
-    }
+    } with
+        static member create (name: string, lastUpdated: System.DateTimeOffset) = { Name = name; LastUpdated = lastUpdated }
 
 Directory.GetFiles("validation_packages", "*.fsx")
 |> Array.map (fun package ->
     if changed_files.Contains(package) then
-        Console.ForegroundColor <- ConsoleColor.Green
+        
         printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
-        Console.ForegroundColor <- ConsoleColor.White
-        { Name = package; LastUpdated = truncateDateTime System.DateTimeOffset.Now}
+
+        ValidationPackageIndex.create(
+            name = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
+            lastUpdated = truncateDateTime System.DateTimeOffset.Now // take local time with offset if file will be changed with this commit
+        )
+    
     else
+
         printfn $"{package} was not changed in this commit."
         printfn $"getting history for {package}"
 
@@ -62,7 +68,10 @@ Directory.GetFiles("validation_packages", "*.fsx")
         
         printfn $"history is at {time}{System.Environment.NewLine}"
 
-        { Name = package; LastUpdated = time}
+        ValidationPackageIndex.create(
+            name = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
+            lastUpdated = time // take time indicated by git history
+        )
 )
 |> fun packages -> JsonSerializer.Serialize(packages, options = JsonSerializerOptions(WriteIndented = true))
 |> fun json -> File.WriteAllText("validation_packages.json", json)

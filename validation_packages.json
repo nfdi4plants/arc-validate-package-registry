@@ -1,22 +1,22 @@
 [
   {
-    "Name": "validation_packages\\package1.fsx",
-    "LastUpdated": "2023-08-11T13:18:32+02:00"
+    "Name": "validation_packages/package1.fsx",
+    "LastUpdated": "2023-08-11T13:18:31+02:00"
   },
   {
-    "Name": "validation_packages\\package2.fsx",
+    "Name": "validation_packages/package2.fsx",
     "LastUpdated": "2023-08-11T13:17:23+02:00"
   },
   {
-    "Name": "validation_packages\\package3.fsx",
+    "Name": "validation_packages/package3.fsx",
     "LastUpdated": "2023-08-11T12:21:18+02:00"
   },
   {
-    "Name": "validation_packages\\package4.fsx",
+    "Name": "validation_packages/package4.fsx",
     "LastUpdated": "2023-08-11T12:21:18+02:00"
   },
   {
-    "Name": "validation_packages\\package5.fsx",
+    "Name": "validation_packages/package5.fsx",
     "LastUpdated": "2023-08-11T12:21:18+02:00"
   }
 ]
