@@ -27,8 +27,6 @@ let executeProcess (processName: string) (processArgs: string) =
 
 let changed_files = File.ReadAllLines("file_changes.txt") |> set |> Set.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
 
-printfn "parsed changed files as: \r\n%A" changed_files
-
 type ValidationPackageIndex =
     {
         Name: string
@@ -38,13 +36,13 @@ type ValidationPackageIndex =
 Directory.GetFiles("validation_packages", "*.fsx")
 |> Array.map (fun package ->
     if changed_files.Contains(package) then
-        printfn $"{package} was changed in this commit."
+        printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
         { Name = package; LastUpdated = System.DateTime.Now}
     else
         printfn $"{package} was not changed in this commit."
         printfn $"getting history for {package}"
         let history = executeProcess "git" $"log -1 --pretty=format:'%%ci' {package}"
-        printfn $"history is {history.StdOut}"
+        printfn $"history is at {history.StdOut}{System.Environment.NewLine}"
         { Name = package; LastUpdated = System.DateTime.ParseExact(history.StdOut.Split(" ").[0].Replace("'",""), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)}
 )
 |> fun packages -> JsonSerializer.Serialize(packages, options = JsonSerializerOptions(WriteIndented = true))
