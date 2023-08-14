@@ -1,5 +1,7 @@
 # arc-validate-packages
 
+_This repo is in development and not intended to be used in production. Normally, a repo like this would be private, but due to the nature of us needing to test programmatic access to files in this repo, it must be public._ 
+
 A repository of validation packages for ARCs
 
 This repo is indexes validation packages that can be consumed by [`arc-validate`](https://github.com/nfdi4plants/arc-validate) to validate ARCs.
