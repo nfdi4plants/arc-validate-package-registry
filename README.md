@@ -8,7 +8,11 @@ Once released as v2.0, The `arc-validate` tool will be able to sync a local copy
 
 This has the advantage that any new validation tests added to this repo will be automatically available to all users of `arc-validate` without requiring a new release of the tool, while also providing clearly separated tests for various endpoints, e.g. a validation package that only tests wether an ARC can be exported to SRA.
 
-This repo runs a [custom pre-commit hook](update-index.fsx) that will automatically add any `.fsx` file in the [arc-validate-packages folder](./arc-validate-packages/) to [the package index](./arc-validate-package-index.json) when it is commited to the repo.
+This repo runs a [custom pre-commit hook](pre-commit.sh) that will run a [script](./update-index.fsx) automatically add any `.fsx` file in the [arc-validate-packages folder](./arc-validate-packages/) to [the package index](./arc-validate-package-index.json) when it is commited to the repo.
+
+## Setup
+
+run either `setup.cmd` or `setup.sh` depending on your platform to install the pre-commit hook.
 
 ## How to add packages
 
