@@ -35,12 +35,32 @@ let truncateDateTime (date: System.DateTimeOffset)=
 
 let changed_files = File.ReadAllLines("file_changes.txt") |> set |> Set.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
 
+
 type ValidationPackageIndex =
     {
-        Name: string
+        RepoPath: string
+        Name:string
         LastUpdated: System.DateTimeOffset
     } with
-        static member create (name: string, lastUpdated: System.DateTimeOffset) = { Name = name; LastUpdated = lastUpdated }
+        static member create (
+            repoPath: string, 
+            name: string, 
+            lastUpdated: System.DateTimeOffset
+        ) = 
+            { 
+                RepoPath = repoPath 
+                Name = name
+                LastUpdated = lastUpdated 
+            }
+        static member create (
+            repoPath: string, 
+            lastUpdated: System.DateTimeOffset
+        ) = 
+            ValidationPackageIndex.create(
+                repoPath = repoPath,
+                name = Path.GetFileName(repoPath),
+                lastUpdated = lastUpdated
+            )
 
 Directory.GetFiles("arc-validate-packages", "*.fsx")
 |> Array.map (fun package ->
@@ -49,7 +69,7 @@ Directory.GetFiles("arc-validate-packages", "*.fsx")
         printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
 
         ValidationPackageIndex.create(
-            name = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
+            repoPath = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
             lastUpdated = truncateDateTime System.DateTimeOffset.Now // take local time with offset if file will be changed with this commit
         )
     
@@ -69,7 +89,7 @@ Directory.GetFiles("arc-validate-packages", "*.fsx")
         printfn $"history is at {time}{System.Environment.NewLine}"
 
         ValidationPackageIndex.create(
-            name = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
+            repoPath = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
             lastUpdated = time // take time indicated by git history
         )
 )
