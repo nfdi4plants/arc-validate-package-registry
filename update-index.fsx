@@ -58,7 +58,7 @@ type ValidationPackageIndex =
         ) = 
             ValidationPackageIndex.create(
                 repoPath = repoPath,
-                name = Path.GetFileName(repoPath),
+                name = Path.GetFileNameWithoutExtension(repoPath),
                 lastUpdated = lastUpdated
             )
 
