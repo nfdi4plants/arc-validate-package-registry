@@ -1,2 +1,0 @@
-printfn "soos"
-//skrrr

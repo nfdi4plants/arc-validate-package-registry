@@ -1,22 +1,6 @@
 [
   {
-    "Name": "arc-validate-packages/package1.fsx",
-    "LastUpdated": "2023-08-11T13:38:27+02:00"
-  },
-  {
-    "Name": "arc-validate-packages/package2.fsx",
-    "LastUpdated": "2023-08-11T13:37:31+02:00"
-  },
-  {
-    "Name": "arc-validate-packages/package3.fsx",
-    "LastUpdated": "2023-08-11T13:37:31+02:00"
-  },
-  {
-    "Name": "arc-validate-packages/package4.fsx",
-    "LastUpdated": "2023-08-11T13:37:31+02:00"
-  },
-  {
-    "Name": "arc-validate-packages/package5.fsx",
-    "LastUpdated": "2023-08-11T13:37:31+02:00"
+    "Name": "arc-validate-packages/test.fsx",
+    "LastUpdated": "2023-08-15T08:19:25+02:00"
   }
 ]
