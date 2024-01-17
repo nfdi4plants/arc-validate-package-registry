@@ -2,12 +2,12 @@
   {
     "RepoPath": "arc-validate-packages/invenio.fsx",
     "FileName": "invenio",
-    "LastUpdated": "2024-01-17T11:13:10+01:00",
+    "LastUpdated": "2024-01-17T11:16:45+01:00",
     "Metadata": {
-      "Name": "invenio",
-      "Description": "this package is here for testing purposes only.",
-      "BadgeFileName": "invenio-badge.svg",
-      "JUnitFileName": "invenio-results.xml"
+      "Name": "",
+      "Description": "",
+      "BadgeFileName": "",
+      "JUnitFileName": ""
     }
   },
   {
