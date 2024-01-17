@@ -1,6 +1,90 @@
+#r "nuget: YamlDotNet, 13.7.1"
+#r "nuget: Fake.Core.Process, 6.0.0"
+#r "nuget: Spectre.Console, 0.48.0"
+
 open System
 open System.IO
 open System.Text.Json
+open YamlDotNet.Serialization
+open Spectre.Console
+
+
+[<AutoOpen>]
+module Domain =
+    
+    // must be a class to be deserializable with YamlDotNet
+    type ValidationPackageMetadata() =
+        member val Name = "" with get,set
+        member val Description = "" with get,set
+        member val BadgeFileName = "" with get,set
+        member val JUnitFileName = "" with get,set
+        [<YamlIgnore>]
+        member val HasCorrectFrontmatterFormat = false with get,set
+
+    type ValidationPackageIndex =
+        {
+            RepoPath: string
+            FileName:string
+            LastUpdated: System.DateTimeOffset
+            Metadata: ValidationPackageMetadata
+        } with
+            static member create (
+                repoPath: string, 
+                fileName: string, 
+                lastUpdated: System.DateTimeOffset,
+                metadata: ValidationPackageMetadata
+            ) = 
+                { 
+                    RepoPath = repoPath 
+                    FileName = fileName
+                    LastUpdated = lastUpdated 
+                    Metadata = metadata
+                }
+
+[<AutoOpen>]
+module Frontmatter = 
+   
+    let frontMatterStart = $"(*{System.Environment.NewLine}---"
+    let frontMatterEnd = $"---{System.Environment.NewLine}*)"
+
+    let yamlDeserializer = 
+        DeserializerBuilder()
+            .WithNamingConvention(NamingConventions.PascalCaseNamingConvention.Instance)
+            .Build()
+
+    type Domain.ValidationPackageMetadata with
+        
+        static member extractFromScript (scriptPath: string) =
+            let script = File.ReadAllText(scriptPath)
+            if script.StartsWith(frontMatterStart, StringComparison.Ordinal) && script.Contains(frontMatterEnd) then
+                let frontmatter = 
+                    script.Substring(
+                        frontMatterStart.Length, 
+                        (script.IndexOf(frontMatterEnd, StringComparison.Ordinal) - frontMatterEnd.Length))
+                try 
+                    let result = 
+                        yamlDeserializer.Deserialize<Domain.ValidationPackageMetadata>(frontmatter)
+                    result .HasCorrectFrontmatterFormat <- true
+                    result
+                with e as exn -> 
+                    printfn $"error parsing package metadata at {scriptPath}. Make sure that all required metadata tags are included."
+                    ValidationPackageMetadata()
+            else 
+                printfn $"script at {scriptPath} has no correctly formatted frontmatter."
+                ValidationPackageMetadata()
+
+    type Domain.ValidationPackageIndex with
+
+        static member create (
+            repoPath: string, 
+            lastUpdated: System.DateTimeOffset
+        ) = 
+            ValidationPackageIndex.create(
+                repoPath = repoPath,
+                fileName = Path.GetFileNameWithoutExtension(repoPath),
+                lastUpdated = lastUpdated,
+                metadata = ValidationPackageMetadata.extractFromScript(repoPath)
+            )
 
 type ProcessResult = { 
     ExitCode : int; 
@@ -31,68 +115,41 @@ let truncateDateTime (date: System.DateTimeOffset)=
         System.Globalization.CultureInfo.InvariantCulture
     )
 
-
-
 let changed_files = File.ReadAllLines("file_changes.txt") |> set |> Set.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
 
+let packages = 
 
-type ValidationPackageIndex =
-    {
-        RepoPath: string
-        Name:string
-        LastUpdated: System.DateTimeOffset
-    } with
-        static member create (
-            repoPath: string, 
-            name: string, 
-            lastUpdated: System.DateTimeOffset
-        ) = 
-            { 
-                RepoPath = repoPath 
-                Name = name
-                LastUpdated = lastUpdated 
-            }
-        static member create (
-            repoPath: string, 
-            lastUpdated: System.DateTimeOffset
-        ) = 
+    Directory.GetFiles("arc-validate-packages", "*.fsx")
+    |> Array.map (fun package ->
+        if changed_files.Contains(package) then
+        
+            AnsiConsole.MarkupLine($"[green]{package} was changed in this commit.{package}[/]")
+
             ValidationPackageIndex.create(
-                repoPath = repoPath,
-                name = Path.GetFileNameWithoutExtension(repoPath),
-                lastUpdated = lastUpdated
+                repoPath = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
+                lastUpdated = truncateDateTime System.DateTimeOffset.Now // take local time with offset if file will be changed with this commit
             )
-
-Directory.GetFiles("arc-validate-packages", "*.fsx")
-|> Array.map (fun package ->
-    if changed_files.Contains(package) then
-        
-        printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
-
-        ValidationPackageIndex.create(
-            repoPath = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
-            lastUpdated = truncateDateTime System.DateTimeOffset.Now // take local time with offset if file will be changed with this commit
-        )
     
-    else
+        else
+            AnsiConsole.MarkupLine($"{package} was not changed in this commit.{package}")
+            AnsiConsole.MarkupLine($"getting history for {package}")
 
-        printfn $"{package} was not changed in this commit."
-        printfn $"getting history for {package}"
-
-        let history = executeProcess "git" $"log -1 --pretty=format:'%%ci' {package}"
-        let time = 
-            System.DateTimeOffset.ParseExact(
-                history.StdOut.Replace("'",""), 
-                "yyyy-MM-dd HH:mm:ss zzz", 
-                System.Globalization.CultureInfo.InvariantCulture
-            )
+            let history = executeProcess "git" $"log -1 --pretty=format:'%%ci' {package}"
+            let time = 
+                System.DateTimeOffset.ParseExact(
+                    history.StdOut.Replace("'",""), 
+                    "yyyy-MM-dd HH:mm:ss zzz", 
+                    System.Globalization.CultureInfo.InvariantCulture
+                )
         
-        printfn $"history is at {time}{System.Environment.NewLine}"
+            AnsiConsole.MarkupLine($"history is at {time}{System.Environment.NewLine}")
 
-        ValidationPackageIndex.create(
-            repoPath = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
-            lastUpdated = time // take time indicated by git history
-        )
-)
-|> fun packages -> JsonSerializer.Serialize(packages, options = JsonSerializerOptions(WriteIndented = true))
+            ValidationPackageIndex.create(
+                repoPath = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
+                lastUpdated = time // take time indicated by git history
+            )
+    )
+
+JsonSerializer.Serialize(packages, options = JsonSerializerOptions(WriteIndented = true))
 |> fun json -> File.WriteAllText("arc-validate-package-index.json", json)
 
