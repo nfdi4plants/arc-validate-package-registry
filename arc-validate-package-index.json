@@ -7,20 +7,18 @@
       "Name": "",
       "Description": "",
       "BadgeFileName": "",
-      "JUnitFileName": "",
-      "HasCorrectFrontmatterFormat": false
+      "JUnitFileName": ""
     }
   },
   {
     "RepoPath": "arc-validate-packages/test.fsx",
     "FileName": "test",
-    "LastUpdated": "2024-01-17T10:53:59+01:00",
+    "LastUpdated": "2024-01-17T10:53:58+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
       "BadgeFileName": "test-badge.svg",
-      "JUnitFileName": "test-results.xml",
-      "HasCorrectFrontmatterFormat": true
+      "JUnitFileName": "test-results.xml"
     }
   }
 ]

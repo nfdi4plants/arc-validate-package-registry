@@ -5,6 +5,8 @@
 open System
 open System.IO
 open System.Text.Json
+open System.Text.Json.Serialization
+open YamlDotNet
 open YamlDotNet.Serialization
 open Spectre.Console
 
@@ -19,6 +21,7 @@ module Domain =
         member val BadgeFileName = "" with get,set
         member val JUnitFileName = "" with get,set
         [<YamlIgnore>]
+        [<JsonIgnore>]
         member val HasCorrectFrontmatterFormat = false with get,set
 
     type ValidationPackageIndex =
