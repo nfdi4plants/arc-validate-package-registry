@@ -1,3 +1,12 @@
+(*
+---
+Name: invenio
+Description: this package is here for testing purposes only.
+BadgeFileName: invenio-badge.svg
+JUnitFileName: invenio-results.xml
+---
+*)
+
 #r "nuget: ARCExpect"
 #r "nuget: Anybadge.NET"
 #r "nuget: ARCValidationPackages"
@@ -15,8 +24,8 @@ open System.IO
 // Input:
 
 let arcDir = Directory.GetCurrentDirectory()
-let outDirBadge = Path.Combine(arcDir, "Invenio_badge.svg")
-let outDirResXml = Path.Combine(arcDir, "Invenio_results.xml")
+let outDirBadge = Path.Combine(arcDir, "invenio_badge.svg")
+let outDirResXml = Path.Combine(arcDir, "invenio_results.xml")
 
 
 // Values:
