@@ -1,3 +1,16 @@
+(*
+---
+Name: invenio
+Description: |
+    Validates if the ARC contains the necessary metadata to be publishable via Invenio.
+    The following metadata is required:
+        - Investigation has title and description
+        - All persons in Investigation Contacts have a name, last name, affiliation and valid email
+BadgeFileName: invenio-badge.svg
+JUnitFileName: invenio-results.xml
+---
+*)
+
 #r "nuget: ARCExpect"
 #r "nuget: Anybadge.NET"
 #r "nuget: ARCValidationPackages"
@@ -15,8 +28,8 @@ open System.IO
 // Input:
 
 let arcDir = Directory.GetCurrentDirectory()
-let outDirBadge = Path.Combine(arcDir, "Invenio_badge.svg")
-let outDirResXml = Path.Combine(arcDir, "Invenio_results.xml")
+let outDirBadge = Path.Combine(arcDir, "invenio_badge.svg")
+let outDirResXml = Path.Combine(arcDir, "invenio_results.xml")
 
 
 // Values:
@@ -57,28 +70,34 @@ let contactsEmails =
 
 let cases = 
     testList INVMSO.``Investigation Metadata``.INVESTIGATION.key.Name [
+        // Investigation has title
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``.INVESTIGATION.``Investigation Title``.Name) {
             invFileTokensNoMdSecKeys
             |> Validate.ParamCollection.ContainsParamWithTerm
                 INVMSO.``Investigation Metadata``.INVESTIGATION.``Investigation Title``
         }
+        // Investigation has description
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``.INVESTIGATION.``Investigation Description``.Name) {
             invFileTokensNoMdSecKeys
             |> Validate.ParamCollection.ContainsParamWithTerm
                 INVMSO.``Investigation Metadata``.INVESTIGATION.``Investigation Description``
         }
+        // All Investigation contacts have a name
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``. ``INVESTIGATION CONTACTS``.``Investigation Person First Name``.Name) {
             contactsFns
             |> Seq.iter Validate.Param.ValueIsNotEmpty
         }
+        // All Investigation contacts have a last name
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``. ``INVESTIGATION CONTACTS``.``Investigation Person Last Name``.Name) {
             contactsLns
             |> Seq.iter Validate.Param.ValueIsNotEmpty
         }
+        // All Investigation contacts have an affiliation
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``. ``INVESTIGATION CONTACTS``.``Investigation Person Affiliation``.Name) {
             contactsAffs
             |> Seq.iter Validate.Param.ValueIsNotEmpty
         }
+        // All Investigation contacts have a valid email
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``. ``INVESTIGATION CONTACTS``.``Investigation Person Email``.Name) {
             contactsEmails
             |> Seq.iter (Validate.Param.ValueMatchesRegex StringValidationPattern.email)

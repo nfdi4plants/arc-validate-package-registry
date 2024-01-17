@@ -1,12 +1,24 @@
 [
   {
     "RepoPath": "arc-validate-packages/invenio.fsx",
-    "Name": "invenio",
-    "LastUpdated": "2024-01-15T16:50:28+01:00"
+    "FileName": "invenio",
+    "LastUpdated": "2024-01-17T11:22:36+01:00",
+    "Metadata": {
+      "Name": "invenio",
+      "Description": "Validates if the ARC contains the necessary metadata to be publishable via Invenio.\nThe following metadata is required:\n    - Investigation has title and description\n    - All persons in Investigation Contacts have a name, last name, affiliation and valid email\n",
+      "BadgeFileName": "invenio-badge.svg",
+      "JUnitFileName": "invenio-results.xml"
+    }
   },
   {
     "RepoPath": "arc-validate-packages/test.fsx",
-    "Name": "test",
-    "LastUpdated": "2023-08-15T08:19:24+02:00"
+    "FileName": "test",
+    "LastUpdated": "2024-01-17T10:53:58+01:00",
+    "Metadata": {
+      "Name": "test",
+      "Description": "this package is here for testing purposes only.",
+      "BadgeFileName": "test-badge.svg",
+      "JUnitFileName": "test-results.xml"
+    }
   }
 ]
