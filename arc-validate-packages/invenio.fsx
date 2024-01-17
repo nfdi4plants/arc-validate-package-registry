@@ -1,11 +1,11 @@
 (*
 ---
 Name: invenio
-Description: "
+Description: |
     Validates if the ARC contains the necessary metadata to be publishable via Invenio.
     The following metadata is required:
         - Investigation has title and description
-        - All persons in Investigation Contacts have a name, last name, affiliation and valid email"
+        - All persons in Investigation Contacts have a name, last name, affiliation and valid email
 BadgeFileName: invenio-badge.svg
 JUnitFileName: invenio-results.xml
 ---
