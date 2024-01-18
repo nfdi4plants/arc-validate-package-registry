@@ -1,15 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using PackageRegistryService.Models;
-using SemanticVersioning;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddDbContext<ValidationPackageDb>(opt => opt.UseInMemoryDatabase("ValidationPackageRegistry"));
+
+//builder.Services.AddDbContext<ValidationPackageDb>(opt => opt.UseInMemoryDatabase("ValidationPackageRegistry"));
+builder.Services.AddDbContext<ValidationPackageDb>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgressConnectionString")));
 
 var app = builder.Build();
 
@@ -18,6 +24,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    using (var scope = app.Services.CreateScope())
+    {
+        var ctx = scope.ServiceProvider.GetRequiredService<ValidationPackageDb>();
+        ctx.Database.EnsureCreated();
+    }
 }
 
 app.UseHttpsRedirection();
@@ -60,7 +71,7 @@ app.MapGet("/api/v1/packages/{name}/{version}", async (string name, string versi
             : Results.NotFound();
 
 })
-.WithName("GetPackageByName(v1)")
+.WithName("GetPackageByNameAndVersion(v1)")
 .WithOpenApi();
 
 app.MapPost("/api/v1/packages", async (ValidationPackage package, ValidationPackageDb db) =>
