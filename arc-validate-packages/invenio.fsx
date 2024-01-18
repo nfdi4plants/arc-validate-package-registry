@@ -6,8 +6,9 @@ Description: |
     The following metadata is required:
         - Investigation has title and description
         - All persons in Investigation Contacts have a name, last name, affiliation and valid email
-BadgeFileName: invenio-badge.svg
-JUnitFileName: invenio-results.xml
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
 ---
 *)
 

@@ -18,8 +18,9 @@ module Domain =
     type ValidationPackageMetadata() =
         member val Name = "" with get,set
         member val Description = "" with get,set
-        member val BadgeFileName = "" with get,set
-        member val JUnitFileName = "" with get,set
+        member val MajorVersion = 0 with get,set
+        member val MinorVersion = 0 with get,set
+        member val PatchVersion = 0 with get,set
         [<YamlIgnore>]
         [<JsonIgnore>]
         member val HasCorrectFrontmatterFormat = false with get,set
