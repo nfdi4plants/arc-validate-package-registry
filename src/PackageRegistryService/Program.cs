@@ -11,7 +11,7 @@ var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApiDocument();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 //builder.Services.AddDbContext<ValidationPackageDb>(opt => opt.UseInMemoryDatabase("ValidationPackageRegistry"));
@@ -22,8 +22,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseOpenApi(); // serve OpenAPI/Swagger documents
+    app.UseReDoc(); // serve Swagger UI
     using (var scope = app.Services.CreateScope())
     {
         var ctx = scope.ServiceProvider.GetRequiredService<ValidationPackageDb>();
@@ -37,8 +37,11 @@ app.MapGet("/api/v1/packages", async (ValidationPackageDb db) =>
 {
     return await db.ValidationPackages.ToListAsync();
 })
-.WithName("GetPackages(v1)")
-.WithOpenApi();
+.WithOpenApi()
+.WithName("GetPackages")
+.WithDescription("Get all packages")
+.WithSummary("");
+
 
 app.MapGet("/api/v1/packages/{name}", async (string name, ValidationPackageDb db) =>
 {
@@ -50,7 +53,7 @@ app.MapGet("/api/v1/packages/{name}", async (string name, ValidationPackageDb db
         .ThenByDescending(p => p.RevisionVersion)
         .FirstOrDefaultAsync();
 })
-.WithName("GetLatestPackageByName(v1)")
+.WithName("GetLatestPackageByName")
 .WithOpenApi();
 
 app.MapGet("/api/v1/packages/{name}/{version}", async (string name, string version, ValidationPackageDb db) =>
@@ -71,7 +74,7 @@ app.MapGet("/api/v1/packages/{name}/{version}", async (string name, string versi
             : Results.NotFound();
 
 })
-.WithName("GetPackageByNameAndVersion(v1)")
+.WithName("GetPackageByNameAndVersion")
 .WithOpenApi();
 
 app.MapPost("/api/v1/packages", async (ValidationPackage package, ValidationPackageDb db) =>
@@ -88,7 +91,7 @@ app.MapPost("/api/v1/packages", async (ValidationPackage package, ValidationPack
 
     return Results.Created($"/api/v1/packages/{package.Name}/{version}", package);
 })
-.WithName("CreatePackage(v1)")
+.WithName("CreatePackage")
 .WithOpenApi();
 
 app.Run();
