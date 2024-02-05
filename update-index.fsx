@@ -78,14 +78,14 @@ let executeProcess (processName: string) (processArgs: string) =
     proc.WaitForExit()
     { ExitCode = proc.ExitCode; StdOut = output.ToString(); StdErr = error.ToString() }
 
-let truncateDateTime (date: System.DateTimeOffset)=
+let truncateDateTime (date: System.DateTimeOffset) =
     DateTimeOffset.ParseExact(
         date.ToString("yyyy-MM-dd HH:mm:ss zzzz"), 
         "yyyy-MM-dd HH:mm:ss zzzz", 
         System.Globalization.CultureInfo.InvariantCulture
     )
 
-let packages = Directory.GetFiles("package-staging-area", "*.fsx")
+let packages = Directory.GetFiles("src/PackageRegistryService/StagingArea", "*.fsx")
 
 let changed_files = File.ReadAllLines("file_changes.txt") |> set |> Set.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
     
