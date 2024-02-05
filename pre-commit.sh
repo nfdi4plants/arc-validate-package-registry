@@ -6,5 +6,5 @@ printf "\e[32mfile changes in new commit:\e[0m\n"
 cat file_changes.txt
 printf "\n"
 dotnet fsi update-index.fsx
-git add arc-validate-package-index.json
+git add src/PackageRegistryService/Data/arc-validate-package-index.json
 rm file_changes.txt

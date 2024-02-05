@@ -1,6 +1,7 @@
 #r "nuget: YamlDotNet, 13.7.1"
 #r "nuget: Fake.Core.Process, 6.0.0"
 #r "nuget: Spectre.Console, 0.48.0"
+#r "nuget: ARCValidationPackages, 2.0.0-preview.1"
 
 open System
 open System.IO
@@ -9,41 +10,7 @@ open System.Text.Json.Serialization
 open YamlDotNet
 open YamlDotNet.Serialization
 open Spectre.Console
-
-
-[<AutoOpen>]
-module Domain =
-    
-    // must be a class to be deserializable with YamlDotNet
-    type ValidationPackageMetadata() =
-        member val Name = "" with get,set
-        member val Description = "" with get,set
-        member val MajorVersion = 0 with get,set
-        member val MinorVersion = 0 with get,set
-        member val PatchVersion = 0 with get,set
-        [<YamlIgnore>]
-        [<JsonIgnore>]
-        member val HasCorrectFrontmatterFormat = false with get,set
-
-    type ValidationPackageIndex =
-        {
-            RepoPath: string
-            FileName:string
-            LastUpdated: System.DateTimeOffset
-            Metadata: ValidationPackageMetadata
-        } with
-            static member create (
-                repoPath: string, 
-                fileName: string, 
-                lastUpdated: System.DateTimeOffset,
-                metadata: ValidationPackageMetadata
-            ) = 
-                { 
-                    RepoPath = repoPath 
-                    FileName = fileName
-                    LastUpdated = lastUpdated 
-                    Metadata = metadata
-                }
+open ARCValidationPackages
 
 [<AutoOpen>]
 module Frontmatter = 
@@ -56,7 +23,7 @@ module Frontmatter =
             .WithNamingConvention(NamingConventions.PascalCaseNamingConvention.Instance)
             .Build()
 
-    type Domain.ValidationPackageMetadata with
+    type ValidationPackageMetadata with
         
         static member extractFromScript (scriptPath: string) =
             let script = File.ReadAllText(scriptPath)
@@ -67,8 +34,7 @@ module Frontmatter =
                         (script.IndexOf(frontMatterEnd, StringComparison.Ordinal) - frontMatterEnd.Length))
                 try 
                     let result = 
-                        yamlDeserializer.Deserialize<Domain.ValidationPackageMetadata>(frontmatter)
-                    result .HasCorrectFrontmatterFormat <- true
+                        yamlDeserializer.Deserialize<ValidationPackageMetadata>(frontmatter)
                     result
                 with e as exn -> 
                     printfn $"error parsing package metadata at {scriptPath}. Make sure that all required metadata tags are included."
@@ -77,7 +43,7 @@ module Frontmatter =
                 printfn $"script at {scriptPath} has no correctly formatted frontmatter."
                 ValidationPackageMetadata()
 
-    type Domain.ValidationPackageIndex with
+    type ValidationPackageIndex with
 
         static member create (
             repoPath: string, 
@@ -119,11 +85,12 @@ let truncateDateTime (date: System.DateTimeOffset)=
         System.Globalization.CultureInfo.InvariantCulture
     )
 
+let packages = Directory.GetFiles("package-staging-area", "*.fsx")
+
 let changed_files = File.ReadAllLines("file_changes.txt") |> set |> Set.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
-
-let packages = 
-
-    Directory.GetFiles("arc-validate-packages", "*.fsx")
+    
+let index = 
+    packages
     |> Array.map (fun package ->
         if changed_files.Contains(package) then
         
@@ -154,6 +121,6 @@ let packages =
             )
     )
 
-JsonSerializer.Serialize(packages, options = JsonSerializerOptions(WriteIndented = true))
-|> fun json -> File.WriteAllText("arc-validate-package-index.json", json)
+JsonSerializer.Serialize(index, options = JsonSerializerOptions(WriteIndented = true))
+|> fun json -> File.WriteAllText("src/PackageRegistryService/Data/arc-validate-package-index.json", json)
 

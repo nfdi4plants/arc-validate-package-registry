@@ -2,17 +2,36 @@
 
 using PackageRegistryService.Models;
 using System.Text.Json;
+
 namespace PackageRegistryService
 
 {
     public class DataInitializer
     {
+        public static List<ValidationPackageIndex> ReadIndex() 
+        {
+            var json = File.ReadAllText(@"Data/arc-validate-package-index.json");
+            var index = JsonSerializer.Deserialize<List<ValidationPackageIndex>>(json);
+            return index;
+        }
         public static void SeedData(ValidationPackageDb context)
         {
             if (!context.ValidationPackages.Any())
             {
-                var json = File.ReadAllText("Data/ValidationPackages.json");
-                var validationPackages = JsonSerializer.Deserialize<List<ValidationPackage>>(json);
+                var index = DataInitializer.ReadIndex();
+                var validationPackages =
+                    index
+                        .Select(i =>
+                            new ValidationPackage
+                            {
+                                Name = i.FileName,
+                                Description = i.Metadata.Description,
+                                MajorVersion = i.Metadata.MajorVersion,
+                                MinorVersion = i.Metadata.MinorVersion,
+                                PatchVersion = i.Metadata.PatchVersion,
+                                PackageContent = File.ReadAllBytes(Path.Combine(@"../../", i.RepoPath))
+                            }
+                        );
                 context.AddRange(validationPackages);
                 context.SaveChanges();
             }

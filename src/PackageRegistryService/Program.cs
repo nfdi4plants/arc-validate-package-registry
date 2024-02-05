@@ -1,11 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PackageRegistryService.Models;
-using Microsoft.Extensions.Configuration;
-using System.Configuration;
 using PackageRegistryService;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Builder;
-
 
 // ------------------------- ApplicationBuilder -------------------------
 // in this section, we will add the necessary code to configure the application builder,
