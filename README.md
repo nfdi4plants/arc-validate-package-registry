@@ -1,27 +1,68 @@
-# arc-validate-packages
+# arc-validate-package-registry
 
-_This repo is in development and not intended to be used in production. Normally, a repo like this would be private, but due to the nature of us needing to test programmatic access to files in this repo, it must be public._ 
+This repository contains:
 
-A repository of validation packages for ARCs
+- a staging area for authoring official validation packages intended for use with [`arc-validate`](). 
+- a web API for serving validation packages. This API is consumed by `arc-validate` to install and sync validation packages.
 
-This repo is indexes validation packages that can be consumed by [`arc-validate`](https://github.com/nfdi4plants/arc-validate) to validate ARCs.
+## Table of contents
 
-Once released as v2.0, The `arc-validate` tool will be able to sync a local copy of any validation package indexed in this repo, and perform the contained validation tests on an ARC. 
+- [arc-validate-package-registry](#arc-validate-package-registry)
+  - [Table of contents](#table-of-contents)
+- [Validation package staging area](#validation-package-staging-area)
+  - [the package index](#the-package-index)
+- [Web API (PackageRegistryService)](#web-api-packageregistryservice)
+  - [Local development](#local-development)
+  - [OpenAPI endpoint documentation via Swagger UI](#openapi-endpoint-documentation-via-swagger-ui)
+- [Setup](#setup)
+  - [package indexing](#package-indexing)
+  - [local development](#local-development-1)
+- [How to add packages](#how-to-add-packages)
 
-This has the advantage that any new validation tests added to this repo will be automatically available to all users of `arc-validate` without requiring a new release of the tool, while also providing clearly separated tests for various endpoints, e.g. a validation package that only tests wether an ARC can be exported to SRA.
 
-This repo runs a [custom pre-commit hook](pre-commit.sh) that will run a [script](./update-index.fsx) automatically add any `.fsx` file in the [arc-validate-packages folder](./arc-validate-packages/) to [the package index](./arc-validate-package-index.json) when it is commited to the repo.
+# Validation package staging area
 
-## Setup
+## the package index
 
-run either `setup.cmd` or `setup.sh` depending on your platform to install the pre-commit hook.
+This repo runs a [custom pre-commit hook](pre-commit.sh) that will run a [script](./update-index.fsx) automatically add any `.fsx` file in the [staging area](src/PackageRegistryService/StagingArea/) to [the package index](src/PackageRegistryService/Data/arc-validate-package-index.json) when it is commited to the repo.
 
-## How to add packages
+# Web API (PackageRegistryService)
 
-### Prerequisites
+The `PackageRegistryService` project located in `/src` is a simple ASP.NET Core (8) web API that serves validation packages and/or associated metadata via a few endpoints.
 
-a installation of the dotnet SDK 6.0 + is required for both authoring packages and running the pre-commit hook.
+It is developed specifically for containerization and use in a docker environment. 
 
-### Tutorial
+The service will eventually be continuously deployed to a public endpoint on the nfdi4plants infrastructure.
 
-A tutorial on authoring validation packages will be released here once the arc-validate 2.0 API is stable.
+## Local development
+
+To run the `PackageRegistryService` locally, ideally use VisualStudio and run the `Docker Compose` project in Debug mode. This will launch the stack defined at [`docker-compose.yml`](docker-compose.yml), which includes:
+
+- the containerized `PackageRegistryService` application 
+- a `postgres` database seeded with the [latest indexed packages](src/PackageRegistryService/Data/arc-validate-package-index.json)
+- an `adminer` instance for database management (will maybe be replaced by pgAdmin in the future)
+
+## OpenAPI endpoint documentation via Swagger UI
+
+The `PackageRegistryService` has a built-in Swagger UI endpoint for API documentation. It is served at `/swagger/index.html`.
+
+# Setup
+
+## package indexing
+
+To install the pre-commit hook needed for automatic package indexing, run either `setup.cmd` or `setup.sh` depending on your platform to install the pre-commit hook.
+
+## local development
+
+install the following prerequisites:
+- .NET 8 SDK
+- Docker
+- Docker Compose
+
+# How to add packages
+
+To add a package to the staging area, make sure that you installed the pre-commit hook as described in the [Setup](#setup) section. 
+
+Then, simply add a new `.fsx` file to the [staging area](src/PackageRegistryService/StagingArea/), and commit it to the repo. The pre-commit hook will automatically add the new package to the package index.
+
+If all packages on the index pass a set of tests, the docker container will be built and pushed to the registry, and can from there be deployed to the public endpoint.
