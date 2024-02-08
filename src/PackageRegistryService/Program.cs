@@ -19,6 +19,7 @@ builder.Services.AddOpenApiDocument(settings =>
         settings.Version = "v1";
         settings.Description = "A simple API for retrieving ARC validation packages";
     });
+
 builder.Services.AddEndpointsApiExplorer(); 
 
 // Add database related services
@@ -67,12 +68,12 @@ if (app.Environment.IsDevelopment())
 
 if (!app.Environment.IsProduction())
 {
-    app.Use((context, next) =>
-    {
-        context.Request.Scheme = "https";
-        return next(context);
-    });
-
+    //app.Use((context, next) =>
+    //{
+    //    context.Request.Scheme = "https";
+    //    return next(context);
+    //});
+    app.UseHttpsRedirection();
 
 }
 
