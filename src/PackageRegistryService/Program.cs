@@ -135,4 +135,12 @@ app.MapPost("/api/v1/packages", async (ValidationPackage package, ValidationPack
 .WithOpenApi()
 .WithTags("Packages");
 
+app.MapGet("/", () =>
+{
+    // Logic to process the invitationToken
+    //...
+
+    return Results.Content("<h1>Hi!</h1>", "text/html");
+});
+
 app.Run();
