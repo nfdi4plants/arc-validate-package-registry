@@ -58,6 +58,15 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+if (!app.Environment.IsProduction())
+{
+    app.Use((context, next) =>
+    {
+        context.Request.Scheme = "https";
+        return next(context);
+    });
+}
+
 // Configure the HTTP request pipeline.
 
 // app.MapGet binds a response handler function to a HTTP request on a specific route pattern
