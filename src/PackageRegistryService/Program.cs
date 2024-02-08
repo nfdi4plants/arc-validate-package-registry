@@ -68,11 +68,6 @@ if (app.Environment.IsDevelopment())
 
 if (!app.Environment.IsProduction())
 {
-    //app.Use((context, next) =>
-    //{
-    //    context.Request.Scheme = "https";
-    //    return next(context);
-    //});
     app.UseHttpsRedirection();
 
 }
@@ -147,10 +142,12 @@ app.MapPost("/api/v1/packages", async (ValidationPackage package, ValidationPack
 
 app.MapGet("/", () =>
 {
-    // Logic to process the invitationToken
-    //...
-
-    return Results.Content("<h1>Hi!</h1>", "text/html");
+    return Results.Content(
+        "<h1>ARC validation package registry API</h1><br></br>" +
+        "<p>The frontend for validation package inspection is currently WIP.</p><br></br>", 
+        """<a href="/swagger">Meanwhile, check the API documentation<a>""" +
+        "text/html"
+    );
 });
 
 app.Run();
