@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PackageRegistryService.Models;
 using PackageRegistryService;
+using Microsoft.AspNetCore.HttpOverrides;
 
 // ------------------------- ApplicationBuilder -------------------------
 // in this section, we will add the necessary code to configure the application builder,
@@ -30,6 +31,12 @@ builder.Services.AddDbContext<ValidationPackageDb>(opt =>
         connectionString: builder.Configuration.GetConnectionString("PostgressConnectionString")
     )
 );
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
 
 // ------------------------- WebApplication -------------------------
 // in this section, we will add the necessary code to configure the WebApplication,
@@ -65,6 +72,8 @@ if (!app.Environment.IsProduction())
         context.Request.Scheme = "https";
         return next(context);
     });
+
+
 }
 
 // Configure the HTTP request pipeline.
