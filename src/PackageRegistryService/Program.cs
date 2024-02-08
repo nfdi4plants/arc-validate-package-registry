@@ -55,10 +55,10 @@ if (app.Environment.IsDevelopment())
         ctx.Database.Migrate();
         DataInitializer.SeedData(ctx);
     }
+    app.UseHttpsRedirection();
 }
 
 // Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
 
 // app.MapGet binds a response handler function to a HTTP request on a specific route pattern
 app.MapGet("/api/v1/packages", async (ValidationPackageDb db) =>
