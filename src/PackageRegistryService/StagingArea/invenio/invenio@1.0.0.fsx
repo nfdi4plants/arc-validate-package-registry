@@ -8,7 +8,7 @@ Description: |
         - All persons in Investigation Contacts have a name, last name, affiliation and valid email
 MajorVersion: 1
 MinorVersion: 0
-PatchVersion: 1
+PatchVersion: 0
 ---
 *)
 

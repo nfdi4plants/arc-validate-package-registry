@@ -29,7 +29,7 @@ namespace PackageRegistryService
                                 MajorVersion = i.Metadata.MajorVersion,
                                 MinorVersion = i.Metadata.MinorVersion,
                                 PatchVersion = i.Metadata.PatchVersion,
-                                PackageContent = File.ReadAllBytes($"StagingArea/{i.FileName}.fsx")
+                                PackageContent = File.ReadAllBytes($"StagingArea/{i.FileName}/{i.FileName}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}.fsx")
                             }
                         );
                 context.AddRange(validationPackages);

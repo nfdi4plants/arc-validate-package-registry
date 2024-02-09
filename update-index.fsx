@@ -1,6 +1,5 @@
 #r "nuget: YamlDotNet, 13.7.1"
 #r "nuget: Fake.Core.Process, 6.0.0"
-#r "nuget: Spectre.Console, 0.48.0"
 #r "nuget: ARCValidationPackages, 2.0.0-preview.1"
 
 open System
@@ -9,7 +8,6 @@ open System.Text.Json
 open System.Text.Json.Serialization
 open YamlDotNet
 open YamlDotNet.Serialization
-open Spectre.Console
 open ARCValidationPackages
 
 [<AutoOpen>]
@@ -51,7 +49,7 @@ module Frontmatter =
         ) = 
             ValidationPackageIndex.create(
                 repoPath = repoPath,
-                fileName = Path.GetFileNameWithoutExtension(repoPath),
+                fileName = Path.GetFileNameWithoutExtension(repoPath).Split("@").[0],
                 lastUpdated = lastUpdated,
                 metadata = ValidationPackageMetadata.extractFromScript(repoPath)
             )
@@ -85,7 +83,9 @@ let truncateDateTime (date: System.DateTimeOffset) =
         System.Globalization.CultureInfo.InvariantCulture
     )
 
-let packages = Directory.GetFiles("src/PackageRegistryService/StagingArea", "*.fsx")
+let packages = 
+    Directory.GetFiles("src/PackageRegistryService/StagingArea", "*.fsx", SearchOption.AllDirectories)
+    |> Array.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
 
 let changed_files = File.ReadAllLines("file_changes.txt") |> set |> Set.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
     
@@ -94,7 +94,7 @@ let index =
     |> Array.map (fun package ->
         if changed_files.Contains(package) then
         
-            AnsiConsole.MarkupLine($"[green]{package} was changed in this commit.{package}[/]")
+            printfn $"{package} was changed in this commit.{System.Environment.NewLine}"
 
             ValidationPackageIndex.create(
                 repoPath = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
@@ -102,8 +102,8 @@ let index =
             )
     
         else
-            AnsiConsole.MarkupLine($"{package} was not changed in this commit.{package}")
-            AnsiConsole.MarkupLine($"getting history for {package}")
+            printfn $"{package} was not changed in this commit."
+            printfn $"getting history for {package}"
 
             let history = executeProcess "git" $"log -1 --pretty=format:'%%ci' {package}"
             let time = 
@@ -113,7 +113,7 @@ let index =
                     System.Globalization.CultureInfo.InvariantCulture
                 )
         
-            AnsiConsole.MarkupLine($"history is at {time}{System.Environment.NewLine}")
+            printfn $"history is at {time}{System.Environment.NewLine}"
 
             ValidationPackageIndex.create(
                 repoPath = package.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
