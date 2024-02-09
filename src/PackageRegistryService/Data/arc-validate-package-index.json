@@ -50,11 +50,11 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.0.fsx",
     "FileName": "test",
-    "LastUpdated": "2024-02-09T17:29:51+01:00",
+    "LastUpdated": "2024-02-09T18:07:34+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
-      "MajorVersion": 1,
+      "MajorVersion": 2,
       "MinorVersion": 0,
       "PatchVersion": 0,
       "Publish": false,

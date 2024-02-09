@@ -1,7 +1,7 @@
 (*
 ---
 Name: test
-MajorVersion: 1
+MajorVersion: 2
 MinorVersion: 0
 PatchVersion: 0
 Description: this package is here for testing purposes only.
