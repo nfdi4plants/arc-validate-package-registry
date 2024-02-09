@@ -7,13 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8061A76B
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "PackageTests", "tests\PackageTests\PackageTests.fsproj", "{C4D0490E-F8AF-43E6-9A1F-3844292D6247}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ValidationPackages", "ValidationPackages", "{55555073-D78D-4D9C-B895-B9E55F0C9F68}"
-	ProjectSection(SolutionItems) = preProject
-		arc-validate-package-index.json = arc-validate-package-index.json
-		arc-validate-packages\invenio.fsx = arc-validate-packages\invenio.fsx
-		arc-validate-packages\test.fsx = arc-validate-packages\test.fsx
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{9F6D799F-2DCA-4F66-8123-2B267BF95A63}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
@@ -31,7 +24,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackageRegistryService", "s
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{91911DC0-4736-4A1A-807C-FE9430899AB7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "index-workflow", "index-workflow", "{7D6983EB-CE25-4B60-95D6-89F31F6400AB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "index-workflow", "index-workflow", "{A5D4286F-B049-42B8-9A0F-C68C3692F72D}"
+	ProjectSection(SolutionItems) = preProject
+		src\PackageRegistryService\Data\arc-validate-package-index.json = src\PackageRegistryService\Data\arc-validate-package-index.json
+		pre-commit.sh = pre-commit.sh
+		setup.cmd = setup.cmd
+		setup.sh = setup.sh
+		update-index.fsx = update-index.fsx
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

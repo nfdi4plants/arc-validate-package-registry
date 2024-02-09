@@ -1,5 +1,6 @@
 ﻿// ref: https://pratikpokhrel51.medium.com/creating-data-seeder-in-ef-core-that-reads-from-json-file-in-dot-net-core-69004df7ad0a
 
+using Microsoft.CodeAnalysis;
 using PackageRegistryService.Models;
 using System.Text.Json;
 
@@ -19,6 +20,9 @@ namespace PackageRegistryService
             if (!context.ValidationPackages.Any())
             {
                 var index = DataInitializer.ReadIndex();
+
+                context.SaveChanges();
+
                 var validationPackages =
                     index
                         .Select(i =>
@@ -29,7 +33,10 @@ namespace PackageRegistryService
                                 MajorVersion = i.Metadata.MajorVersion,
                                 MinorVersion = i.Metadata.MinorVersion,
                                 PatchVersion = i.Metadata.PatchVersion,
-                                PackageContent = File.ReadAllBytes($"StagingArea/{i.FileName}/{i.FileName}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}.fsx")
+                                PackageContent = File.ReadAllBytes($"StagingArea/{i.FileName}/{i.FileName}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}.fsx"),
+                                Tags = i.Metadata.Tags,
+                                ReleaseNotes = i.Metadata.ReleaseNotes,
+                                Authors = i.Metadata.Authors
                             }
                         );
                 context.AddRange(validationPackages);

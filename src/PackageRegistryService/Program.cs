@@ -74,6 +74,8 @@ if (!app.Environment.IsProduction())
 
 // Configure the HTTP request pipeline.
 
+// ======================== Packages endpoints =========================
+
 // app.MapGet binds a response handler function to a HTTP request on a specific route pattern
 app.MapGet("/api/v1/packages", async (ValidationPackageDb db) =>
 {
