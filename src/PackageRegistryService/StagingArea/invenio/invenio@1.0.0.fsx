@@ -5,7 +5,7 @@ Description: |
     Validates if the ARC contains the necessary metadata to be publishable via Invenio.
     The following metadata is required:
         - Investigation has title and description
-        - All persons in Investigation Contacts have a name, last name, affiliation and valid email
+        - All persons in Investigation Contacts must have a name, last name, affiliation and valid email
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0

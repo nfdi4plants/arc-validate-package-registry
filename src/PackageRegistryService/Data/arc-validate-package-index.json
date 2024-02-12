@@ -1,11 +1,11 @@
 [
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/invenio/invenio@1.0.0.fsx",
-    "FileName": "invenio",
-    "LastUpdated": "2024-02-09T15:33:45+01:00",
+    "FileName": "invenio@1.0.0.fsx",
+    "LastUpdated": "2024-02-12T13:12:45+01:00",
     "Metadata": {
       "Name": "invenio",
-      "Description": "Validates if the ARC contains the necessary metadata to be publishable via Invenio.\nThe following metadata is required:\n    - Investigation has title and description\n    - All persons in Investigation Contacts have a name, last name, affiliation and valid email\n",
+      "Description": "Validates if the ARC contains the necessary metadata to be publishable via Invenio.\nThe following metadata is required:\n    - Investigation has title and description\n    - All persons in Investigation Contacts must have a name, last name, affiliation and valid email\n",
       "MajorVersion": 1,
       "MinorVersion": 0,
       "PatchVersion": 0,
@@ -17,8 +17,8 @@
   },
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.0.fsx",
-    "FileName": "test",
-    "LastUpdated": "2024-02-09T15:33:45+01:00",
+    "FileName": "test@1.0.0.fsx",
+    "LastUpdated": "2024-02-12T13:12:45+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -33,8 +33,8 @@
   },
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.1.fsx",
-    "FileName": "test",
-    "LastUpdated": "2024-02-09T15:33:45+01:00",
+    "FileName": "test@1.0.1.fsx",
+    "LastUpdated": "2024-02-12T13:12:45+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -49,8 +49,8 @@
   },
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.0.fsx",
-    "FileName": "test",
-    "LastUpdated": "2024-02-09T18:07:33+01:00",
+    "FileName": "test@2.0.0.fsx",
+    "LastUpdated": "2024-02-12T13:12:45+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
