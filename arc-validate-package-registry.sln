@@ -33,6 +33,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "index-workflow", "index-wor
 		update-index.fsx = update-index.fsx
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".ci", ".ci", "{24F7CF58-94B9-4FB4-8A59-FD329B3C431D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\update-docker-image.yml = .github\workflows\update-docker-image.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

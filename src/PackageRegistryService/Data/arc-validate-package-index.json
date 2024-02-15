@@ -2,7 +2,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/invenio/invenio@1.0.0.fsx",
     "FileName": "invenio@1.0.0.fsx",
-    "LastUpdated": "2024-02-12T13:12:45+01:00",
+    "LastUpdated": "2024-02-12T13:12:41+01:00",
     "Metadata": {
       "Name": "invenio",
       "Description": "Validates if the ARC contains the necessary metadata to be publishable via Invenio.\nThe following metadata is required:\n    - Investigation has title and description\n    - All persons in Investigation Contacts must have a name, last name, affiliation and valid email\n",
@@ -18,7 +18,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.0.fsx",
     "FileName": "test@1.0.0.fsx",
-    "LastUpdated": "2024-02-12T13:12:45+01:00",
+    "LastUpdated": "2024-02-12T13:12:41+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -34,7 +34,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.1.fsx",
     "FileName": "test@1.0.1.fsx",
-    "LastUpdated": "2024-02-12T13:12:45+01:00",
+    "LastUpdated": "2024-02-12T13:12:41+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -50,7 +50,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.0.fsx",
     "FileName": "test@2.0.0.fsx",
-    "LastUpdated": "2024-02-12T13:12:45+01:00",
+    "LastUpdated": "2024-02-12T13:12:41+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
