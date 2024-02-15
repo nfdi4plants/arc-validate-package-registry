@@ -144,7 +144,7 @@ module Frontmatter =
         ) = 
             ValidationPackageIndex.create(
                 repoPath = repoPath,
-                fileName = Path.GetFileNameWithoutExtension(repoPath).Split("@").[0],
+                fileName = Path.GetFileName(repoPath),
                 lastUpdated = lastUpdated,
                 metadata = ValidationPackageMetadata.extractFromScript(repoPath)
             )
