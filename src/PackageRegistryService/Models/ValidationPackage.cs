@@ -48,6 +48,10 @@ namespace PackageRegistryService.Models
         /// <example>aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQ==</example>
         public required byte[] PackageContent { get; set; }
         /// <summary>
+        ///
+        /// </summary>
+        public required DateOnly ReleaseDate { get; set; }
+        /// <summary>
         /// 
         /// </summary>
         public string[]? Tags { get; set; }

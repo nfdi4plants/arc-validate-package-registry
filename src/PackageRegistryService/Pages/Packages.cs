@@ -40,6 +40,7 @@ namespace PackageRegistryService.Pages
                                 Name: group.Key,
                                 Tags: latestPackage.Tags,
                                 Description: latestPackage.Description,
+                                ReleaseDate: latestPackage.ReleaseDate,
                                 LatestVersion: latestPackage.GetSemanticVersionString()
                             );
                         }

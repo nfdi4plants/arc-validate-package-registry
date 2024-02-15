@@ -28,12 +28,13 @@ namespace PackageRegistryService
                         .Select(i =>
                             new ValidationPackage
                             {
-                                Name = i.FileName,
+                                Name = i.Metadata.Name,
                                 Description = i.Metadata.Description,
                                 MajorVersion = i.Metadata.MajorVersion,
                                 MinorVersion = i.Metadata.MinorVersion,
                                 PatchVersion = i.Metadata.PatchVersion,
-                                PackageContent = File.ReadAllBytes($"StagingArea/{i.FileName}/{i.FileName}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}.fsx"),
+                                PackageContent = File.ReadAllBytes($"StagingArea/{i.Metadata.Name}/{i.FileName}"),
+                                ReleaseDate = new(i.LastUpdated.Year, i.LastUpdated.Month, i.LastUpdated.Day),
                                 Tags = i.Metadata.Tags,
                                 ReleaseNotes = i.Metadata.ReleaseNotes,
                                 Authors = i.Metadata.Authors
