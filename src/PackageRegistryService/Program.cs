@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using PackageRegistryService.Models;
 using PackageRegistryService;
+using PackageRegistryService.Models;
+using PackageRegistryService.Pages;
 using Microsoft.AspNetCore.HttpOverrides;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
+using static System.Net.Mime.MediaTypeNames;
+using PackageRegistryService.API;
 
 // ------------------------- ApplicationBuilder -------------------------
 // in this section, we will add the necessary code to configure the application builder,
@@ -45,6 +49,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 var app = builder.Build();
 
+app.UseStaticFiles(); // serve wwwroot content https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-8.0
+
 // serve OpenAPI document and Swagger UI
 app.UseOpenApi();
 app.UseSwaggerUi(settings => {
@@ -77,52 +83,10 @@ if (!app.Environment.IsProduction())
 // ======================== Packages endpoints =========================
 
 // app.MapGet binds a response handler function to a HTTP request on a specific route pattern
-app.MapGet("/api/v1/packages", async (ValidationPackageDb db) =>
-{
 
-    return await db.ValidationPackages.ToListAsync();
-})
-// add metadata to the endpoint for OpenAPI document generation
-.WithOpenApi()
-.WithName("GetAllPackages")
-.WithSummary("This is a summary")
-.WithDescription("This is a description")
-.WithTags("Packages");
-
-app.MapGet("/api/v1/packages/{name}", async (string name, ValidationPackageDb db) =>
-{
-    return await
-        db.ValidationPackages
-        .Where(p => p.Name == name)
-        .OrderByDescending(p => p.MajorVersion)
-        .ThenByDescending(p => p.MinorVersion)
-        .ThenByDescending(p => p.PatchVersion)
-        .FirstOrDefaultAsync();
-})
-.WithName("GetLatestPackageByName")
-.WithTags("Packages");
-
-app.MapGet("/api/v1/packages/{name}/{version}", async (string name, string version, ValidationPackageDb db) =>
-{
-    var splt = version.Split('.');
-    if (splt.Length != 3)
-    {
-        return Results.BadRequest("version was not a of valid format MAJOR.MINOR.REVISION");
-    }
-
-    var major = int.Parse(splt[0]);
-    var minor = int.Parse(splt[1]);
-    var revision = int.Parse(splt[2]);
-
-    return await db.ValidationPackages.FindAsync(name, major, minor, revision)
-        is ValidationPackage package
-            ? Results.Ok(package)
-            : Results.NotFound();
-
-})
-.WithName("GetPackageByNameAndVersion")
-.WithOpenApi()
-.WithTags("Packages");
+app.MapGroup("/api/v1")
+    .MapApiV1()
+    .WithTags("Packages");
 
 app.MapPost("/api/v1/packages", async (ValidationPackage package, ValidationPackageDb db) =>
 {
@@ -144,12 +108,14 @@ app.MapPost("/api/v1/packages", async (ValidationPackage package, ValidationPack
 
 app.MapGet("/", () =>
 {
-    return Results.Content(
-        "<h1>ARC validation package registry API</h1><br></br>" +
-        "<p>The frontend for validation package inspection is currently WIP.</p><br></br>", 
-        """<a href="/swagger">Meanwhile, check the API documentation<a>""" +
-        "text/html"
-    );
+    var content =
+        Layout.Render(
+            title: "ARC validation package registry API",
+            content: @"<h1>ARC validation package registry API</h1><br></br>
+<p>The frontend for validation package inspection is currently WIP.</p><br></br>
+<a href=""swagger""> Meanwhile, check the API documentation </a>");
+
+return Results.Text(content: content, contentType: "text/html");
 });
 
 app.Run();

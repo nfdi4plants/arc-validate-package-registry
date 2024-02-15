@@ -30,6 +30,9 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="Pages\Packages\" />
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\js\" />
     <None Include="StagingArea\**" />
   </ItemGroup>
 </Project>
