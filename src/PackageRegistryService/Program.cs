@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using PackageRegistryService;
 using PackageRegistryService.Models;
-using PackageRegistryService.Pages;
 using Microsoft.AspNetCore.HttpOverrides;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 using static System.Net.Mime.MediaTypeNames;
 using PackageRegistryService.API;
+using PackageRegistryService.Pages.Components;
+using PackageRegistryService.Pages;
 
 // ------------------------- ApplicationBuilder -------------------------
 // in this section, we will add the necessary code to configure the application builder,
@@ -88,34 +89,7 @@ app.MapGroup("/api/v1")
     .MapApiV1()
     .WithTags("Packages");
 
-app.MapPost("/api/v1/packages", async (ValidationPackage package, ValidationPackageDb db) =>
-{
-    if (await db.ValidationPackages.FindAsync(package.Name, package.MajorVersion, package.MinorVersion, package.PatchVersion) is not null)
-    {
-        return Results.Conflict();
-    }
-
-    var version = package.GetSemanticVersionString();
-
-    await db.ValidationPackages.AddAsync(package);
-    await db.SaveChangesAsync();
-
-    return Results.Created($"/api/v1/packages/{package.Name}/{version}", package);
-})
-.WithName("CreatePackage")
-.WithOpenApi()
-.WithTags("Packages");
-
-app.MapGet("/", () =>
-{
-    var content =
-        Layout.Render(
-            title: "ARC validation package registry API",
-            content: @"<h1>ARC validation package registry API</h1><br></br>
-<p>The frontend for validation package inspection is currently WIP.</p><br></br>
-<a href=""swagger""> Meanwhile, check the API documentation </a>");
-
-return Results.Text(content: content, contentType: "text/html");
-});
+app.MapGroup("/")
+    .MapPageEndpoints();
 
 app.Run();
