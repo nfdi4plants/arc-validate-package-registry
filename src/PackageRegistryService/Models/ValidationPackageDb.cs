@@ -11,6 +11,7 @@
             : base(options) { }
 
         public DbSet<ValidationPackage> ValidationPackages => Set<ValidationPackage>();
+        public DbSet<PackageContentHash> Hashes => Set<PackageContentHash>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

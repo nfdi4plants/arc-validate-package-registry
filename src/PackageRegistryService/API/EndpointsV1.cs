@@ -6,6 +6,7 @@ using PackageRegistryService.Pages;
 using Microsoft.AspNetCore.HttpOverrides;
 using PackageRegistryService.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PackageRegistryService.API
 {
@@ -41,7 +42,7 @@ namespace PackageRegistryService.API
             int major; int minor; int revision;
 
             if (
-                !int.TryParse(splt[0], out major) 
+                !int.TryParse(splt[0], out major)
                 || !int.TryParse(splt[1], out minor)
                 || !int.TryParse(splt[2], out revision)
             )
@@ -59,7 +60,7 @@ namespace PackageRegistryService.API
             return TypedResults.Ok(package);
         }
 
-        public static async Task<Results<Ok<ValidationPackage>, Conflict>> CreatePackage(ValidationPackage package, ValidationPackageDb database)
+        public static async Task<Results<Ok<ValidationPackage>, Conflict, UnauthorizedHttpResult>> CreatePackage(ValidationPackage package, ValidationPackageDb database)
         {
             var existing = await database.ValidationPackages.FindAsync(package.Name, package.MajorVersion, package.MinorVersion, package.PatchVersion);
             if (existing != null)
@@ -73,32 +74,36 @@ namespace PackageRegistryService.API
             return TypedResults.Ok(package);
         }
 
+        public static async Task<Results<Ok, UnprocessableEntity>> Verify(string name, string version, [FromBody] string hash)
+        {
+            return TypedResults.UnprocessableEntity();
+        }
+
         public static RouteGroupBuilder MapApiV1(this RouteGroupBuilder group)
         {
+
+            // packages endpoints
             group.MapGet("/packages", GetAllPackages)
                 .WithOpenApi()
                 .WithName("GetAllPackages");
-                //.WithSummary("This is a summary") // not working currently, fixed via document processor in /OpenAPI/DocGen.cs
-                //.WithDescription("This is a description");
 
             group.MapGet("/packages/{name}", GetLatestPackageByName)
                 .WithOpenApi()
                 .WithName("GetLatestPackageByName");
-                //.WithSummary("This is a summary") // not working currently, fixed via document processor in /OpenAPI/DocGen.cs
-                //.WithDescription("This is a description");
 
             group.MapGet("/packages/{name}/{version}", GetPackageByNameAndVersion)
                 .WithOpenApi()
                 .WithName("GetPackageByNameAndVersion");
-                //.WithSummary("This is a summary") // not working currently, fixed via document processor in /OpenAPI/DocGen.cs
-                //.WithDescription("This is a description");
 
             group.MapPost("/packages", CreatePackage)
                 .WithOpenApi()
                 .WithName("CreatePackage")
                 .AddEndpointFilter<APIKeyEndpointFilter>(); // creating packages via post requests requires an API key
-                //.WithSummary("This is a summary") // not working currently, fixed via document processor in /OpenAPI/DocGen.cs
-                //.WithDescription("This is a description");
+
+            // verify endpoints
+            group.MapPost("/verify/{name}/{version}", Verify)
+                .WithOpenApi()
+                .WithName("Verify");
 
             return group;
         }

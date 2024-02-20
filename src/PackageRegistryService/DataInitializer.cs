@@ -2,6 +2,8 @@
 
 using Microsoft.CodeAnalysis;
 using PackageRegistryService.Models;
+using System.Security.Policy;
+using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace PackageRegistryService
@@ -17,6 +19,8 @@ namespace PackageRegistryService
         }
         public static void SeedData(ValidationPackageDb context)
         {
+            MD5 md5 = MD5.Create();
+
             if (!context.ValidationPackages.Any())
             {
                 var index = DataInitializer.ReadIndex();
@@ -25,22 +29,44 @@ namespace PackageRegistryService
 
                 var validationPackages =
                     index
-                        .Select(i =>
-                            new ValidationPackage
+                        .Select((i) =>
+                        {
+                            var content = File.ReadAllBytes($"StagingArea/{i.Metadata.Name}/{i.FileName}");
+
+                            return new ValidationPackage
                             {
                                 Name = i.Metadata.Name,
                                 Description = i.Metadata.Description,
                                 MajorVersion = i.Metadata.MajorVersion,
                                 MinorVersion = i.Metadata.MinorVersion,
                                 PatchVersion = i.Metadata.PatchVersion,
-                                PackageContent = File.ReadAllBytes($"StagingArea/{i.Metadata.Name}/{i.FileName}"),
+                                PackageContent = content,
                                 ReleaseDate = new(i.LastUpdated.Year, i.LastUpdated.Month, i.LastUpdated.Day),
                                 Tags = i.Metadata.Tags,
                                 ReleaseNotes = i.Metadata.ReleaseNotes,
-                                Authors = i.Metadata.Authors
-                            }
-                        );
+                                Authors = i.Metadata.Authors,
+                            };
+                        });
+
                 context.AddRange(validationPackages);
+
+                var hashes = 
+                    index
+                        .Select((i) =>
+                        {
+                            var content = File.ReadAllBytes($"StagingArea/{i.Metadata.Name}/{i.FileName}");
+                            return new PackageContentHash
+                            {
+                                PackageName = i.Metadata.Name,
+                                PackageMajorVersion = i.Metadata.MajorVersion,
+                                PackageMinorVersion = i.Metadata.MinorVersion,
+                                PackagePatchVersion = i.Metadata.PatchVersion,
+                                Hash = Convert.ToHexString(md5.ComputeHash(content)),
+                            };
+                        });
+
+                context.AddRange(hashes);
+
                 context.SaveChanges();
             }
         }
