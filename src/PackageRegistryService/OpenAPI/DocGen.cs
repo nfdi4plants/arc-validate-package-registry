@@ -32,6 +32,9 @@ namespace PackageRegistryService.OpenAPI
             );
             // fix for WithDescription and WithSummary methods not working with nswag and minimal API endpoints
             settings.OperationProcessors.Add(new OperationMetadataProcessor());
+
+            // only inclide "api" paths in docs
+            settings.OperationProcessors.Add(new OperationFilterProcessor());
         }
     }
 }
