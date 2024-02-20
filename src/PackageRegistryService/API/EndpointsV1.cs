@@ -77,28 +77,28 @@ namespace PackageRegistryService.API
         {
             group.MapGet("/packages", GetAllPackages)
                 .WithOpenApi()
-                .WithName("GetAllPackages")
-                .WithSummary("This is a summary")
-                .WithDescription("This is a description");
+                .WithName("GetAllPackages");
+                //.WithSummary("This is a summary") // not working currently, fixed via document processor in /OpenAPI/DocGen.cs
+                //.WithDescription("This is a description");
 
             group.MapGet("/packages/{name}", GetLatestPackageByName)
                 .WithOpenApi()
-                .WithName("GetLatestPackageByName")
-                .WithSummary("This is a summary")
-                .WithDescription("This is a description");
+                .WithName("GetLatestPackageByName");
+                //.WithSummary("This is a summary") // not working currently, fixed via document processor in /OpenAPI/DocGen.cs
+                //.WithDescription("This is a description");
 
             group.MapGet("/packages/{name}/{version}", GetPackageByNameAndVersion)
                 .WithOpenApi()
-                .WithName("GetPackageByNameAndVersion")
-                .WithSummary("This is a summary")
-                .WithDescription("This is a description");
+                .WithName("GetPackageByNameAndVersion");
+                //.WithSummary("This is a summary") // not working currently, fixed via document processor in /OpenAPI/DocGen.cs
+                //.WithDescription("This is a description");
 
             group.MapPost("/packages", CreatePackage)
                 .WithOpenApi()
                 .WithName("CreatePackage")
-                .WithSummary("This is a summary")
-                .WithDescription("This is a description")
                 .AddEndpointFilter<APIKeyEndpointFilter>(); // creating packages via post requests requires an API key
+                //.WithSummary("This is a summary") // not working currently, fixed via document processor in /OpenAPI/DocGen.cs
+                //.WithDescription("This is a description");
 
             return group;
         }

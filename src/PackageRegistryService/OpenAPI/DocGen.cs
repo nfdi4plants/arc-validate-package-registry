@@ -1,4 +1,5 @@
 ﻿using NSwag.Generation.AspNetCore;
+using NSwag.Generation.Processors;
 
 namespace PackageRegistryService.OpenAPI
 {
@@ -29,6 +30,8 @@ namespace PackageRegistryService.OpenAPI
                     secureEndpointIds: ["CreatePackage"]
                 )
             );
+            // fix for WithDescription and WithSummary methods not working with nswag and minimal API endpoints
+            settings.OperationProcessors.Add(new OperationMetadataProcessor());
         }
     }
 }
