@@ -19,7 +19,7 @@ namespace PackageRegistryService.OpenAPI
                         new OpenApiSecurityRequirement
                         {
                             {
-                                "API Key", new string[] { }
+                                "ApiKey", new string[] { }
                             }
                         }
 

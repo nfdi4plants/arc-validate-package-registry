@@ -12,7 +12,7 @@ namespace PackageRegistryService.OpenAPI
 
             // add a security definition for API key authentication
             settings.AddSecurity(
-                name: "API Key",
+                name: "ApiKey",
                 new NSwag.OpenApiSecurityScheme
                 {
                     Type = NSwag.OpenApiSecuritySchemeType.ApiKey,
