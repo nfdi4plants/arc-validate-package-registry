@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.HttpOverrides;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 using static System.Net.Mime.MediaTypeNames;
 using PackageRegistryService.API;
+using PackageRegistryService.OpenAPI;
 using PackageRegistryService.Pages.Components;
 using PackageRegistryService.Pages;
+using Microsoft.OpenApi.Models;
+using NSwag.Generation.Processors.Security;
+using NSwag.Generation.Processors;
 
 // ------------------------- ApplicationBuilder -------------------------
 // in this section, we will add the necessary code to configure the application builder,
@@ -18,14 +22,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // configurte NSwag OpenAPI document with document-level settings
-builder.Services.AddOpenApiDocument(settings =>
-    {
-        settings.Title = "ARC validation package registry API";
-        settings.Version = "v1";
-        settings.Description = "A simple API for retrieving ARC validation packages";
-    });
 
-builder.Services.AddEndpointsApiExplorer(); 
+builder.Services.AddOpenApiDocument(DocGen.GeneratorSetup);
+
+builder.Services.AddEndpointsApiExplorer();
 
 // Add database related services
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

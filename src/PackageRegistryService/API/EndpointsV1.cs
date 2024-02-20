@@ -4,6 +4,8 @@ using PackageRegistryService;
 using PackageRegistryService.Models;
 using PackageRegistryService.Pages;
 using Microsoft.AspNetCore.HttpOverrides;
+using PackageRegistryService.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PackageRegistryService.API
 {
@@ -55,7 +57,21 @@ namespace PackageRegistryService.API
             }
 
             return TypedResults.Ok(package);
-        }   
+        }
+
+        public static async Task<Results<Ok<ValidationPackage>, Conflict>> CreatePackage(ValidationPackage package, ValidationPackageDb database)
+        {
+            var existing = await database.ValidationPackages.FindAsync(package.Name, package.MajorVersion, package.MinorVersion, package.PatchVersion);
+            if (existing != null)
+            {
+                return TypedResults.Conflict();
+            }
+
+            database.ValidationPackages.Add(package);
+            await database.SaveChangesAsync();
+
+            return TypedResults.Ok(package);
+        }
 
         public static RouteGroupBuilder MapApiV1(this RouteGroupBuilder group)
         {
@@ -76,6 +92,13 @@ namespace PackageRegistryService.API
                 .WithName("GetPackageByNameAndVersion")
                 .WithSummary("This is a summary")
                 .WithDescription("This is a description");
+
+            group.MapPost("/packages", CreatePackage)
+                .WithOpenApi()
+                .WithName("CreatePackage")
+                .WithSummary("This is a summary")
+                .WithDescription("This is a description")
+                .AddEndpointFilter<APIKeyEndpointFilter>(); // creating packages via post requests requires an API key
 
             return group;
         }
