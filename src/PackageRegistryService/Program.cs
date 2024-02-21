@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PackageRegistryService;
 using PackageRegistryService.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
@@ -12,6 +11,8 @@ using Microsoft.OpenApi.Models;
 using NSwag.Generation.Processors.Security;
 using NSwag.Generation.Processors;
 using PackageRegistryService.API.Endpoints;
+using PackageRegistryService.Data;
+using Microsoft.AspNetCore.Http.Json;
 
 // ------------------------- ApplicationBuilder -------------------------
 // in this section, we will add the necessary code to configure the application builder,
@@ -44,6 +45,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.ForwardedHeaders =
         ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
+
+builder.Services.Configure<JsonOptions>(options => options.SerializerOptions.PropertyNamingPolicy = null);
 
 // ------------------------- WebApplication -------------------------
 // in this section, we will add the necessary code to configure the WebApplication,
