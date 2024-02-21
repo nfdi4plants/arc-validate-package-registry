@@ -11,6 +11,7 @@ using PackageRegistryService.Pages;
 using Microsoft.OpenApi.Models;
 using NSwag.Generation.Processors.Security;
 using NSwag.Generation.Processors;
+using PackageRegistryService.API.Endpoints;
 
 // ------------------------- ApplicationBuilder -------------------------
 // in this section, we will add the necessary code to configure the application builder,
@@ -85,9 +86,11 @@ if (!app.Environment.IsProduction())
 
 // app.MapGet binds a response handler function to a HTTP request on a specific route pattern
 
-app.MapGroup("/api/v1")
-    .MapApiV1()
-    .WithTags("Packages");
+app.MapGroup("/api/v1/packages")
+    .MapPackagesApiV1();
+
+app.MapGroup("/api/v1/verify")
+    .MapVerificationApiV1();
 
 app.MapGroup("/")
     .MapPageEndpoints();

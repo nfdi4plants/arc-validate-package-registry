@@ -1,16 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using PackageRegistryService;
 using PackageRegistryService.Models;
-using PackageRegistryService.Pages;
-using Microsoft.AspNetCore.HttpOverrides;
-using PackageRegistryService.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace PackageRegistryService.API
+namespace PackageRegistryService.API.Handlers
 {
-    public static class APIEndpointsV1
+    public class PackageHandlers
     {
         // get all validation packages
         public static async Task<Ok<ValidationPackage[]>> GetAllPackages(ValidationPackageDb database)
@@ -72,40 +66,6 @@ namespace PackageRegistryService.API
             await database.SaveChangesAsync();
 
             return TypedResults.Ok(package);
-        }
-
-        public static async Task<Results<Ok, UnprocessableEntity>> Verify(string name, string version, [FromBody] string hash)
-        {
-            return TypedResults.UnprocessableEntity();
-        }
-
-        public static RouteGroupBuilder MapApiV1(this RouteGroupBuilder group)
-        {
-
-            // packages endpoints
-            group.MapGet("/packages", GetAllPackages)
-                .WithOpenApi()
-                .WithName("GetAllPackages");
-
-            group.MapGet("/packages/{name}", GetLatestPackageByName)
-                .WithOpenApi()
-                .WithName("GetLatestPackageByName");
-
-            group.MapGet("/packages/{name}/{version}", GetPackageByNameAndVersion)
-                .WithOpenApi()
-                .WithName("GetPackageByNameAndVersion");
-
-            group.MapPost("/packages", CreatePackage)
-                .WithOpenApi()
-                .WithName("CreatePackage")
-                .AddEndpointFilter<APIKeyEndpointFilter>(); // creating packages via post requests requires an API key
-
-            // verify endpoints
-            group.MapPost("/verify/{name}/{version}", Verify)
-                .WithOpenApi()
-                .WithName("Verify");
-
-            return group;
         }
     }
 }
