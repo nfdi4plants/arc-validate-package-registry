@@ -6,12 +6,12 @@ using System.Security.Policy;
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace PackageRegistryService
+namespace PackageRegistryService.Data
 
 {
     public class DataInitializer
     {
-        public static List<ValidationPackageIndex> ReadIndex() 
+        public static List<ValidationPackageIndex> ReadIndex()
         {
             var json = File.ReadAllText(@"Data/arc-validate-package-index.json");
             var index = JsonSerializer.Deserialize<List<ValidationPackageIndex>>(json);
@@ -23,7 +23,7 @@ namespace PackageRegistryService
 
             if (!context.ValidationPackages.Any())
             {
-                var index = DataInitializer.ReadIndex();
+                var index = ReadIndex();
 
                 context.SaveChanges();
 
@@ -50,7 +50,7 @@ namespace PackageRegistryService
 
                 context.AddRange(validationPackages);
 
-                var hashes = 
+                var hashes =
                     index
                         .Select((i) =>
                         {
