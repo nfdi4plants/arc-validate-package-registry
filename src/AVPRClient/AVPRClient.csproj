@@ -4,10 +4,26 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Kevin Schneider</Authors>
+    <Description>.NET client library for avpr.nfdi4plants.org</Description>
+    <Summary>.NET client library for avpr.nfdi4plants.org</Summary>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>C# F# ARC annotated-research-context rdm research-data-management validation</PackageTags>
+    <PackageProjectUrl>https://github.com/nfdi4plants/arc-validate-package-registry</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nfdi4plants/arc-validate-package-registry</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/RELEASE_NOTES.md"))</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageVersion>0.0.1</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <None Include="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
