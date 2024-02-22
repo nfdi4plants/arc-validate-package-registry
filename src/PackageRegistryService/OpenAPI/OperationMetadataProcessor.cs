@@ -35,6 +35,20 @@ namespace PackageRegistryService.OpenAPI
                     { "Summary", "Get a specific version of a validation package" },
                     { "Description", "Get a specific version of a validation package from the package registry. Package content is a base64 encoded byte array containing the package executable." }
                 }
+            },
+            {
+                "VerifyPackageContent", new Dictionary<string, string>
+                {
+                    { "Summary", "Verify a content hash for a given package." },
+                    { "Description", "Verify a content hash for a given package. Hashes are MD5 hex fingerprints." }
+                }
+            },
+            {
+                "CreatePackageContentHash", new Dictionary<string, string>
+                {
+                    { "Summary", "Create a content hash for a given package." },
+                    { "Description", "Create a content hash for a given package. Hashes are MD5 hex fingerprints. This Endpoint requires API Key authentication." }
+                }
             }
         };
 

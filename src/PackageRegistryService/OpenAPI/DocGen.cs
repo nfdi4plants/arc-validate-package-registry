@@ -27,7 +27,7 @@ namespace PackageRegistryService.OpenAPI
             // For e.g. JWT, this would work because we could rely on full blown authorization service/config, but this is a simple API key checked via endpoint filters
             settings.OperationProcessors.Add(
                 new OperationSecurityProcessor(
-                    secureEndpointIds: ["CreatePackage"]
+                    secureEndpointIds: ["CreatePackage", "CreatePackageContentHash"]
                 )
             );
             // fix for WithDescription and WithSummary methods not working with nswag and minimal API endpoints

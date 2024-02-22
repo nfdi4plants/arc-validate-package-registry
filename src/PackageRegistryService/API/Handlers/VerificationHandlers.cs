@@ -9,7 +9,7 @@ namespace PackageRegistryService.API.Handlers
     {
         public static async Task<Results<Ok, UnprocessableEntity, NotFound>> Verify(PackageContentHash hashedPackage, ValidationPackageDb database)
         {
-            var package = await 
+            var existingHash = await 
                 database.Hashes.FindAsync(
                     hashedPackage.PackageName, 
                     hashedPackage.PackageMajorVersion,
@@ -17,17 +17,48 @@ namespace PackageRegistryService.API.Handlers
                     hashedPackage.PackagePatchVersion
                 );
 
-            if (package is null)
+            var existingPackage = await
+                database.ValidationPackages.FindAsync(
+                    hashedPackage.PackageName,
+                    hashedPackage.PackageMajorVersion,
+                    hashedPackage.PackageMinorVersion,
+                    hashedPackage.PackagePatchVersion
+                );
+
+            if (existingHash is null || existingPackage is null)
             {
                 return TypedResults.NotFound();
             }
 
-            if (package.Hash != hashedPackage.Hash)
+            if (existingHash.Hash != hashedPackage.Hash)
             {
                 return TypedResults.UnprocessableEntity();
             }
 
             return TypedResults.Ok();
+        }
+
+        public static async Task<Results<Ok<PackageContentHash>, Conflict, UnauthorizedHttpResult>> CreateContentHash(PackageContentHash hashedPackage, ValidationPackageDb database)
+        {
+
+            var existing = await 
+                database.Hashes.FindAsync(
+                    hashedPackage.PackageName,
+                    hashedPackage.PackageMajorVersion,
+                    hashedPackage.PackageMinorVersion,
+                    hashedPackage.PackagePatchVersion
+                );
+
+            if (existing != null)
+            {
+                return TypedResults.Conflict();
+            }
+
+            database.Hashes.Add(hashedPackage);
+            await database.SaveChangesAsync();
+
+            return TypedResults.Ok(hashedPackage);
+
         }
     }
 }

@@ -9,7 +9,12 @@ namespace PackageRegistryService.API.Endpoints
         {
             group.MapPost("/", VerificationHandlers.Verify)
                 .WithOpenApi()
-                .WithName("Verify");
+                .WithName("VerifyPackageContent");
+
+            group.MapPost("/hashes", VerificationHandlers.CreateContentHash)
+                .WithOpenApi()
+                .WithName("CreatePackageContentHash")
+                .AddEndpointFilter<APIKeyEndpointFilter>(); // creating hashes via post requests requires an API key
 
             return group.WithTags("Content Verification");
         }
