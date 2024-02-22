@@ -397,3 +397,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /src/PackageRegistryService/wwwroot/css/desktop.ini
+
+.env
