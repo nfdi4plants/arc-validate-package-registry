@@ -5,6 +5,6 @@ git diff --cached --name-only > file_changes.txt
 printf "\e[32mfile changes in new commit:\e[0m\n"
 cat file_changes.txt
 printf "\n"
-dotnet fsi update-index.fsx
+dotnet fsi ./scripts/update-index.fsx
 git add src/PackageRegistryService/Data/arc-validate-package-index.json
 rm file_changes.txt

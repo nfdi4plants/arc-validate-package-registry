@@ -27,10 +27,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "index-workflow", "index-workflow", "{A5D4286F-B049-42B8-9A0F-C68C3692F72D}"
 	ProjectSection(SolutionItems) = preProject
 		src\PackageRegistryService\Data\arc-validate-package-index.json = src\PackageRegistryService\Data\arc-validate-package-index.json
+		scripts\domain.fsx = scripts\domain.fsx
 		pre-commit.sh = pre-commit.sh
+		scripts\publish-package.fsx = scripts\publish-package.fsx
 		setup.cmd = setup.cmd
 		setup.sh = setup.sh
-		update-index.fsx = update-index.fsx
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".ci", ".ci", "{24F7CF58-94B9-4FB4-8A59-FD329B3C431D}"
@@ -41,6 +42,10 @@ EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AVPRClient", "src\AVPRClient\AVPRClient.fsproj", "{26BFA11D-8072-404F-A9D2-F7762E96A7BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "publish-workflow", "publish-workflow", "{B479BD02-0253-4CFA-B2AE-F29EC29C6B70}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\domain.fsx = scripts\domain.fsx
+		scripts\publish-package.fsx = scripts\publish-package.fsx
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
