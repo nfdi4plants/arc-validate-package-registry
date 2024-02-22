@@ -7,7 +7,7 @@ namespace PackageRegistryService.API.Endpoints
     {
         public static RouteGroupBuilder MapVerificationApiV1(this RouteGroupBuilder group)
         {
-            group.MapPost("/{name}/{version}", VerificationHandlers.Verify)
+            group.MapPost("/", VerificationHandlers.Verify)
                 .WithOpenApi()
                 .WithName("Verify");
 

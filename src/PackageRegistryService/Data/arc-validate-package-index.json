@@ -18,7 +18,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.0.fsx",
     "FileName": "test@1.0.0.fsx",
-    "LastUpdated": "2024-02-22T09:00:18+01:00",
+    "LastUpdated": "2024-02-22T09:00:17+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -34,7 +34,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.1.fsx",
     "FileName": "test@1.0.1.fsx",
-    "LastUpdated": "2024-02-22T09:00:18+01:00",
+    "LastUpdated": "2024-02-22T09:00:17+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -50,7 +50,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.0.fsx",
     "FileName": "test@2.0.0.fsx",
-    "LastUpdated": "2024-02-22T09:00:18+01:00",
+    "LastUpdated": "2024-02-22T09:00:17+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -83,7 +83,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@3.0.0.fsx",
     "FileName": "test@3.0.0.fsx",
-    "LastUpdated": "2024-02-22T09:00:18+01:00",
+    "LastUpdated": "2024-02-22T09:00:17+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
