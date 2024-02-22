@@ -1,7 +1,7 @@
 (*
 ---
 Name: test
-MajorVersion: 2
+MajorVersion: 3
 MinorVersion: 0
 PatchVersion: 0
 Publish: true
@@ -24,4 +24,4 @@ ReleaseNotes: "add authors and tags for further testing"
 *)
 
 // this file is intended for testing purposes only.
-printfn "Hello, world!" 
+printfn "If you can read this in your console, you successfully executed test package v3.0.0!" 

@@ -18,14 +18,14 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.0.fsx",
     "FileName": "test@1.0.0.fsx",
-    "LastUpdated": "2024-02-12T13:12:41+01:00",
+    "LastUpdated": "2024-02-22T09:00:18+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
       "MajorVersion": 1,
       "MinorVersion": 0,
       "PatchVersion": 0,
-      "Publish": false,
+      "Publish": true,
       "Authors": [],
       "Tags": [],
       "ReleaseNotes": ""
@@ -34,14 +34,14 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.1.fsx",
     "FileName": "test@1.0.1.fsx",
-    "LastUpdated": "2024-02-12T13:12:41+01:00",
+    "LastUpdated": "2024-02-22T09:00:18+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
       "MajorVersion": 1,
       "MinorVersion": 0,
       "PatchVersion": 1,
-      "Publish": false,
+      "Publish": true,
       "Authors": [],
       "Tags": [],
       "ReleaseNotes": ""
@@ -50,14 +50,47 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.0.fsx",
     "FileName": "test@2.0.0.fsx",
-    "LastUpdated": "2024-02-12T13:12:41+01:00",
+    "LastUpdated": "2024-02-22T09:00:18+01:00",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
       "MajorVersion": 2,
       "MinorVersion": 0,
       "PatchVersion": 0,
-      "Publish": false,
+      "Publish": true,
+      "Authors": [
+        {
+          "FullName": "John Doe",
+          "Email": "j@d.com",
+          "Affiliation": "University of Nowhere",
+          "AffiliationLink": "https://nowhere.edu"
+        },
+        {
+          "FullName": "Jane Doe",
+          "Email": "jj@d.com",
+          "Affiliation": "University of Somewhere",
+          "AffiliationLink": "https://somewhere.edu"
+        }
+      ],
+      "Tags": [
+        "validation",
+        "my-package",
+        "thing"
+      ],
+      "ReleaseNotes": "add authors and tags for further testing"
+    }
+  },
+  {
+    "RepoPath": "src/PackageRegistryService/StagingArea/test/test@3.0.0.fsx",
+    "FileName": "test@3.0.0.fsx",
+    "LastUpdated": "2024-02-22T09:00:18+01:00",
+    "Metadata": {
+      "Name": "test",
+      "Description": "this package is here for testing purposes only.",
+      "MajorVersion": 3,
+      "MinorVersion": 0,
+      "PatchVersion": 0,
+      "Publish": true,
       "Authors": [
         {
           "FullName": "John Doe",
