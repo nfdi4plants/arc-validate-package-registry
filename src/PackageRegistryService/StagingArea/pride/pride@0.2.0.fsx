@@ -106,7 +106,7 @@ let stdProtocols =
     stdFileMdsTokensNoMdSecKeys
     |> Seq.filter (Param.getTerm >> (=) STDMSO.``Study Metadata``.``STUDY PROTOCOLS``.key)
 
-let allGraphTokens = 
+let allStdGraphTokens = 
     stdFileProcTokens
     |> Seq.collect Map.values
     |> List.concat
@@ -117,8 +117,59 @@ let organismTokens =
     |> Seq.collect Map.values
     |> List.concat
     |> List.tryFind (fun cvpList -> cvpList.Head |> Param.getValueAsTerm = (CvTerm.create("OBI:0100026","organism","OBI")))
+    |> Option.defaultValue []
 
-stdFileProcTokens |> Seq.map Map.toSeq
+let tissueTokens =
+    stdFileProcTokens
+    |> Seq.collect Map.values
+    |> List.concat
+    |> List.tryFind (fun cvpList -> cvpList.Head |> Param.getValueAsTerm = (CvTerm.create("NCIT:12801","Tissue","NCIT")))
+    |> Option.defaultValue []
+
+let assFileProcTokens =
+    absoluteFilePaths
+    |> Seq.choose (
+        fun cvp ->
+            let cvpV = CvParam.getValueAsString cvp
+            if String.contains "isa.assay.xlsx" cvpV then
+                ARCTokenization.Assay.parseProcessGraphColumnsFromFile cvpV
+                |> Some
+            else None
+    )
+
+let assFileMdsTokens =
+    Assay.parseMetadataSheetsFromTokens () absoluteFilePaths
+    |> List.concat
+    |> ARCGraph.fillTokenList Terms.AssayMetadata.ontology
+    |> Seq.concat
+    |> Seq.concat
+    |> Seq.map snd
+
+let techTypeName = CvTerm.create("ASSMSO:00000011", "Assay Technology Type", "ASSMSO")
+let techTypeTAN = CvTerm.create("ASSMSO:00000013", "Assay Technology Type Term Accession Number", "ASSMSO")
+let techTypeTSR = CvTerm.create("ASSMSO:00000015", "Assay Technology Type Term Source REF", "ASSMSO")
+
+let assFileMdsTokensNoMdSecKeys =
+    assFileMdsTokens
+    |> Seq.filter (Param.getValue >> (<>) Terms.StructuralTerms.metadataSectionKey.Name) 
+
+let assTechTypeTAN =
+    stdFileMdsTokensNoMdSecKeys
+    |> Seq.filter (Param.getTerm >> (=) techTypeTAN)
+
+let assTechTypeTSR =
+    stdFileMdsTokensNoMdSecKeys
+    |> Seq.filter (Param.getTerm >> (=) techTypeTSR)
+
+let assTechTypeName =
+    stdFileMdsTokensNoMdSecKeys
+    |> Seq.filter (Param.getTerm >> (=) techTypeName)
+
+let allAssGraphTokens = 
+    assFileProcTokens
+    |> Seq.collect Map.values
+    |> List.concat
+    |> List.concat
 
 
 // Helper functions (to deposit in ARCExpect later):
@@ -231,12 +282,45 @@ let cases =
             |> Seq.iter (Validate.Param.ValueMatchesRegex (characterLimit (Some 50) (Some 500)))
         }
         ARCExpect.validationCase (TestID.Name "organism") {
-            allGraphTokens
+            allStdGraphTokens
             |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("OBI:0100026","organism","OBI"))
         }
         ARCExpect.validationCase (TestID.Name "organism terms") {
-            allGraphTokens
+            organismTokens
             |> Validate.ParamCollection.forAll (fun ip -> match ip.Value with CvValue _ -> true | _ -> false)
+        }
+        ARCExpect.validationCase (TestID.Name "Tissue") {
+            allStdGraphTokens
+            |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("NCIT:12801","Tissue","NCIT"))
+        }
+        ARCExpect.validationCase (TestID.Name "Tissue terms") {
+            tissueTokens
+            |> Validate.ParamCollection.forAll (fun ip -> match ip.Value with CvValue _ -> true | _ -> false)
+        }
+        ARCExpect.validationCase (TestID.Name techTypeName.Name) {
+            assTechTypeName
+            |> Validate.ParamCollection.ContainsParamWithTerm techTypeName
+        }
+        ARCExpect.validationCase (TestID.Name techTypeTAN.Name) {
+            assTechTypeTAN
+            |> Validate.ParamCollection.ContainsParamWithTerm techTypeTAN
+        }
+        ARCExpect.validationCase (TestID.Name techTypeTSR.Name) {
+            assTechTypeTSR
+            |> Validate.ParamCollection.ContainsParamWithTerm techTypeTSR
+        }
+        ARCExpect.validationCase (TestID.Name "Instrument Model") {
+            allStdGraphTokens
+            |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("MS:1000031","instrument model","MS"))
+        }
+        ARCExpect.validationCase (TestID.Name "Modification") {
+            ARCExpect.either (fun _ ->
+                allStdGraphTokens
+                |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("MS:1003021","Fixed modification","MS"))
+            ) (fun _ ->
+                allStdGraphTokens
+                |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("MS:1003022","Variable modification","MS"))
+            )
         }
     ]
 
