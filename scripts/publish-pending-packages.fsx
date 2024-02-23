@@ -13,7 +13,6 @@ let isDryRun = fsi.CommandLineArgs[1] = "--dry-run"
 
 let envVars = 
     DotEnv.Fluent()
-        .WithExceptions()
         .Read()
 
 let apiKey = 
