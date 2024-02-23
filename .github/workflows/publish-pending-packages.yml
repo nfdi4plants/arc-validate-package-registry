@@ -27,7 +27,11 @@ jobs:
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
             if [[ ${{ github.event.inputs.dry-run }} == true ]]; then
               echo "DRYRUN=--dry-run" >> $GITHUB_ENV
+            else 
+              :
             fi
+          else 
+            :
           fi
       - run: dotnet fsi scripts/publish-pending-packages.fsx ${{ env.DRYRUN }}
         env:
