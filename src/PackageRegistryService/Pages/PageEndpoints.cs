@@ -8,6 +8,8 @@
 
             group.MapGet("packages", Packages.Render);
 
+            group.MapGet("package/{packageName}", Package.Render);
+
             return group;
         }
     }
