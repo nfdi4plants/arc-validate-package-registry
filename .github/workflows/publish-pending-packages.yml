@@ -6,6 +6,12 @@ on:
     paths:
       - 'src/StagingArea/**'
   workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'manually decide wether to dry run or publish to production'
+        required: true
+        default: true
+        type: boolean
 
 jobs:
   publish-pending-packages:
@@ -16,6 +22,14 @@ jobs:
         with:
           dotnet-version: 8.x.x
       - uses: actions/checkout@v4
-      - run: dotnet fsi scripts/publish-pending-packages.fsx --dry-run
+      - name: decide on dry run
+        run: |
+          if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
+            DRYRUN=${{ dry-run }}
+          else
+            DRYRUN=false
+          fi
+          echo "DRYRUN=$DRYRUN" >> $GITHUB_ENV
+      - run: dotnet fsi scripts/publish-pending-packages.fsx {{env.DRYRUN}}
         env:
           APIKEY: ${{ secrets.APIKEY }}

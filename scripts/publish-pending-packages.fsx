@@ -13,6 +13,7 @@ let isDryRun = fsi.CommandLineArgs[1] = "--dry-run"
 
 if isDryRun then
     printfn "Dry run mode enabled. No changes will be pushed to the package database."
+    printfn ""
 
 let envVars = 
     DotEnv.Fluent()
@@ -57,7 +58,9 @@ type AVPRClient.ValidationPackage with
 
     static member printJson (p: AVPRClient.ValidationPackage) = 
         let json = AVPRClient.ValidationPackage.toJson p
-        printfn $"Package info:{System.Environment.NewLine}{json}{System.Environment.NewLine}"
+        printfn ""
+        printfn $"Package info:{System.Environment.NewLine}{json}"
+        printfn ""
 
 
 type AVPRClient.PackageContentHash with
@@ -77,7 +80,9 @@ type AVPRClient.PackageContentHash with
 
     static member printJson (h: AVPRClient.PackageContentHash) = 
         let json = AVPRClient.PackageContentHash.toJson h
-        printfn $"Hash info:{System.Environment.NewLine}{json}{System.Environment.NewLine}"
+        printfn ""
+        printfn $"Hash info:{System.Environment.NewLine}{json}"
+        printfn ""
 
 let client = 
     let httpClient = new System.Net.Http.HttpClient()
@@ -127,7 +132,9 @@ let pending_indexed_packages =
 open System
 open System.Security.Cryptography
 
-printfn $"Comparing database and repo content hashes...{System.Environment.NewLine}"
+printfn ""
+printfn $"Comparing database and repo content hashes..."
+printfn ""
 
 let md5 = MD5.Create()
 
@@ -143,7 +150,7 @@ published_indexed_packages
     with e ->
         if isDryRun then
             printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Package content hash {repo_hash} does not match the published package"
-            printfn $"Make sure that the package file has not been modified after publication! ({i.RepoPath}){System.Environment.NewLine}" 
+            printfn $"  Make sure that the package file has not been modified after publication! ({i.RepoPath})"
         else
             failwith $"[{i.RepoPath}]: Package content hash {repo_hash} does not match the published package"
 )
@@ -151,7 +158,9 @@ published_indexed_packages
 // Publish the pending packages, and add the content hash to the database
 
 if isDryRun then
-    printfn $"{System.Environment.NewLine} !! the following packages and content hashes will be submitted to the production DB: !!{System.Environment.NewLine}{System.Environment.NewLine}"
+    printfn ""
+    printfn $"!! the following packages and content hashes will be submitted to the production DB: !!"
+    printfn ""
     pending_indexed_packages
     |> Array.iter (fun i ->
         let p = AVPRClient.ValidationPackage.createOfIndex(i)
@@ -161,7 +170,9 @@ if isDryRun then
 )
 
 else
-    printfn $"{System.Environment.NewLine} !! publishing pending packages and content hashes to the production DB: !!{System.Environment.NewLine}{System.Environment.NewLine}"
+    printfn ""
+    printfn $"!! publishing pending packages and content hashes to the production DB: !!"
+    printfn ""
     pending_indexed_packages
     |> Array.iter (fun i ->
         let p = AVPRClient.ValidationPackage.createOfIndex(i)
@@ -172,7 +183,8 @@ else
             |> Async.AwaitTask
             |> Async.RunSynchronously
             |> ignore
-            printfn $"Done.{System.Environment.NewLine}"
+            printfn $"Done."
+            printfn ""
         with e ->
             failwith $"CreatePackage: [{i.RepoPath}]: failed with {System.Environment.NewLine}{e.Message}{System.Environment.NewLine}Package info:{System.Environment.NewLine}{AVPRClient.ValidationPackage.toJson p}"
         try
@@ -183,7 +195,8 @@ else
             |> Async.AwaitTask
             |> Async.RunSynchronously
             |> ignore
-            printfn $"Done.{System.Environment.NewLine}"
+            printfn $"Done."
+            printfn ""
         with e ->
             failwith $"CreatePackageContentHash: [{i.RepoPath}]: {System.Environment.NewLine}{e.Message}{System.Environment.NewLine}Hash info:{System.Environment.NewLine}{AVPRClient.PackageContentHash.toJson h}"
     )
