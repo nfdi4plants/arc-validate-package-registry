@@ -113,7 +113,6 @@ let cases =
         }
     ]
 
-
 // Execution:
 
 Execute.ValidationPipeline(outDirResXml, outDirBadge, "Invenio") cases
