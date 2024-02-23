@@ -151,7 +151,7 @@ published_indexed_packages
 // Publish the pending packages, and add the content hash to the database
 
 if isDryRun then
-    printfn $"!! {System.Environment.NewLine}the following packages and content hashes will be submitted to the production DB: !!{System.Environment.NewLine}"
+    printfn $"{System.Environment.NewLine} !! the following packages and content hashes will be submitted to the production DB: !!{System.Environment.NewLine}{System.Environment.NewLine}"
     pending_indexed_packages
     |> Array.iter (fun i ->
         let p = AVPRClient.ValidationPackage.createOfIndex(i)
@@ -161,31 +161,29 @@ if isDryRun then
 )
 
 else
+    printfn $"{System.Environment.NewLine} !! publishing pending packages and content hashes to the production DB: !!{System.Environment.NewLine}{System.Environment.NewLine}"
     pending_indexed_packages
     |> Array.iter (fun i ->
         let p = AVPRClient.ValidationPackage.createOfIndex(i)
         let h = AVPRClient.PackageContentHash.createOfIndex(i)
         try
+            printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Publishing package..."
             client.CreatePackageAsync(p)
             |> Async.AwaitTask
             |> Async.RunSynchronously
             |> ignore
+            printfn $"Done.{System.Environment.NewLine}"
         with e ->
             failwith $"CreatePackage: [{i.RepoPath}]: failed with {System.Environment.NewLine}{e.Message}{System.Environment.NewLine}Package info:{System.Environment.NewLine}{AVPRClient.ValidationPackage.toJson p}"
         try
-
-            printfn "%O" h.Hash
-            printfn "%O" h.PackageName
-            printfn "%O" h.PackageMajorVersion
-            printfn "%O" h.PackageMinorVersion
-            printfn "%O" h.PackagePatchVersion
-
+            printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Publishing package content hash...{System.Environment.NewLine}"
             client.CreatePackageContentHashAsync(
                 AVPRClient.PackageContentHash.createOfIndex(i)
             )
             |> Async.AwaitTask
             |> Async.RunSynchronously
             |> ignore
+            printfn $"Done.{System.Environment.NewLine}"
         with e ->
             failwith $"CreatePackageContentHash: [{i.RepoPath}]: {System.Environment.NewLine}{e.Message}{System.Environment.NewLine}Hash info:{System.Environment.NewLine}{AVPRClient.PackageContentHash.toJson h}"
     )
