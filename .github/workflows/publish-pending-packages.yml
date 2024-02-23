@@ -10,8 +10,8 @@ on:
       dry-run:
         description: 'dry run mode'
         required: true
-        default: "--dry-run"
-        type: string
+        default: true
+        type: boolean
 
 
 jobs:
