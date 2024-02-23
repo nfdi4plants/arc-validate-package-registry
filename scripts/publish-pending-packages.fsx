@@ -11,6 +11,9 @@ open System.Security.Cryptography
 
 let isDryRun = fsi.CommandLineArgs[1] = "--dry-run"
 
+if isDryRun then
+    printfn "Dry run mode enabled. No changes will be pushed to the package database."
+
 let envVars = 
     DotEnv.Fluent()
         .Read()
@@ -23,6 +26,7 @@ let apiKey =
         if String.IsNullOrWhiteSpace(key) then failwith "APIKEY not found"
         key
 
+let jsonSerializerOptions = JsonSerializerOptions(WriteIndented = true)
 
 type AVPRClient.ValidationPackage with
     static member createOfIndex (i: ValidationPackageIndex) = 
@@ -48,7 +52,13 @@ type AVPRClient.ValidationPackage with
             )
         p
 
-let md5 = MD5.Create()
+    static member toJson (p: AVPRClient.ValidationPackage) = 
+        JsonSerializer.Serialize(p, jsonSerializerOptions)
+
+    static member printJson (p: AVPRClient.ValidationPackage) = 
+        let json = AVPRClient.ValidationPackage.toJson p
+        printfn $"Package info:{System.Environment.NewLine}{json}{System.Environment.NewLine}"
+
 
 type AVPRClient.PackageContentHash with
     static member createOfIndex (i: ValidationPackageIndex) = 
@@ -61,6 +71,13 @@ type AVPRClient.PackageContentHash with
             let md5 = MD5.Create()
             md5.ComputeHash(File.ReadAllBytes(i.RepoPath)) |> Convert.ToHexString
         h
+
+    static member toJson (h: AVPRClient.PackageContentHash) = 
+        JsonSerializer.Serialize(h, jsonSerializerOptions)
+
+    static member printJson (h: AVPRClient.PackageContentHash) = 
+        let json = AVPRClient.PackageContentHash.toJson h
+        printfn $"Hash info:{System.Environment.NewLine}{json}{System.Environment.NewLine}"
 
 let client = 
     let httpClient = new System.Net.Http.HttpClient()
@@ -110,7 +127,9 @@ let pending_indexed_packages =
 open System
 open System.Security.Cryptography
 
-printfn "Comparing database and repo content hashes..."
+printfn $"Comparing database and repo content hashes...{System.Environment.NewLine}"
+
+let md5 = MD5.Create()
 
 published_indexed_packages
 |> Array.iter (fun i -> 
@@ -124,7 +143,7 @@ published_indexed_packages
     with e ->
         if isDryRun then
             printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Package content hash {repo_hash} does not match the published package"
-            printfn $"Make sure that the package file has not been modified after publication! ({i.RepoPath})" 
+            printfn $"Make sure that the package file has not been modified after publication! ({i.RepoPath}){System.Environment.NewLine}" 
         else
             failwith $"[{i.RepoPath}]: Package content hash {repo_hash} does not match the published package"
 )
@@ -132,29 +151,13 @@ published_indexed_packages
 // Publish the pending packages, and add the content hash to the database
 
 if isDryRun then
-    printfn "the following packages and content hashes will be submitted to the production DB:"
-    printfn ""
+    printfn $"!! {System.Environment.NewLine}the following packages and content hashes will be submitted to the production DB: !!{System.Environment.NewLine}"
     pending_indexed_packages
     |> Array.iter (fun i ->
         let p = AVPRClient.ValidationPackage.createOfIndex(i)
         let h = AVPRClient.PackageContentHash.createOfIndex(i)
-        printfn $"""
-Package info:
-{
-    System.Text.Json.JsonSerializer.Serialize(
-        p, 
-        System.Text.Json.JsonSerializerOptions(WriteIndented = true)
-    )
-}
-
-Hash info:
-{
-    System.Text.Json.JsonSerializer.Serialize(
-        h, 
-        System.Text.Json.JsonSerializerOptions(WriteIndented = true)
-    )
-}
-"""
+        AVPRClient.ValidationPackage.printJson p
+        AVPRClient.PackageContentHash.printJson h
 )
 
 else
@@ -168,17 +171,7 @@ else
             |> Async.RunSynchronously
             |> ignore
         with e ->
-            failwith $"""CreatePackage: [{i.RepoPath}]: failed with {e.Message}. 
-        
-Package info:
-{
-    System.Text.Json.JsonSerializer.Serialize(
-        p, 
-        System.Text.Json.JsonSerializerOptions(WriteIndented = true)
-    )
-}
-"""
-    
+            failwith $"CreatePackage: [{i.RepoPath}]: failed with {System.Environment.NewLine}{e.Message}{System.Environment.NewLine}Package info:{System.Environment.NewLine}{AVPRClient.ValidationPackage.toJson p}"
         try
 
             printfn "%O" h.Hash
@@ -194,13 +187,5 @@ Package info:
             |> Async.RunSynchronously
             |> ignore
         with e ->
-            failwith $"""CreatePackageContentHash: [{i.RepoPath}]: failed with {e.Message}
-Hash info:
-{
-    System.Text.Json.JsonSerializer.Serialize(
-        h, 
-        System.Text.Json.JsonSerializerOptions(WriteIndented = true)
-    )
-}
-"""
+            failwith $"CreatePackageContentHash: [{i.RepoPath}]: {System.Environment.NewLine}{e.Message}{System.Environment.NewLine}Hash info:{System.Environment.NewLine}{AVPRClient.PackageContentHash.toJson h}"
     )
