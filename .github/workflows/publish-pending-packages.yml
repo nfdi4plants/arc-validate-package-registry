@@ -26,7 +26,7 @@ jobs:
       - name: decide on dry run
         run: |
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
-            dry_run=${{ inputs.my_input }}
+            dry_run=${{ inputs.dry-run }}
           else
             dry_run=false
           fi
