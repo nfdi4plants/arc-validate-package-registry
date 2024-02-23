@@ -5,8 +5,8 @@ on:
     branches: ['main']
     paths:
       - 'src/**'
-      - '!src/Data/**'
-      - '!src/StagingArea/**'
+      - '!src/PackageRegistryService/Data/**'
+      - '!src/PackageRegistryService/StagingArea/**'
 
 env:
   REGISTRY: ghcr.io

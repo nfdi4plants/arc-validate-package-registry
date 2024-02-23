@@ -12,7 +12,7 @@ PatchVersion: 0
 Publish: true
 Authors:
     - FullName: Oliver Maus
-    - Affiliation: DataPLANT
+      Affiliation: DataPLANT
 Tags:
     - ARC
     - data publication
