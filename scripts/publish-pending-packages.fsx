@@ -9,6 +9,13 @@ open System.Text.Json
 open dotenv.net
 open System.Security.Cryptography
 
+printfn "script args:"
+
+for arg in fsi.CommandLineArgs do
+    printfn $"  {arg}"
+
+printfn ""
+
 let isDryRun = fsi.CommandLineArgs.Length > 1 && fsi.CommandLineArgs[1] = "--dry-run"
 
 if isDryRun then
