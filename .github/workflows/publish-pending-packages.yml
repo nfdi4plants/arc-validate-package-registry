@@ -25,11 +25,9 @@ jobs:
       - name: decide on dry run
         run: |
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
-            DRYRUN=${{ inputs.dry-run }}
-          else
-            DRYRUN=false
+            SCRIPTARGS=${{ inputs.dry-run }}
+            echo "SCRIPTARGS=SCRIPTARGS" >> $GITHUB_ENV
           fi
-          echo "DRYRUN=$DRYRUN" >> $GITHUB_ENV
-      - run: dotnet fsi scripts/publish-pending-packages.fsx ${{ env.DRYRUN }}
+      - run: dotnet fsi scripts/publish-pending-packages.fsx {{ env.SCRIPTARGS }}
         env:
           APIKEY: ${{ secrets.APIKEY }}

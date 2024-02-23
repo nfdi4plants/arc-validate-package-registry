@@ -9,7 +9,7 @@ open System.Text.Json
 open dotenv.net
 open System.Security.Cryptography
 
-let isDryRun = fsi.CommandLineArgs[1] = "--dry-run"
+let isDryRun = fsi.CommandLineArgs.Length > 1 && fsi.CommandLineArgs[1] = "--dry-run"
 
 if isDryRun then
     printfn "Dry run mode enabled. No changes will be pushed to the package database."
