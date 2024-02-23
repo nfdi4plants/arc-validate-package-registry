@@ -1,0 +1,20 @@
+name: "publish pending packages"
+
+on:
+  push:
+    branches: ['main']
+    paths:
+      - 'src/StagingArea/**'
+
+jobs:
+  publish-pending-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x.x
+      - uses: actions/checkout@v4
+      - run: dotnet fsi scripts/publish-pending-packages.fsx --dry-run
+        env:
+          APIKEY: ${{ env.APIKEY }}

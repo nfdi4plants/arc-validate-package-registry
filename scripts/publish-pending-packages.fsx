@@ -1,6 +1,5 @@
 #r "nuget: dotenv.net, 3.1.3"
-#r "nuget: Newtonsoft.Json, 13.0.3"
-#r "../src/AVPRClient/bin/Debug/net8.0/AVPRClient.dll"
+#r "nuget: AVPRClient, 0.0.1"
 #load "domain.fsx"
 
 open Domain
@@ -9,6 +8,8 @@ open System.IO
 open System.Text.Json
 open dotenv.net
 open System.Security.Cryptography
+
+let isDryRun = fsi.CommandLineArgs[1] = "--dry-run"
 
 let envVars = 
     DotEnv.Fluent()
@@ -125,18 +126,14 @@ published_indexed_packages
 
 // Publish the pending packages, and add the content hash to the database
 
-pending_indexed_packages
-|> Array.map (fun i ->
-    let p = AVPRClient.ValidationPackage.createOfIndex(i)
-    let h = AVPRClient.PackageContentHash.createOfIndex(i)
-    try
-        client.CreatePackageAsync(p)
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-        |> ignore
-    with e ->
-        failwith $"""CreatePackage: [{i.RepoPath}]: failed with {e.Message}. 
-        
+if isDryRun then
+    printfn "the following packages and content hashes will be submitted to the production DB:"
+    printfn ""
+    pending_indexed_packages
+    |> Array.iter (fun i ->
+        let p = AVPRClient.ValidationPackage.createOfIndex(i)
+        let h = AVPRClient.PackageContentHash.createOfIndex(i)
+        printfn $"""
 Package info:
     Name: {p.Name}
     Description: {p.Description}
@@ -148,24 +145,7 @@ Package info:
     Authors: {p.Authors}
     ReleaseNotes: {p.ReleaseNotes}
     ReleaseDate: {p.ReleaseDate}
-"""
-    
-    try
 
-        printfn "%O" h.Hash
-        printfn "%O" h.PackageName
-        printfn "%O" h.PackageMajorVersion
-        printfn "%O" h.PackageMinorVersion
-        printfn "%O" h.PackagePatchVersion
-
-        client.CreatePackageContentHashAsync(
-            AVPRClient.PackageContentHash.createOfIndex(i)
-        )
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-        |> ignore
-    with e ->
-        failwith $"""CreatePackageContentHash: [{i.RepoPath}]: failed with {e.Message}
 Hash info:
     PackageName: {h.PackageName}
     PackageMajorVersion: {h.PackageMajorVersion}
@@ -174,3 +154,54 @@ Hash info:
     Hash: {h.Hash}
 """
 )
+
+else
+    pending_indexed_packages
+    |> Array.iter (fun i ->
+        let p = AVPRClient.ValidationPackage.createOfIndex(i)
+        let h = AVPRClient.PackageContentHash.createOfIndex(i)
+        try
+            client.CreatePackageAsync(p)
+            |> Async.AwaitTask
+            |> Async.RunSynchronously
+            |> ignore
+        with e ->
+            failwith $"""CreatePackage: [{i.RepoPath}]: failed with {e.Message}. 
+        
+    Package info:
+        Name: {p.Name}
+        Description: {p.Description}
+        MajorVersion: {p.MajorVersion}
+        MinorVersion: {p.MinorVersion}
+        PatchVersion: {p.PatchVersion}
+        PackageContent(Length): {p.PackageContent.Length}
+        Tags: {p.Tags}
+        Authors: {p.Authors}
+        ReleaseNotes: {p.ReleaseNotes}
+        ReleaseDate: {p.ReleaseDate}
+    """
+    
+        try
+
+            printfn "%O" h.Hash
+            printfn "%O" h.PackageName
+            printfn "%O" h.PackageMajorVersion
+            printfn "%O" h.PackageMinorVersion
+            printfn "%O" h.PackagePatchVersion
+
+            client.CreatePackageContentHashAsync(
+                AVPRClient.PackageContentHash.createOfIndex(i)
+            )
+            |> Async.AwaitTask
+            |> Async.RunSynchronously
+            |> ignore
+        with e ->
+            failwith $"""CreatePackageContentHash: [{i.RepoPath}]: failed with {e.Message}
+    Hash info:
+        PackageName: {h.PackageName}
+        PackageMajorVersion: {h.PackageMajorVersion}
+        PackageMinorVersion: {h.PackageMinorVersion}
+        PackagePatchVersion: {h.PackagePatchVersion}
+        Hash: {h.Hash}
+    """
+    )

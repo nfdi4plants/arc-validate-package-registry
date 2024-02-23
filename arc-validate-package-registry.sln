@@ -29,23 +29,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "index-workflow", "index-wor
 		src\PackageRegistryService\Data\arc-validate-package-index.json = src\PackageRegistryService\Data\arc-validate-package-index.json
 		scripts\domain.fsx = scripts\domain.fsx
 		pre-commit.sh = pre-commit.sh
-		scripts\publish-package.fsx = scripts\publish-package.fsx
 		setup.cmd = setup.cmd
 		setup.sh = setup.sh
+		scripts\update-index.fsx = scripts\update-index.fsx
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".ci", ".ci", "{24F7CF58-94B9-4FB4-8A59-FD329B3C431D}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\publish-pending-packages.yml = .github\workflows\publish-pending-packages.yml
 		.github\workflows\update-docker-image.yml = .github\workflows\update-docker-image.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "publish-workflow", "publish-workflow", "{B479BD02-0253-4CFA-B2AE-F29EC29C6B70}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\domain.fsx = scripts\domain.fsx
-		scripts\publish-package.fsx = scripts\publish-package.fsx
+		scripts\publish-pending-packages.fsx = scripts\publish-pending-packages.fsx
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVPRClient", "src\AVPRClient\AVPRClient.csproj", "{D1FABAC1-D0F2-4F6C-B975-236E9969FB38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AVPRClient", "src\AVPRClient\AVPRClient.csproj", "{D1FABAC1-D0F2-4F6C-B975-236E9969FB38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
