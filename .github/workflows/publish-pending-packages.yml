@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       dry-run:
-        description: 'manually decide wether to dry run or publish to production'
+        description: 'dry run mode'
         required: true
         default: true
         type: boolean
@@ -25,7 +25,7 @@ jobs:
       - name: decide on dry run
         run: |
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
-            DRYRUN=${{ dry-run }}
+            DRYRUN=${{ inputs.dry-run }}
           else
             DRYRUN=false
           fi
