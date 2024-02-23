@@ -10,8 +10,9 @@ on:
       dry-run:
         description: 'dry run mode'
         required: true
-        default: true
-        type: boolean
+        default: "--dry-run"
+        type: string
+
 
 jobs:
   publish-pending-packages:
@@ -25,12 +26,13 @@ jobs:
       - name: decide on dry run
         run: |
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
-            if [[ ${{ github.event.inputs.dry-run }} == true ]]; then
-              echo "DRYRUN=--dry-run" >> $GITHUB_ENV
-            else 
-              :
-            fi
-          else 
+            dry_run=${{ inputs.my_input }}
+          else
+            dry_run=false
+          fi
+          if [[ $dry_run == "true ]]; then
+            echo "DRYRUN=--dry-run" >> $GITHUB_ENV
+          else
             :
           fi
       - run: dotnet fsi scripts/publish-pending-packages.fsx ${{ env.DRYRUN }}
