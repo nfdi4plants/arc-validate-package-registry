@@ -16,13 +16,13 @@ let envVars =
         .Read()
 
 let apiKey = 
-    if System.Environment.GetEnvironmentVariable("APIKEY") = null then
-        try
-            envVars["APIKEY"]
-        with e -> 
-            failwith "APIKEY not found"
-    else
-        failwith "APIKEY not found"
+    if envVars.ContainsKey("APIKEY") then
+        envVars["APIKEY"]
+    else 
+        let key = Environment.GetEnvironmentVariable("APIKEY")
+        if String.IsNullOrWhiteSpace(key) then failwith "APIKEY not found"
+        key
+
 
 type AVPRClient.ValidationPackage with
     static member createOfIndex (i: ValidationPackageIndex) = 
