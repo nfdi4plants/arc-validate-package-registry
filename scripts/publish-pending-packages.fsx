@@ -110,6 +110,8 @@ let pending_indexed_packages =
 open System
 open System.Security.Cryptography
 
+printfn "Comparing database and repo content hashes..."
+
 published_indexed_packages
 |> Array.iter (fun i -> 
     let repo_hash = md5.ComputeHash(File.ReadAllBytes(i.RepoPath)) |> Convert.ToHexString
@@ -120,7 +122,10 @@ published_indexed_packages
         |> Async.AwaitTask
         |> Async.RunSynchronously
     with e ->
-        failwith $"[{i.RepoPath}]: Package content hash {repo_hash} does not match the published package"
+        if isDryRun then
+            printfn $"[{i.RepoPath}]: Package content hash {repo_hash} does not match the published package"
+        else
+            failwith $"[{i.RepoPath}]: Package content hash {repo_hash} does not match the published package"
 )
 
 // Publish the pending packages, and add the content hash to the database
