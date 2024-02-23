@@ -123,7 +123,8 @@ published_indexed_packages
         |> Async.RunSynchronously
     with e ->
         if isDryRun then
-            printfn $"[{i.RepoPath}]: Package content hash {repo_hash} does not match the published package"
+            printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Package content hash {repo_hash} does not match the published package"
+            printfn $"Make sure that the package file has not been modified after publication! ({i.RepoPath})" 
         else
             failwith $"[{i.RepoPath}]: Package content hash {repo_hash} does not match the published package"
 )
@@ -139,23 +140,20 @@ if isDryRun then
         let h = AVPRClient.PackageContentHash.createOfIndex(i)
         printfn $"""
 Package info:
-    Name: {p.Name}
-    Description: {p.Description}
-    MajorVersion: {p.MajorVersion}
-    MinorVersion: {p.MinorVersion}
-    PatchVersion: {p.PatchVersion}
-    PackageContent(Length): {p.PackageContent.Length}
-    Tags: {p.Tags}
-    Authors: {p.Authors}
-    ReleaseNotes: {p.ReleaseNotes}
-    ReleaseDate: {p.ReleaseDate}
+{
+    System.Text.Json.JsonSerializer.Serialize(
+        p, 
+        System.Text.Json.JsonSerializerOptions(WriteIndented = true)
+    )
+}
 
 Hash info:
-    PackageName: {h.PackageName}
-    PackageMajorVersion: {h.PackageMajorVersion}
-    PackageMinorVersion: {h.PackageMinorVersion}
-    PackagePatchVersion: {h.PackagePatchVersion}
-    Hash: {h.Hash}
+{
+    System.Text.Json.JsonSerializer.Serialize(
+        h, 
+        System.Text.Json.JsonSerializerOptions(WriteIndented = true)
+    )
+}
 """
 )
 
@@ -172,18 +170,14 @@ else
         with e ->
             failwith $"""CreatePackage: [{i.RepoPath}]: failed with {e.Message}. 
         
-    Package info:
-        Name: {p.Name}
-        Description: {p.Description}
-        MajorVersion: {p.MajorVersion}
-        MinorVersion: {p.MinorVersion}
-        PatchVersion: {p.PatchVersion}
-        PackageContent(Length): {p.PackageContent.Length}
-        Tags: {p.Tags}
-        Authors: {p.Authors}
-        ReleaseNotes: {p.ReleaseNotes}
-        ReleaseDate: {p.ReleaseDate}
-    """
+Package info:
+{
+    System.Text.Json.JsonSerializer.Serialize(
+        p, 
+        System.Text.Json.JsonSerializerOptions(WriteIndented = true)
+    )
+}
+"""
     
         try
 
@@ -201,11 +195,12 @@ else
             |> ignore
         with e ->
             failwith $"""CreatePackageContentHash: [{i.RepoPath}]: failed with {e.Message}
-    Hash info:
-        PackageName: {h.PackageName}
-        PackageMajorVersion: {h.PackageMajorVersion}
-        PackageMinorVersion: {h.PackageMinorVersion}
-        PackagePatchVersion: {h.PackagePatchVersion}
-        Hash: {h.Hash}
-    """
+Hash info:
+{
+    System.Text.Json.JsonSerializer.Serialize(
+        h, 
+        System.Text.Json.JsonSerializerOptions(WriteIndented = true)
+    )
+}
+"""
     )
