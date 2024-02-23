@@ -195,7 +195,7 @@ else
         with e ->
             failwith $"CreatePackage: [{i.RepoPath}]: failed with {System.Environment.NewLine}{e.Message}{System.Environment.NewLine}Package info:{System.Environment.NewLine}{AVPRClient.ValidationPackage.toJson p}"
         try
-            printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Publishing package content hash...{System.Environment.NewLine}"
+            printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Publishing package content hash..."
             client.CreatePackageContentHashAsync(
                 AVPRClient.PackageContentHash.createOfIndex(i)
             )

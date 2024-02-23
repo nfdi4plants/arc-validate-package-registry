@@ -9,6 +9,14 @@ Description: |
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
+Publish: true
+Authors:
+    - FullName: Oliver Maus
+    - Affiliation: DataPLANT
+Tags:
+    - ARC
+    - data publication
+ReleaseNotes: "Initial release"
 ---
 *)
 
