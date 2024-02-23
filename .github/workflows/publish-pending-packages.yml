@@ -30,6 +30,6 @@ jobs:
             DRYRUN=false
           fi
           echo "DRYRUN=$DRYRUN" >> $GITHUB_ENV
-      - run: dotnet fsi scripts/publish-pending-packages.fsx {{env.DRYRUN}}
+      - run: dotnet fsi scripts/publish-pending-packages.fsx {{ env.DRYRUN }}
         env:
           APIKEY: ${{ secrets.APIKEY }}
