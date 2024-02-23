@@ -30,7 +30,7 @@ jobs:
           else
             dry_run=false
           fi
-          if [[ $dry_run == "true ]]; then
+          if [[ $dry_run == true ]]; then
             echo "DRYRUN=--dry-run" >> $GITHUB_ENV
           else
             :
