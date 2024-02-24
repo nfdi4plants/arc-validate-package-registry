@@ -8,7 +8,9 @@
 
             group.MapGet("packages", Packages.Render);
 
-            group.MapGet("package/{packageName}", Package.Render);
+            group.MapGet("package/{packageName}", Package.RenderLatest);
+
+            group.MapGet("package/{packageName}/{version}", Package.Render);
 
             return group;
         }

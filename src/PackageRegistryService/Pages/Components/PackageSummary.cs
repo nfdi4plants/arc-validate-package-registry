@@ -4,23 +4,14 @@ namespace PackageRegistryService.Pages.Components
 {
     public record PackageSummary(string Name, string Description, string [] Tags, string LatestVersion, DateOnly ReleaseDate)
     {
-        public static string RenderDescription(string description)
-        {
-            return String.Join(
-                System.Environment.NewLine,
-                description
-                    .Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None)
-                    .Select(l => $@"<small style=""display:block"">{l}</small>")
-            );
-        }
         public static string Render(PackageSummary summary)
         {
             return $@"<tr>
 <th scope=""row""><a href=""/package/{summary.Name}"">{summary.Name}</a></th>
-<td>{RenderDescription(summary.Description)}</td>
+<td>{PackageDescription.RenderSmall(summary.Description)}</td>
 <td><a href=""/package/{summary.Name}/{summary.LatestVersion}"">{summary.LatestVersion}</a></td>
 <td>{summary.ReleaseDate}</td>
-<td>{string.Join("; ", summary.Tags.Select(t => $@"<a href=""/packages?tag={t}"">{t}</a>"))}</td>
+<td>{string.Join("; ", summary.Tags.Select(PackageTag.Render))}</td>
 </tr>";
         }
 
