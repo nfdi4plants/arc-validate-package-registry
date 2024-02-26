@@ -1,16 +1,18 @@
-﻿namespace PackageRegistryService.Pages
+﻿using PackageRegistryService.Pages.Handlers;
+
+namespace PackageRegistryService.Pages
 {
     public static class PageEndpoints
     {
         public static RouteGroupBuilder MapPageEndpoints(this RouteGroupBuilder group)
         {
-            group.MapGet("", Index.Render);
+            group.MapGet("", IndexHandlers.Render);
 
-            group.MapGet("packages", Packages.Render);
+            group.MapGet("packages", PackagesHandlers.Render);
 
-            group.MapGet("package/{packageName}", Package.RenderLatest);
+            group.MapGet("package/{packageName}", PackageHandlers.RenderLatest);
 
-            group.MapGet("package/{packageName}/{version}", Package.Render);
+            group.MapGet("package/{packageName}/{version}", PackageHandlers.Render);
 
             return group;
         }

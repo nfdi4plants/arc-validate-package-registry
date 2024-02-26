@@ -7,11 +7,10 @@ using PackageRegistryService.Pages.Components;
 using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace PackageRegistryService.Pages
+namespace PackageRegistryService.Pages.Handlers
 {
-    public static class Packages
+    public static class PackagesHandlers
     {
-        
         public static async Task<ContentHttpResult> Render(ValidationPackageDb database)
         {
             var packages = await database.ValidationPackages.ToArrayAsync();

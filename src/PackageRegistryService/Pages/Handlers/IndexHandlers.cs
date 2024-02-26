@@ -2,9 +2,9 @@
 using PackageRegistryService.Models;
 using PackageRegistryService.Pages.Components;
 
-namespace PackageRegistryService.Pages
+namespace PackageRegistryService.Pages.Handlers
 {
-    public static class Index
+    public static class IndexHandlers
     {
         public static async Task<ContentHttpResult> Render()
         {
