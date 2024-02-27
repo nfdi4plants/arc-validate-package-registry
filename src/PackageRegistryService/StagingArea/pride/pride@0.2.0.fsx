@@ -8,10 +8,29 @@ Description: |
         - Investigation has Keywords comment in correct format
         - All persons in Investigation Contacts must have a first name, last name, affiliation and valid email
         - Study has protocol, tissue & species in correct format
-        - Assay has protocol, technology type, instrument model, and fixed and or variable modification in correct format
+        - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
+Publish: true
+Authors:
+  - FullName: Oliver Maus
+    Email: maus@nfdi4plants.org
+    Affiliation: RPTU Kaiserslautern
+    AffiliationLink: http://rptu.de/startseite
+Tags:
+  - validation
+  - pride
+  - proteomics
+ReleaseNotes: "
+  - initial release
+  - metadata validation added:
+    - Investigation has title and description
+    - Investigation has Keywords comment in correct format
+    - All persons in Investigation Contacts must have a first name, last name, affiliation and valid email
+    - Study has protocol, tissue & species in correct format
+    - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format
+    "
 ---
 *)
 
