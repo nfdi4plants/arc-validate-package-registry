@@ -18,7 +18,8 @@ namespace PackageRegistryService.Pages.Components
 
         public static string Render(string active) 
         {
-            return $@"<footer style=""margin-top: 100px"" class=""container"">
+            return $@"<footer style=""margin-top: 200px"" class=""container"">
+  <hr/>
   <div class=""grid"">
     <div>
       <small><strong>AVPR - a service by <a class=""secondary"" href=""https://nfdi4plants.org/"">DataPLANT</a></strong></small>

@@ -20,26 +20,19 @@ ReleaseNotes: "Initial release"
 ---
 *)
 
-#r "nuget: ARCExpect"
-#r "nuget: Anybadge.NET"
-#r "nuget: ARCValidationPackages"
+#r "nuget: ARCExpect, 1.0.1"
 
 open ARCExpect
 open ARCTokenization
 open ARCTokenization.StructuralOntology
 open ControlledVocabulary
 open Expecto
-open ARCValidationPackages
-open ARCValidationPackages.API
 open System.IO
 
 
 // Input:
 
 let arcDir = Directory.GetCurrentDirectory()
-let outDirBadge = Path.Combine(arcDir, "invenio_badge.svg")
-let outDirResXml = Path.Combine(arcDir, "invenio_results.xml")
-
 
 // Values:
 
@@ -116,4 +109,8 @@ let cases =
 
 // Execution:
 
-Execute.ValidationPipeline(outDirResXml, outDirBadge, "Invenio") cases
+cases
+|> Execute.ValidationPipeline(
+    basePath = arcDir,
+    packageName = "invenio"
+)
