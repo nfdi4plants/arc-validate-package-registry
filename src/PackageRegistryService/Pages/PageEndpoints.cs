@@ -8,6 +8,8 @@ namespace PackageRegistryService.Pages
         {
             group.MapGet("", IndexHandlers.Render);
 
+            group.MapGet("about", AboutHandlers.Render);
+
             group.MapGet("packages", PackagesHandlers.Render);
 
             group.MapGet("package/{packageName}", PackageHandlers.RenderLatest);

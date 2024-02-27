@@ -28,7 +28,7 @@ namespace PackageRegistryService.Pages.Components
       <td>{p.ReleaseDate}</td>
     </tr>"))}
   </tbody>
-";
+</table>";
             return content;
 
         }

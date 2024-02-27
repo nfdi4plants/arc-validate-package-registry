@@ -37,7 +37,7 @@ namespace PackageRegistryService.Pages.Handlers
                             return
                             new PackageSummary(
                                 Name: group.Key,
-                                Tags: latestPackage.Tags,
+                                Tags: latestPackage.Tags ?? [],
                                 Description: latestPackage.Description,
                                 ReleaseDate: latestPackage.ReleaseDate,
                                 LatestVersion: latestPackage.GetSemanticVersionString()
@@ -46,7 +46,7 @@ namespace PackageRegistryService.Pages.Handlers
                     );
 
             var content = Layout.Render(
-                activeNavbarItem: "",
+                activeNavbarItem: "Browse Packages",
                 title: "ARC validation package registry API",
                 content: PackageSummary.RenderList(packageSummaries)
             );

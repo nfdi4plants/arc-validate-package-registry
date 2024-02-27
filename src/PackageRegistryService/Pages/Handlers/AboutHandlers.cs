@@ -4,14 +4,14 @@ using PackageRegistryService.Pages.Components;
 
 namespace PackageRegistryService.Pages.Handlers
 {
-    public static class IndexHandlers
+    public static class AboutHandlers
     {
         public static async Task<ContentHttpResult> Render()
         {
 
             var content =
                 Layout.Render(
-                    activeNavbarItem: "Home",
+                    activeNavbarItem: "About",
                     title: "ARC validation package registry API",
                     content: @"<h1>ARC validation package registry API</h1><br></br>
 <p>This service provides a browser and API for ARC validation packages.</p>

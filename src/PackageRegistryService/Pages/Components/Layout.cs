@@ -6,22 +6,28 @@
         {
             return $@"<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset=""utf-8"">
-        <meta name=""viewport"" content=""width=device-width, initial-scale=1"">
-        <meta name=""color-scheme"" content=""light dark"" />
-        <link rel=""stylesheet"" href=""/css/pico.cyan.min.css"" />
-        <title>{title}</title>
-    </head>
-    <body>
-        <header class=""container"">
-            {Navbar.Render(active: activeNavbarItem)}
-        </header>
-        <main class=""container"">
-            {content}
-        </main>
-        <footer></footer>
-    </body>
+  <head>
+    <meta charset=""utf-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1"">
+    <meta name=""color-scheme"" content=""light dark"" />
+    <link rel=""stylesheet"" href=""/css/pico.cyan.min.css"" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class=""container"">
+      <section>
+        {Navbar.Render(active: activeNavbarItem)}
+      </section>
+    </header>
+    <main class=""container"">
+      <section>
+        {content}
+      </section>
+    </main>
+      <section>
+      {Footer.Render(active: activeNavbarItem)}
+      </section>
+  </body>
 </html>";
         }
     }
