@@ -66,7 +66,7 @@ let contactsAffs =
 let contactsEmails =
     invFileTokensNoMdSecKeys
     |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Email``)
-
+ 
 
 // Validation Cases:
 

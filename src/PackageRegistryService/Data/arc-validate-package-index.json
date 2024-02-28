@@ -2,7 +2,8 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/invenio/invenio@1.0.0.fsx",
     "FileName": "invenio@1.0.0.fsx",
-    "LastUpdated": "2024-02-27T15:00:31+01:00",
+    "LastUpdated": "2024-02-28T15:39:08+01:00",
+    "ContentHash": "1A3CB3CC0538782C864EA37545451FD5",
     "Metadata": {
       "Name": "invenio",
       "Description": "Validates if the ARC contains the necessary metadata to be publishable via Invenio.\nThe following metadata is required:\n    - Investigation has title and description\n    - All persons in Investigation Contacts must have a name, last name, affiliation and valid email\n",
@@ -28,7 +29,8 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.0.fsx",
     "FileName": "test@1.0.0.fsx",
-    "LastUpdated": "2024-02-27T15:00:31+01:00",
+    "LastUpdated": "2024-02-28T15:39:08+01:00",
+    "ContentHash": "43BFF4CDCC3F3EBB3CA21B6C1F8AC5BA",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -44,7 +46,8 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.1.fsx",
     "FileName": "test@1.0.1.fsx",
-    "LastUpdated": "2024-02-27T15:00:31+01:00",
+    "LastUpdated": "2024-02-28T15:39:08+01:00",
+    "ContentHash": "0B9CBA89F1CECFAF5EB0BA1CE6A480FA",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -60,7 +63,8 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.0.fsx",
     "FileName": "test@2.0.0.fsx",
-    "LastUpdated": "2024-02-27T15:00:31+01:00",
+    "LastUpdated": "2024-02-28T15:39:08+01:00",
+    "ContentHash": "F819359C06456B62F035F2587FBE1EE2",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
@@ -93,7 +97,8 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@3.0.0.fsx",
     "FileName": "test@3.0.0.fsx",
-    "LastUpdated": "2024-02-27T15:00:31+01:00",
+    "LastUpdated": "2024-02-28T15:39:08+01:00",
+    "ContentHash": "9E6AB1A9C908DE02F583D9FD0E76D8FA",
     "Metadata": {
       "Name": "test",
       "Description": "this package is here for testing purposes only.",
