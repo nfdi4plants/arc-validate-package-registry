@@ -2,6 +2,7 @@
 #r "nuget: AVPRIndex, 0.0.1"
 #r "nuget: AVPRClient, 0.0.2"
 
+open AVPRIndex
 open Domain
 open System
 open System.IO
