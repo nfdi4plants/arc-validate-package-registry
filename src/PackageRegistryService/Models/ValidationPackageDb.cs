@@ -19,6 +19,10 @@
             .OwnsMany(v => v.Authors, a =>
             {
                 a.ToJson();
+            })
+            .OwnsMany(v => v.Tags, t =>
+            {
+                 t.ToJson();
             });
         }
     }

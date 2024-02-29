@@ -20,9 +20,18 @@ namespace PackageRegistryService.Models
         [Key]
         public required string Name { get; set; }
         /// <summary>
-        /// Free text validation package description.
+        /// Single sentence validation package description.
         /// </summary>
         /// <example>MyPackage does the thing</example>
+        public required string Summary { get; set; }
+        /// <summary>
+        /// Free text validation package description.
+        /// </summary>
+        /// <example>
+        /// MyPackage does the thing.
+        /// It does it very good, it does it very well.
+        /// It does it very fast, it does it very swell.
+        /// </example>
         public required string Description { get; set; }
         /// <summary>
         /// SemVer major version of the validation package.
@@ -54,7 +63,7 @@ namespace PackageRegistryService.Models
         /// <summary>
         /// 
         /// </summary>
-        public string[]? Tags { get; set; }
+        public ICollection<AVPRIndex.Domain.OntologyAnnotation>? Tags { get; set; }
         /// <summary>
         /// 
         /// </summary>

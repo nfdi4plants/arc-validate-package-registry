@@ -2,7 +2,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/invenio/invenio@1.0.0.fsx",
     "FileName": "invenio@1.0.0.fsx",
-    "LastUpdated": "2024-02-29T14:45:26+01:00",
+    "LastUpdated": "2024-02-29T14:45:24+01:00",
     "ContentHash": "864458DA6C7B0F08A546210CFD3CCA4A",
     "Metadata": {
       "Name": "invenio",
@@ -74,7 +74,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.0.fsx",
     "FileName": "test@2.0.0.fsx",
-    "LastUpdated": "2024-02-29T14:45:26+01:00",
+    "LastUpdated": "2024-02-29T14:45:24+01:00",
     "ContentHash": "40729E451689807AEFF17F5932843A4C",
     "Metadata": {
       "Name": "test",
@@ -121,7 +121,7 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@3.0.0.fsx",
     "FileName": "test@3.0.0.fsx",
-    "LastUpdated": "2024-02-29T14:45:26+01:00",
+    "LastUpdated": "2024-02-29T14:45:24+01:00",
     "ContentHash": "0537642158095CE84F4FA8363225831E",
     "Metadata": {
       "Name": "test",

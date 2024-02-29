@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PackageRegistryService.Models;
@@ -11,9 +12,11 @@ using PackageRegistryService.Models;
 namespace PackageRegistryService.Migrations
 {
     [DbContext(typeof(ValidationPackageDb))]
-    partial class ValidationPackageDbModelSnapshot : ModelSnapshot
+    [Migration("20240229124121_AddSummaryAndOntologyTags")]
+    partial class AddSummaryAndOntologyTags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

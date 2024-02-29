@@ -5,7 +5,23 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Authors>Kevin Schneider</Authors>
+    <Description>Type system for the indexing backend of avpr.nfdi4plants.org</Description>
+    <Summary>Type system for the indexing backend of avpr.nfdi4plants.org</Summary>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>C# F# ARC annotated-research-context rdm research-data-management validation</PackageTags>
+    <PackageProjectUrl>https://github.com/nfdi4plants/arc-validate-package-registry</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nfdi4plants/arc-validate-package-registry</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/RELEASE_NOTES.md"))</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageVersion>0.0.1</PackageVersion>
+  </PropertyGroup>
+
   <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="RELEASE_NOTES.md" />
     <Compile Include="Globals.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="Utils.fs" />

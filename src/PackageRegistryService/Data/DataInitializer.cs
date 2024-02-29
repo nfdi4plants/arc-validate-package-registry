@@ -10,7 +10,7 @@ using static AVPRIndex.Domain;
 using static AVPRIndex.Frontmatter;
 
 namespace PackageRegistryService.Data
-
+    
 {
     public class DataInitializer
     {
@@ -18,7 +18,7 @@ namespace PackageRegistryService.Data
         {
             var json = File.ReadAllText(@"Data/arc-validate-package-index.json");
             var index = JsonSerializer.Deserialize<List<ValidationPackageIndex>>(json);
-            return index;
+            return index ?? [];
         }
         public static void SeedData(ValidationPackageDb context)
         {
@@ -39,6 +39,7 @@ namespace PackageRegistryService.Data
                             return new ValidationPackage
                             {
                                 Name = i.Metadata.Name,
+                                Summary = i.Metadata.Summary,
                                 Description = i.Metadata.Description,
                                 MajorVersion = i.Metadata.MajorVersion,
                                 MinorVersion = i.Metadata.MinorVersion,

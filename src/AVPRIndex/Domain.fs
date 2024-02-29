@@ -39,9 +39,37 @@ module Domain =
                 )
             | _ -> false
 
+    type OntologyAnnotation() =
+
+        member val Name = "" with get,set
+        member val TermSourceREF = "" with get,set
+        member val TermAccessionNumber = "" with get,set
+
+        override this.GetHashCode() =
+            hash (
+                this.Name, 
+                this.TermSourceREF, 
+                this.TermAccessionNumber
+            )
+
+        override this.Equals(other) =
+            match other with
+            | :? OntologyAnnotation as oa -> 
+                (
+                    this.Name, 
+                    this.TermSourceREF, 
+                    this.TermAccessionNumber
+                ) = (
+                    oa.Name, 
+                    oa.TermSourceREF, 
+                    oa.TermAccessionNumber
+                )
+            | _ -> false
+
     type ValidationPackageMetadata() =
         // mandatory fields
         member val Name = "" with get,set
+        member val Summary = "" with get,set
         member val Description = "" with get,set
         member val MajorVersion = 0 with get,set
         member val MinorVersion = 0 with get,set
@@ -49,12 +77,13 @@ module Domain =
         // optional fields
         member val Publish = false with get,set
         member val Authors: Author [] = Array.empty<Author> with get,set
-        member val Tags: string [] = Array.empty<string> with get,set
+        member val Tags: OntologyAnnotation [] = Array.empty<OntologyAnnotation> with get,set
         member val ReleaseNotes = "" with get,set
 
         override this.GetHashCode() =
             hash (
                 this.Name, 
+                this.Summary, 
                 this.Description, 
                 this.MajorVersion, 
                 this.MinorVersion, 
@@ -70,6 +99,7 @@ module Domain =
             | :? ValidationPackageMetadata as vpm -> 
                 (
                     this.Name, 
+                    this.Summary, 
                     this.Description, 
                     this.MajorVersion, 
                     this.MinorVersion, 
@@ -80,6 +110,7 @@ module Domain =
                     this.ReleaseNotes
                 ) = (
                     vpm.Name, 
+                    vpm.Summary, 
                     vpm.Description, 
                     vpm.MajorVersion, 
                     vpm.MinorVersion, 
