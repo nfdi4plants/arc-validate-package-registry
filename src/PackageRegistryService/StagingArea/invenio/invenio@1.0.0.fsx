@@ -1,6 +1,7 @@
 (*
 ---
 Name: invenio
+Summary: Validates if the ARC contains the necessary metadata to be publishable via Invenio.
 Description: |
     Validates if the ARC contains the necessary metadata to be publishable via Invenio.
     The following metadata is required:

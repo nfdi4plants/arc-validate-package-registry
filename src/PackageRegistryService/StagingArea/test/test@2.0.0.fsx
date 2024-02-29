@@ -5,6 +5,7 @@ MajorVersion: 2
 MinorVersion: 0
 PatchVersion: 0
 Publish: true
+Summary: this package is here for testing purposes only.
 Description: this package is here for testing purposes only.
 Authors:
   - FullName: John Doe
