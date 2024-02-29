@@ -47,9 +47,18 @@ type AVPRClient.ValidationPackage with
         p.PatchVersion <- i.Metadata.PatchVersion
         p.PackageContent <- File.ReadAllBytes(i.RepoPath)
         p.ReleaseDate <- DateTimeOffset.Now
-        p.Tags <- i.Metadata.Tags
+        p.Tags <- (
+            i.Metadata.Tags
+            |> Array.map (fun tag ->
+                let t = AVPRClient.OntologyAnnotation()
+                t.Name <- tag.Name
+                t.TermAccessionNumber <- tag.TermAccessionNumber
+                t.TermSourceREF <- tag.TermSourceREF
+                t
+            )
+        )
         p.ReleaseNotes <- i.Metadata.ReleaseNotes
-        p.Authors <- 
+        p.Authors <- (
             i.Metadata.Authors
             |> Array.map (fun author -> 
                 let a = AVPRClient.Author()
@@ -59,6 +68,7 @@ type AVPRClient.ValidationPackage with
                 a.AffiliationLink <- author.AffiliationLink
                 a
             )
+        )
         p
 
     static member toJson (p: AVPRClient.ValidationPackage) = 
