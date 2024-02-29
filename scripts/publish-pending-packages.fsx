@@ -41,6 +41,7 @@ type AVPRClient.ValidationPackage with
     static member createOfIndex (i: ValidationPackageIndex) = 
         let p = new AVPRClient.ValidationPackage()
         p.Name <- i.Metadata.Name
+        p.Summary <- i.Metadata.Summary
         p.Description <- i.Metadata.Description
         p.MajorVersion <- i.Metadata.MajorVersion
         p.MinorVersion <- i.Metadata.MinorVersion
