@@ -15,7 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{9F6D799F-2DC
 		README.md = README.md
 		setup.cmd = setup.cmd
 		setup.sh = setup.sh
-		update-index.fsx = update-index.fsx
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{412317F5-7FF4-4455-9C9D-CEAF7FE6E7B2}"
@@ -48,7 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "publish-workflow", "publish
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AVPRClient", "src\AVPRClient\AVPRClient.csproj", "{D1FABAC1-D0F2-4F6C-B975-236E9969FB38}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AVPRIndex", "src\AVPRIndex\AVPRIndex.fsproj", "{78A87C32-8957-468A-AFA6-3DCE8F826500}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AVPRIndex", "src\AVPRIndex\AVPRIndex.fsproj", "{78A87C32-8957-468A-AFA6-3DCE8F826500}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

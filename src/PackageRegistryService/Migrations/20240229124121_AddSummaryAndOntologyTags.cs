@@ -21,12 +21,12 @@ namespace PackageRegistryService.Migrations
 
             migrationBuilder.Sql(@"
                 ALTER TABLE ""ValidationPackages""
-                ADD COLUMN ""TMP"" jsonb
+                ADD COLUMN ""TMP"" jsonb;
             ");
 
             migrationBuilder.Sql(@"
                 UPDATE ""ValidationPackages""
-                SET ""TMP"" = transform_tags(""Tags"")
+                SET ""TMP"" = transform_tags(""Tags"");
             ");
 
             migrationBuilder.Sql(@"
@@ -53,14 +53,14 @@ namespace PackageRegistryService.Migrations
 
             migrationBuilder.Sql(@"
                 ALTER TABLE ""ValidationPackages""
-                ADD COLUMN ""TMP"" text[]
+                ADD COLUMN ""TMP"" text[];
             ");
 
             migrationBuilder.Sql(@"
                 UPDATE ""ValidationPackages""
                 SET ""TMP"" = (
                     SELECT array_agg(tag->>'Name') FROM jsonb_array_elements(""Tags"") AS tag
-                )
+                );
             ");
 
             migrationBuilder.Sql(@"
