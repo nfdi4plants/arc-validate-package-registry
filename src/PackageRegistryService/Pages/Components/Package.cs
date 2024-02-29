@@ -1,5 +1,6 @@
 ﻿using PackageRegistryService.Models;
 using System.Text;
+using static AVPRIndex.Domain;
 
 namespace PackageRegistryService.Pages.Components
 {

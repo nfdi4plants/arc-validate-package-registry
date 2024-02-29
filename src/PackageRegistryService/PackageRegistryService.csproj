@@ -33,4 +33,8 @@
     <Folder Include="wwwroot\js\" />
     <None Include="StagingArea\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AVPRIndex\AVPRIndex.fsproj" />
+  </ItemGroup>
 </Project>

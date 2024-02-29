@@ -5,6 +5,9 @@ using PackageRegistryService.Models;
 using System.Security.Policy;
 using System.Security.Cryptography;
 using System.Text.Json;
+using AVPRIndex;
+using static AVPRIndex.Domain;
+using static AVPRIndex.Frontmatter;
 
 namespace PackageRegistryService.Data
 
@@ -44,7 +47,7 @@ namespace PackageRegistryService.Data
                                 ReleaseDate = new(i.LastUpdated.Year, i.LastUpdated.Month, i.LastUpdated.Day),
                                 Tags = i.Metadata.Tags,
                                 ReleaseNotes = i.Metadata.ReleaseNotes,
-                                Authors = i.Metadata.Authors,
+                                Authors = i.Metadata.Authors
                             };
                         });
 
@@ -55,6 +58,11 @@ namespace PackageRegistryService.Data
                         .Select((i) =>
                         {
                             var content = File.ReadAllBytes($"StagingArea/{i.Metadata.Name}/{i.FileName}");
+                            var hash = Convert.ToHexString(md5.ComputeHash(content));
+                            if (hash != i.ContentHash)
+                            {
+                                throw new Exception($"Hash collision for indexed hash vs content hash: {$"StagingArea/{i.Metadata.Name}/{i.FileName}"}");
+                            }
                             return new PackageContentHash
                             {
                                 PackageName = i.Metadata.Name,

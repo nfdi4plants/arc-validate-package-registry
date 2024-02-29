@@ -62,7 +62,7 @@ namespace PackageRegistryService.Models
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<Author>? Authors { get; set; } // https://www.learnentityframeworkcore.com/relationships#navigation-properties
+        public ICollection<AVPRIndex.Domain.Author>? Authors { get; set; } // https://www.learnentityframeworkcore.com/relationships#navigation-properties
         /// <summary>
         /// 
         /// </summary>
