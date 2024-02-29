@@ -1,6 +1,8 @@
-#load "domain.fsx"
+#r "nuget: AVPRIndex, 0.0.1"
 
+open AVPRIndex
 open Domain
+open Frontmatter
 
 open System
 open System.IO

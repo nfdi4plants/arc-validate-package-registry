@@ -1,6 +1,6 @@
 #r "nuget: dotenv.net, 3.1.3"
-#r "nuget: AVPRClient, 0.0.1"
-#load "domain.fsx"
+#r "nuget: AVPRIndex, 0.0.1"
+#r "nuget: AVPRClient, 0.0.2"
 
 open Domain
 open System
@@ -104,9 +104,7 @@ let published_packages =
 
 //! Paths are relative to the root of the project, since the script is executed from the repo root in CI
 let all_indexed_packages = 
-    "src/PackageRegistryService/Data/arc-validate-package-index.json"
-    |> File.ReadAllText
-    |> JsonSerializer.Deserialize<ValidationPackageIndex[]>
+    AVPRRepo.getIndexedPackages()
 
 let published_indexed_packages = 
     all_indexed_packages
