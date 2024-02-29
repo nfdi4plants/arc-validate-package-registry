@@ -2,10 +2,11 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/invenio/invenio@1.0.0.fsx",
     "FileName": "invenio@1.0.0.fsx",
-    "LastUpdated": "2024-02-28T15:39:07+01:00",
-    "ContentHash": "1A3CB3CC0538782C864EA37545451FD5",
+    "LastUpdated": "2024-02-29T14:45:26+01:00",
+    "ContentHash": "864458DA6C7B0F08A546210CFD3CCA4A",
     "Metadata": {
       "Name": "invenio",
+      "Summary": "",
       "Description": "Validates if the ARC contains the necessary metadata to be publishable via Invenio.\nThe following metadata is required:\n    - Investigation has title and description\n    - All persons in Investigation Contacts must have a name, last name, affiliation and valid email\n",
       "MajorVersion": 1,
       "MinorVersion": 0,
@@ -20,8 +21,16 @@
         }
       ],
       "Tags": [
-        "ARC",
-        "data publication"
+        {
+          "Name": "ARC",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "data publication",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
       ],
       "ReleaseNotes": "Initial release"
     }
@@ -33,6 +42,7 @@
     "ContentHash": "43BFF4CDCC3F3EBB3CA21B6C1F8AC5BA",
     "Metadata": {
       "Name": "test",
+      "Summary": "",
       "Description": "this package is here for testing purposes only.",
       "MajorVersion": 1,
       "MinorVersion": 0,
@@ -50,6 +60,7 @@
     "ContentHash": "0B9CBA89F1CECFAF5EB0BA1CE6A480FA",
     "Metadata": {
       "Name": "test",
+      "Summary": "",
       "Description": "this package is here for testing purposes only.",
       "MajorVersion": 1,
       "MinorVersion": 0,
@@ -63,10 +74,11 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.0.fsx",
     "FileName": "test@2.0.0.fsx",
-    "LastUpdated": "2024-02-28T15:39:07+01:00",
-    "ContentHash": "F819359C06456B62F035F2587FBE1EE2",
+    "LastUpdated": "2024-02-29T14:45:26+01:00",
+    "ContentHash": "40729E451689807AEFF17F5932843A4C",
     "Metadata": {
       "Name": "test",
+      "Summary": "",
       "Description": "this package is here for testing purposes only.",
       "MajorVersion": 2,
       "MinorVersion": 0,
@@ -87,9 +99,21 @@
         }
       ],
       "Tags": [
-        "validation",
-        "my-package",
-        "thing"
+        {
+          "Name": "validation",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "my-package",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "thing",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
       ],
       "ReleaseNotes": "add authors and tags for further testing"
     }
@@ -97,10 +121,11 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@3.0.0.fsx",
     "FileName": "test@3.0.0.fsx",
-    "LastUpdated": "2024-02-28T15:39:07+01:00",
-    "ContentHash": "9E6AB1A9C908DE02F583D9FD0E76D8FA",
+    "LastUpdated": "2024-02-29T14:45:26+01:00",
+    "ContentHash": "0537642158095CE84F4FA8363225831E",
     "Metadata": {
       "Name": "test",
+      "Summary": "",
       "Description": "this package is here for testing purposes only.",
       "MajorVersion": 3,
       "MinorVersion": 0,
@@ -121,9 +146,21 @@
         }
       ],
       "Tags": [
-        "validation",
-        "my-package",
-        "thing"
+        {
+          "Name": "validation",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "my-package",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "thing",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
       ],
       "ReleaseNotes": "add authors and tags for further testing"
     }

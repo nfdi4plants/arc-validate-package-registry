@@ -4,9 +4,16 @@
 
 open System
 open System.IO
+open System.Security.Cryptography
 open YamlDotNet.Serialization
 open System.Text.Json
 // open ARCValidationPackages <-- use this (or ARCtrl) once the data model is stable
+
+[<AutoOpen>]
+module Constants =
+
+    let [<Literal>] STAGING_AREA_RELATIVE_PATH = "src/PackageRegistryService/StagingArea"
+    let [<Literal>] PACKAGE_INDEX_RELATIVE_PATH = "src/PackageRegistryService/Data/arc-validate-package-index.json"
 
 // This is the F# version of /src/PackageRegistryService/Models/ValidationPackageIndex.cs
 // and should be equal to the implementation in arc-validate (until there is a common codebase/domain)
@@ -45,9 +52,37 @@ module Domain =
                 )
             | _ -> false
 
+    type OntologyAnnotation() =
+
+        member val Name = "" with get,set
+        member val TermSourceREF = "" with get,set
+        member val TermAccessionNumber = "" with get,set
+
+        override this.GetHashCode() =
+            hash (
+                this.Name, 
+                this.TermSourceREF, 
+                this.TermAccessionNumber
+            )
+
+        override this.Equals(other) =
+            match other with
+            | :? OntologyAnnotation as oa -> 
+                (
+                    this.Name, 
+                    this.TermSourceREF, 
+                    this.TermAccessionNumber
+                ) = (
+                    oa.Name, 
+                    oa.TermSourceREF, 
+                    oa.TermAccessionNumber
+                )
+            | _ -> false
+
     type ValidationPackageMetadata() =
         // mandatory fields
         member val Name = "" with get,set
+        member val Summary = "" with get,set
         member val Description = "" with get,set
         member val MajorVersion = 0 with get,set
         member val MinorVersion = 0 with get,set
@@ -55,12 +90,13 @@ module Domain =
         // optional fields
         member val Publish = false with get,set
         member val Authors: Author [] = Array.empty<Author> with get,set
-        member val Tags: string [] = Array.empty<string> with get,set
+        member val Tags: OntologyAnnotation [] = Array.empty<OntologyAnnotation> with get,set
         member val ReleaseNotes = "" with get,set
 
         override this.GetHashCode() =
             hash (
                 this.Name, 
+                this.Summary, 
                 this.Description, 
                 this.MajorVersion, 
                 this.MinorVersion, 
@@ -76,6 +112,7 @@ module Domain =
             | :? ValidationPackageMetadata as vpm -> 
                 (
                     this.Name, 
+                    this.Summary, 
                     this.Description, 
                     this.MajorVersion, 
                     this.MinorVersion, 
@@ -86,6 +123,7 @@ module Domain =
                     this.ReleaseNotes
                 ) = (
                     vpm.Name, 
+                    vpm.Summary, 
                     vpm.Description, 
                     vpm.MajorVersion, 
                     vpm.MinorVersion, 
@@ -125,7 +163,7 @@ module Domain =
                 metadata: ValidationPackageMetadata
             ) = 
 
-                let md5 = System.Security.Cryptography.MD5.Create()
+                let md5 = MD5.Create()
 
                 ValidationPackageIndex.create(
                     repoPath = repoPath,
@@ -212,11 +250,18 @@ module Utils =
             System.Globalization.CultureInfo.InvariantCulture
         )
 
-module AVPRRepo =
+type AVPRRepo =
 
     ///! Paths are relative to the root of the project, since the script is executed from the repo root in CI
-    let getStagedPackages() = 
-        Directory.GetFiles("src/PackageRegistryService/StagingArea", "*.fsx", SearchOption.AllDirectories)
+    /// Path is adjustable by passing `RepoRoot`
+    static member getStagedPackages(?RepoRoot: string) = 
+
+        let path = 
+            defaultArg 
+                (RepoRoot |> Option.map (fun p -> Path.Combine(p, STAGING_AREA_RELATIVE_PATH))) 
+                STAGING_AREA_RELATIVE_PATH
+
+        Directory.GetFiles(path, "*.fsx", SearchOption.AllDirectories)
         |> Array.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
         |> Array.map (fun p -> 
             ValidationPackageIndex.create(
@@ -226,8 +271,15 @@ module AVPRRepo =
         )
     
     ///! Paths are relative to the root of the project, since the script is executed from the repo root in CI
-    let getIndexedPackages() = 
-        "src/PackageRegistryService/Data/arc-validate-package-index.json"
+    /// Path is adjustable by passing `RepoRoot`
+    static member getIndexedPackages(?RepoRoot: string) = 
+
+        let path = 
+            defaultArg 
+                (RepoRoot |> Option.map (fun p -> Path.Combine(p, PACKAGE_INDEX_RELATIVE_PATH))) 
+                PACKAGE_INDEX_RELATIVE_PATH
+
+        path
         |> File.ReadAllText
         |> JsonSerializer.Deserialize<ValidationPackageIndex[]>
 

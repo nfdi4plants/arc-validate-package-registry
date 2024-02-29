@@ -16,9 +16,9 @@ Authors:
     Affiliation: University of Somewhere
     AffiliationLink: https://somewhere.edu
 Tags:
-  - validation
-  - my-package
-  - thing
+  - Name: validation
+  - Name: my-package
+  - Name: thing
 ReleaseNotes: "add authors and tags for further testing"
 ---
 *)

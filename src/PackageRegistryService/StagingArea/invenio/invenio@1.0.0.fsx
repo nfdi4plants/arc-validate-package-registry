@@ -14,8 +14,8 @@ Authors:
     - FullName: Oliver Maus
       Affiliation: DataPLANT
 Tags:
-    - ARC
-    - data publication
+    - Name: ARC
+    - Name: data publication
 ReleaseNotes: "Initial release"
 ---
 *)
