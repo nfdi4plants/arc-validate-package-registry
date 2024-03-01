@@ -121,6 +121,32 @@ module Domain =
                     vpm.ReleaseNotes
                 )
             | _ -> false
+        
+        static member create (
+            name: string, 
+            description: string, 
+            majorVersion: int, 
+            minorVersion: int, 
+            patchVersion: int,
+            ?Publish: bool,
+            ?Authors: Author [],
+            ?Tags: OntologyAnnotation [],
+            ?ReleaseNotes
+        ) = 
+            let tmp = ValidationPackageMetadata()
+            tmp.Name <- name
+            tmp.Description <- description
+            tmp.MajorVersion <- majorVersion
+            tmp.MinorVersion <- minorVersion
+            tmp.PatchVersion <- patchVersion
+            Publish |> Option.iter (fun x -> tmp.Publish <- x)
+            Authors |> Option.iter (fun x -> tmp.Authors <- x)
+            Tags |> Option.iter (fun x -> tmp.Tags <- x)
+            ReleaseNotes |> Option.iter (fun x -> tmp.ReleaseNotes <- x)
+        
+            tmp
+        
+        static member getSemanticVersionString(m: ValidationPackageMetadata) = $"{m.MajorVersion}.{m.MinorVersion}.{m.PatchVersion}"
 
     type ValidationPackageIndex =
         {
@@ -179,3 +205,8 @@ module Domain =
                 printfn ""
                 printfn $"Indexed Package info:{System.Environment.NewLine}{json}"
                 printfn ""
+                
+            static member getSemanticVersionString(i: ValidationPackageIndex) = $"{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}";
+
+            member this.PrettyPrint() =
+                $" {this.Metadata.Name} @ version {this.Metadata.MajorVersion}.{this.Metadata.MinorVersion}.{this.Metadata.PatchVersion}{System.Environment.NewLine}{_.Metadata.Description}{System.Environment.NewLine}Last Updated: {this.LastUpdated}{System.Environment.NewLine}"
