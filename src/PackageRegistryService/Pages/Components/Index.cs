@@ -10,7 +10,6 @@
 <p>For <b>programmatic access</b>, go checkout the <a href=""swagger"">API documentation</a>
 <hr/>
 </section>
-
 <section>
 <p>The AVPR indexes and hosts validation packages for <strong>A</strong>nnotated <strong>R</strong>esearch <strong>C</strong>ontexts (ARCs) in a central registry. You can learn more about the concept of ARCs <a href=""https://nfdi4plants.org"">here</a></p>
 <p>It is intended for 2 main use cases:
