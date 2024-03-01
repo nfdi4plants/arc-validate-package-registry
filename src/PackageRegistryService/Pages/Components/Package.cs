@@ -9,6 +9,7 @@ namespace PackageRegistryService.Pages.Components
         public static string Render(
             string packageName,
             string packageVersion,
+            string packageSummary,
             string packageDescription,
             string packageReleaseNotes,
             string packageContent,
@@ -21,14 +22,20 @@ namespace PackageRegistryService.Pages.Components
             return $@"<section>
   <hgroup>
     <h1>Validation Package <mark>{packageName}</mark></h1>
-    <p>{PackageTag.RenderAllInline(packageTags)}</p>
+    <p>{PackageTag.RenderAllLinksInline(packageTags)}</p>
     <p><strong>v{packageVersion}</strong> released on {packageReleaseDate}</p>
+    <p>by {PackageAuthor.RenderAllLinksInline(packageAuthors.Select(a => a.FullName).ToArray())}</p>
   </hgroup>
+  <p style=""display:block"">{packageSummary}</p>
 </section>
 <hr />
 <section>
-  <h4>Install with <a href=""a"">arc-validate</a></h3>
+  <h4>Install with <a href=""https://github.com/nfdi4plants/arc-validate"">arc-validate</a></h4>
   <pre><code> arc-validate package install {packageName} --package-version {packageVersion}</code></pre>
+  <h4>Include in a <a href=""https://doi.org/10.1111/tpj.16474"">PLANTDataHUB CQC pipeline</a></h4>
+  <pre><code>validation_packages:
+  - name: {packageName}
+    version: {packageVersion}</code></pre>
 </section>
 <hr />
 <section> 

@@ -10,7 +10,6 @@ namespace PackageRegistryService.Authentication
         {
             _configuration = configuration;
         }
-
         public async ValueTask<object> InvokeAsync(
             EndpointFilterInvocationContext context,  
             EndpointFilterDelegate next

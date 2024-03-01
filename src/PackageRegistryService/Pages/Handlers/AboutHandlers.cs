@@ -13,10 +13,8 @@ namespace PackageRegistryService.Pages.Handlers
                 Layout.Render(
                     activeNavbarItem: "About",
                     title: "ARC validation package registry API",
-                    content: @"<h1>ARC validation package registry API</h1><br></br>
-<p>This service provides a browser and API for ARC validation packages.</p>
-<p><a href=""/packages"">Browse all available packages</a></p>
-<p>For <b>programmatic access</b>, go checkout the <a href=""swagger"">API documentation</a>");
+                    content: About.Render()
+                );
 
             return TypedResults.Text(content: content, contentType: "text/html");
 
