@@ -2,17 +2,17 @@
 {
     public class PackageTag
     {
-        public static string Render(string tagName) => $@"<a href=""/packages?tag={tagName}"">{tagName}</a>";
+        public static string RenderLink(string tagName) => $@"<a href=""/packages?tag={tagName}"">{tagName}</a>";
         
-        public static string RenderAllInline(string[]? tags)
+        public static string RenderAllLinksInline(string[]? tagNames)
         {             
-            if (tags == null)
+            if (tagNames == null)
             {
                 return "";
             }
             else
             {
-                return String.Join("; ", tags.Select(t => Render(t)));
+                return String.Join("; ", tagNames.Select(t => RenderLink(t)));
             }
         }
     }

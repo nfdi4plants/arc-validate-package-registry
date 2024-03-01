@@ -38,7 +38,7 @@ namespace PackageRegistryService.Pages.Handlers
                             new PackageSummary(
                                 Name: group.Key,
                                 Tags: (latestPackage.Tags ?? []).Select(t => t.Name).ToArray(),
-                                Description: latestPackage.Description,
+                                Summary: latestPackage.Summary,
                                 ReleaseDate: latestPackage.ReleaseDate,
                                 LatestVersion: latestPackage.GetSemanticVersionString()
                             );
