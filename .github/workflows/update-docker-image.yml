@@ -4,9 +4,11 @@ on:
   push:
     branches: ['main']
     paths:
-      - 'src/PackageRegistryService/**'
+      - 'src/**'
       - '!src/PackageRegistryService/Data/**'
       - '!src/PackageRegistryService/StagingArea/**'
+      - '!src/AVPRIndex/**'
+      - '!src/AVPRClient/**'
 
 env:
   REGISTRY: ghcr.io
