@@ -39,6 +39,21 @@ module Domain =
                 )
             | _ -> false
 
+        static member create (
+            fullName: string,
+            email: string,
+            affiliation: string,
+            affiliationLink: string
+        ) =
+            let tmp = new Author()
+
+            tmp.FullName <- fullName
+            tmp.Email <- email
+            tmp.Affiliation <- affiliation
+            tmp.AffiliationLink <- affiliationLink
+
+            tmp
+
     type OntologyAnnotation() =
 
         member val Name = "" with get,set
@@ -65,6 +80,19 @@ module Domain =
                     oa.TermAccessionNumber
                 )
             | _ -> false
+
+        static member create (
+            name: string,
+            termSourceRef: string,
+            termAccessionNumber: string
+        ) =
+            let tmp = new OntologyAnnotation()
+
+            tmp.Name <- name
+            tmp.TermSourceREF <- termSourceRef
+            tmp.TermAccessionNumber <- termAccessionNumber
+
+            tmp
 
     type ValidationPackageMetadata() =
         // mandatory fields
