@@ -41,16 +41,19 @@ module Domain =
 
         static member create (
             fullName: string,
-            email: string,
-            affiliation: string,
-            affiliationLink: string
+            ?email: string,
+            ?affiliation: string,
+            ?affiliationLink: string
         ) =
             let tmp = new Author()
 
             tmp.FullName <- fullName
-            tmp.Email <- email
-            tmp.Affiliation <- affiliation
-            tmp.AffiliationLink <- affiliationLink
+            if email.IsSome then
+                tmp.Email <- email.Value
+            if affiliation.IsSome then
+                tmp.Affiliation <- affiliation.Value
+            if affiliationLink.IsSome then
+                tmp.AffiliationLink <- affiliationLink Value
 
             tmp
 
