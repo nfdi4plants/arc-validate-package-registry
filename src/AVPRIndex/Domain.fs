@@ -83,14 +83,16 @@ module Domain =
 
         static member create (
             name: string,
-            termSourceRef: string,
-            termAccessionNumber: string
+            ?termSourceRef: string,
+            ?termAccessionNumber: string
         ) =
             let tmp = new OntologyAnnotation()
 
             tmp.Name <- name
-            tmp.TermSourceREF <- termSourceRef
-            tmp.TermAccessionNumber <- termAccessionNumber
+            if termSourceRef.IsSome then
+                tmp.TermSourceREF <- termSourceRef.Value
+            if termAccessionNumber.IsSome then
+                tmp.TermAccessionNumber <- termAccessionNumber.Value
 
             tmp
 
