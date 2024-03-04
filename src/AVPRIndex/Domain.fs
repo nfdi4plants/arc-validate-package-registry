@@ -53,7 +53,7 @@ module Domain =
             if affiliation.IsSome then
                 tmp.Affiliation <- affiliation.Value
             if affiliationLink.IsSome then
-                tmp.AffiliationLink <- affiliationLink Value
+                tmp.AffiliationLink <- affiliationLink.Value
 
             tmp
 
