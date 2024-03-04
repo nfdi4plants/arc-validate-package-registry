@@ -123,7 +123,8 @@ module Domain =
             | _ -> false
         
         static member create (
-            name: string, 
+            name: string,
+            summary: string,
             description: string, 
             majorVersion: int, 
             minorVersion: int, 
@@ -135,6 +136,7 @@ module Domain =
         ) = 
             let tmp = ValidationPackageMetadata()
             tmp.Name <- name
+            tmp.Summary <- summary
             tmp.Description <- description
             tmp.MajorVersion <- majorVersion
             tmp.MinorVersion <- minorVersion
