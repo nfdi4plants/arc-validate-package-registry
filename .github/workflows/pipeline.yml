@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs: 
 
-      any_changed: ${{ steps.changed-files-yaml.outputs.any_changed }}
-      all_changed_files: ${{ steps.changed-files-yaml.outputs.all_changed_files }}
+      global_any_changed: ${{ steps.changed-files-yaml.outputs.global_any_changed }}
+      global_all_changed_files: ${{ steps.changed-files-yaml.outputs.global_all_changed_files }}
 
       staging_area_all_changed_files: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}
       staging_area_any_changed: ${{ steps.changed-files-yaml.outputs.staging_area_any_changed }}
@@ -45,6 +45,8 @@ jobs:
         uses: tj-actions/changed-files@v42
         with:
           files_yaml: |
+            global:
+              - '**'
             staging_area:
               - src/PackageRegistryServive/StagingArea/**
             test:
@@ -56,11 +58,12 @@ jobs:
               - src/AVPRClient/**
             index:
               - src/AVPRIndex/**
+
       - name: list changes
         run: |
           echo "global:"
-          echo "- any: ${{ steps.changed-files-yaml.outputs.any_changed }}"
-          echo "- all: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.global_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.global_all_changed_files }}"
           echo "staging area:"
           echo "- any: ${{ steps.changed-files-yaml.outputs.staging_area_any_changed }}"
           echo "- all: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}"
@@ -76,19 +79,20 @@ jobs:
           echo "index:"
           echo "- any: ${{ steps.changed-files-yaml.outputs.index_any_changed }}"
           echo "- all: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}"
-          echo "dry run: ${{ steps.decide-on-dry-run.outputs.dry_run }}"
+          echo "dry run:"
+          echo "${{ steps.decide-on-dry-run.outputs.dry_run }}"
 
       - name: decide on dry run
         id: decide-on-dry-run
         run: |
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
-            dry_run=${{ inputs.dry-run }}
+            dr=${{ inputs.dry-run }}
           else
-            dry_run=false
+            dr=false
           fi
-          echo "dry_run=$dry_run" >> "$GITHUB_OUTPUT"
+          echo "dry_run=$dr" >> "$GITHUB_OUTPUT"
           echo "$GITHUB_OUTPUT"
-          echo "dry_run=$dry_run"
+          echo "dry_run=$dr"
 
   test_env:
     runs-on: ubuntu-latest
@@ -96,9 +100,23 @@ jobs:
     steps:
       - name: list changes
         run: |
-          echo "staging area: ${{ needs.get_changed_files.outputs.changed_files_staging_area }}"
-          echo "test: ${{ needs.get_changed_files.outputs.changed_files_test }}"
-          echo "api: ${{ needs.get_changed_files.outputs.changed_files_api }}"
-          echo "client: ${{ needs.get_changed_files.outputs.changed_files_client }}"
-          echo "index: ${{ needs.get_changed_files.outputs.changed_files_index }}"
-          echo "dry run: ${{ needs.get_changed_files.outputs.is_dry_run }}"
+          echo "global:"
+          echo "- any: ${{ needs.setup.outputs.global_any_changed }}"
+          echo "- all: ${{ needs.setup.outputs.global_all_changed_files }}"
+          echo "staging area:"
+          echo "- any: ${{ needs.setup.outputs.staging_area_any_changed }}"
+          echo "- all: ${{ needs.setup.outputs.staging_area_all_changed_files }}"
+          echo "tests:"
+          echo "- any: ${{ needs.setup.outputs.tests_any_changed }}"
+          echo "- all: ${{ needs.setup.outputs.tests_all_changed_files }}"
+          echo "api:"
+          echo "- any: ${{ needs.setup.outputs.api_any_changed }}"
+          echo "- all: ${{ needs.setup.outputs.api_all_changed_files }}"
+          echo "client
+          echo "- any: ${{ needs.setup.outputs.client_any_changed }}"
+          echo "- all: ${{ needs.setup.outputs.client_all_changed_files }}"
+          echo "index:"
+          echo "- any: ${{ needs.setup.outputs.index_any_changed }}"
+          echo "- all: ${{ needs.setup.outputs.index_all_changed_files }}"
+          echo "dry run: ${{ needs.setup.outputs.is_dry_run }}"
+
