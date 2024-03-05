@@ -90,5 +90,54 @@ namespace AVPRClient
                 };
             }
         }
+
+        public static AVPRIndex.Domain.Author [] AsIndexType (
+            this ICollection<Author> authors
+        )
+        {
+            return authors
+                .Select(author =>
+                    new AVPRIndex.Domain.Author
+                    {
+                        FullName = author.FullName,
+                        Email = author.Email,
+                        Affiliation = author.Affiliation,
+                        AffiliationLink = author.AffiliationLink
+                    })
+                .ToArray();
+        }
+
+        public static AVPRIndex.Domain.OntologyAnnotation[] AsIndexType(
+            this ICollection<OntologyAnnotation> ontologyAnnotations
+        )
+        {
+            return ontologyAnnotations
+                .Select(tag =>
+                    new AVPRIndex.Domain.OntologyAnnotation
+                    {
+                        Name = tag.Name,
+                        TermSourceREF = tag.TermSourceREF,
+                        TermAccessionNumber = tag.TermAccessionNumber
+                    })
+                .ToArray();
+        }
+
+        public static AVPRIndex.Domain.ValidationPackageMetadata toValidationPackageMetadata(
+            this AVPRClient.ValidationPackage validationPackage
+        )
+        {
+            return Domain.ValidationPackageMetadata.create(
+                validationPackage.Name,
+                validationPackage.Summary,
+                validationPackage.Description,
+                validationPackage.MajorVersion,
+                validationPackage.MinorVersion,
+                validationPackage.PatchVersion,
+                Microsoft.FSharp.Core.FSharpOption<bool>.None,
+                validationPackage.Authors.AsIndexType(),
+                validationPackage.Tags.AsIndexType(),
+                validationPackage.ReleaseNotes
+            );
+        }
     }
 }
