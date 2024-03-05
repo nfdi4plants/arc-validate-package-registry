@@ -50,11 +50,7 @@ jobs:
           else
             dry_run=false
           fi
-          if [[ $dry_run == true ]]; then
-            echo "DRYRUN=--dry-run" >> $GITHUB_ENV
-          else
-            :
-          fi
+          echo "dry_run=$dry_run" >> "$GITHUB_OUTPUT"
 
   test_env:
     runs-on: ubuntu-latest
