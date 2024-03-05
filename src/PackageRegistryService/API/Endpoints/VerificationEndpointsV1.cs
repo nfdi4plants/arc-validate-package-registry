@@ -14,7 +14,7 @@ namespace PackageRegistryService.API.Endpoints
             group.MapPost("/hashes", VerificationHandlers.CreateContentHash)
                 .WithOpenApi()
                 .WithName("CreatePackageContentHash")
-                .AddEndpointFilter<APIKeyEndpointFilter>(); // creating hashes via post requests requires an API key
+                .AddEndpointFilter<APIKeyEndpointFilter>(); // creating hashes via post requests requires an API key!
 
             return group.WithTags("Content Verification");
         }

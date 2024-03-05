@@ -4,7 +4,7 @@ on:
   push:
     branches: ['main']
     paths:
-      - 'src/PackageRegistryService'
+      - 'src/PackageRegistryService/**'
       - '!src/PackageRegistryService/Data/**'
       - '!src/PackageRegistryService/StagingArea/**'
 
