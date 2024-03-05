@@ -67,7 +67,7 @@ jobs:
           else
             dr=false
           fi
-          echo "dry_run=$dr" >> "$GITHUB_OUTPUT"
+          echo "dry_run=$dr" >> $GITHUB_OUTPUT
           echo "$GITHUB_OUTPUT"
           echo "dry_run=$dr"
 
