@@ -90,5 +90,21 @@ namespace AVPRClient
                 };
             }
         }
+
+        public static AVPRIndex.Domain.Author [] toAuthors (
+            this AVPRClient.ValidationPackage validationPackage
+        )
+        {
+            return validationPackage.Authors
+                .Select(author =>
+                    new AVPRIndex.Domain.Author
+                    {
+                        FullName = author.FullName,
+                        Email = author.Email,
+                        Affiliation = author.Affiliation,
+                        AffiliationLink = author.AffiliationLink
+                    })
+                .ToArray();
+        }
     }
 }
