@@ -92,10 +92,10 @@ namespace AVPRClient
         }
 
         public static AVPRIndex.Domain.Author [] GetAuthors (
-            this AVPRClient.ValidationPackage validationPackage
+            this ICollection<Author> authors
         )
         {
-            return validationPackage.Authors
+            return authors
                 .Select(author =>
                     new AVPRIndex.Domain.Author
                     {
@@ -108,10 +108,10 @@ namespace AVPRClient
         }
 
         public static AVPRIndex.Domain.OntologyAnnotation[] GetOntologyAnnotations(
-            this AVPRClient.ValidationPackage validationPackage
+            this ICollection<OntologyAnnotation> ontologyAnnotations
         )
         {
-            return validationPackage.Tags
+            return ontologyAnnotations
                 .Select(tag =>
                     new AVPRIndex.Domain.OntologyAnnotation
                     {
@@ -134,8 +134,8 @@ namespace AVPRClient
                 validationPackage.MinorVersion,
                 validationPackage.PatchVersion,
                 Microsoft.FSharp.Core.FSharpOption<bool>.None,
-                validationPackage.GetAuthors(),
-                validationPackage.GetOntologyAnnotations(),
+                validationPackage.Authors.GetAuthors(),
+                validationPackage.Tags.GetOntologyAnnotations(),
                 validationPackage.ReleaseNotes
             );
         }
