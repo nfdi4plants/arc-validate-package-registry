@@ -16,7 +16,8 @@ namespace PackageRegistryService.Pages.Components
             DateOnly packageReleaseDate,
             string[] packageTags,
             Author[] packageAuthors,
-            string versionTable
+            string versionTable,
+            int downloads
         )
         {
             return $@"<section>
@@ -25,6 +26,7 @@ namespace PackageRegistryService.Pages.Components
     <p>{PackageTag.RenderAllLinksInline(packageTags)}</p>
     <p><strong>v{packageVersion}</strong> released on {packageReleaseDate}</p>
     <p>by {PackageAuthor.RenderAllLinksInline(packageAuthors.Select(a => a.FullName).ToArray())}</p>
+    <p>{downloads} Downloads</p>
   </hgroup>
   <p style=""display:block"">{packageSummary}</p>
 </section>

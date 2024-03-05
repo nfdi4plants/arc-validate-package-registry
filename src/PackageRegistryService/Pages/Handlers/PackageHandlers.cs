@@ -29,6 +29,7 @@ namespace PackageRegistryService.Pages.Handlers
             }
 
             var package = await database.ValidationPackages.FindAsync(packageName, major, minor, revision);
+            var downloads = await database.Downloads.FindAsync(packageName, major, minor, revision);
 
             if (package == null)
             {
@@ -53,7 +54,8 @@ namespace PackageRegistryService.Pages.Handlers
                     packageDescription: package.Description,
                     packageReleaseNotes: package.ReleaseNotes ?? "",
                     packageAuthors: (package.Authors ?? []).ToArray(),
-                    versionTable: Components.PackageAvailableVersion.RenderVersionTable(packages)
+                    versionTable: Components.PackageAvailableVersion.RenderVersionTable(packages),
+                    downloads: downloads?.Downloads ?? 0
                 )
             );
 
@@ -78,6 +80,8 @@ namespace PackageRegistryService.Pages.Handlers
                 return TypedResults.NotFound();
             }
 
+            var downloads = await database.Downloads.FindAsync(latestPackage.Name, latestPackage.MajorVersion, latestPackage.MinorVersion, latestPackage.PatchVersion);
+
             var page = Layout.Render(
                 activeNavbarItem: "",
                 title: $"Package {packageName} - ARC validation package registry API",
@@ -91,7 +95,8 @@ namespace PackageRegistryService.Pages.Handlers
                     packageDescription: latestPackage.Description,
                     packageReleaseNotes: latestPackage.ReleaseNotes ?? "",
                     packageAuthors: (latestPackage.Authors ?? []).ToArray(),
-                    versionTable: Components.PackageAvailableVersion.RenderVersionTable(packages)
+                    versionTable: Components.PackageAvailableVersion.RenderVersionTable(packages),
+                    downloads: downloads?.Downloads ?? 0
                 )
             );
 

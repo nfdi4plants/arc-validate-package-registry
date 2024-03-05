@@ -2,7 +2,7 @@
 
 namespace PackageRegistryService.Pages.Components
 {
-    public record PackageSummary(string Name, string Summary, string [] Tags, string LatestVersion, DateOnly ReleaseDate)
+    public record PackageSummary(string Name, string Summary, string [] Tags, string LatestVersion, DateOnly ReleaseDate, int TotalDownloads)
     {
         public static string Render(PackageSummary summary)
         {
@@ -12,6 +12,7 @@ namespace PackageRegistryService.Pages.Components
 <td><a href=""/package/{summary.Name}/{summary.LatestVersion}"">{summary.LatestVersion}</a></td>
 <td>{summary.ReleaseDate}</td>
 <td>{string.Join("; ", summary.Tags.Select(PackageTag.RenderLink))}</td>
+<td>{summary.TotalDownloads}</td>
 </tr>";
         }
 
@@ -27,6 +28,7 @@ namespace PackageRegistryService.Pages.Components
 <th scope=""col"">Latest version</th>
 <th scope=""col"">Release date</th>
 <th scope=""col"">Tags</th>
+<th scope=""col"">Total Downloads</th>
 </tr>
 </thead>
 {string.Join(System.Environment.NewLine, summaries.Select(PackageSummary.Render))}

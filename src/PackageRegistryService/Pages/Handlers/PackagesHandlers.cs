@@ -28,19 +28,26 @@ namespace PackageRegistryService.Pages.Handlers
                     .ToList()
                     .Select(group =>
                         {
+                            var downloads =
+                                database.Downloads
+                                .Where(p => p.PackageName == group.Key)
+                                .Sum(d => d.Downloads);
+
                             var latestPackage =
                                 group
                                     .OrderByDescending(p => p.MajorVersion)
                                     .ThenByDescending(p => p.MinorVersion)
                                     .ThenByDescending(p => p.PatchVersion)
                                     .FirstOrDefault();
+
                             return
                             new PackageSummary(
                                 Name: group.Key,
                                 Tags: (latestPackage.Tags ?? []).Select(t => t.Name).ToArray(),
                                 Summary: latestPackage.Summary,
                                 ReleaseDate: latestPackage.ReleaseDate,
-                                LatestVersion: latestPackage.GetSemanticVersionString()
+                                LatestVersion: latestPackage.GetSemanticVersionString(),
+                                TotalDownloads: downloads
                             );
                         }
                     );
