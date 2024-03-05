@@ -49,7 +49,7 @@ jobs:
               - '**'
             staging_area:
               - src/PackageRegistryServive/StagingArea/**
-            test:
+            tests:
               - tests/**
             api:
               - src/PackageRegistryServive/**
@@ -59,7 +59,19 @@ jobs:
             index:
               - src/AVPRIndex/**
 
-      - name: list changes
+      - name: decide on dry run
+        id: decide-on-dry-run
+        run: |
+          if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
+            dr=${{ inputs.dry-run }}
+          else
+            dr=false
+          fi
+          echo "dry_run=$dr" >> "$GITHUB_OUTPUT"
+          echo "$GITHUB_OUTPUT"
+          echo "dry_run=$dr"
+
+      - name: list outputs
         run: |
           echo "global:"
           echo "- any: ${{ steps.changed-files-yaml.outputs.global_any_changed }}"
@@ -82,17 +94,6 @@ jobs:
           echo "dry run:"
           echo "${{ steps.decide-on-dry-run.outputs.dry_run }}"
 
-      - name: decide on dry run
-        id: decide-on-dry-run
-        run: |
-          if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
-            dr=${{ inputs.dry-run }}
-          else
-            dr=false
-          fi
-          echo "dry_run=$dr" >> "$GITHUB_OUTPUT"
-          echo "$GITHUB_OUTPUT"
-          echo "dry_run=$dr"
 
   test_env:
     runs-on: ubuntu-latest
@@ -118,5 +119,6 @@ jobs:
           echo "index:"
           echo "- any: ${{ needs.setup.outputs.index_any_changed }}"
           echo "- all: ${{ needs.setup.outputs.index_all_changed_files }}"
-          echo "dry run: ${{ needs.setup.outputs.is_dry_run }}"
+          echo "dry run:"
+          echo "${{ needs.setup.outputs.dry_run }}"
 

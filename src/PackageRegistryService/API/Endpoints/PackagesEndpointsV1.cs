@@ -2,7 +2,7 @@
 using PackageRegistryService.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using PackageRegistryService.API.Handlers;
-
+ 
 namespace PackageRegistryService.API.Endpoints
 {
     public static class PackagesEndpointsV1

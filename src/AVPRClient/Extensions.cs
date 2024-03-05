@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using AVPRIndex;
 using YamlDotNet.Core.Tokens;
 using static AVPRIndex.Domain;
-
+ 
 namespace AVPRClient
 {
     public static class Extensions
