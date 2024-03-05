@@ -76,6 +76,22 @@ namespace PackageRegistryService.Data
 
                 context.AddRange(hashes);
 
+                var downloads =
+                     index
+                        .Select((i) =>
+                        {
+                            return new PackageDownloads
+                            {
+                                PackageName = i.Metadata.Name,
+                                PackageMajorVersion = i.Metadata.MajorVersion,
+                                PackageMinorVersion = i.Metadata.MinorVersion,
+                                PackagePatchVersion = i.Metadata.PatchVersion,
+                                Downloads = 0
+                            };
+                        });
+
+                context.AddRange(downloads);
+
                 context.SaveChanges();
             }
         }

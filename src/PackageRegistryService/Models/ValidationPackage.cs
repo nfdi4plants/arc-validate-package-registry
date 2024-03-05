@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Security.Cryptography;
 
 
 namespace PackageRegistryService.Models
@@ -14,7 +15,7 @@ namespace PackageRegistryService.Models
     public class ValidationPackage
     {
         /// <summary>
-        /// The name of the validation package. This is the unique identifier for the validation package, and will be used to retrieve the validation package.
+        /// The name of the validation package.
         /// </summary>
         /// <example>MyPackage</example>
         [Key]
@@ -82,6 +83,16 @@ namespace PackageRegistryService.Models
         /// </summary>
         /// <returns>A string containing the package content</returns>
         public string GetPackageScriptContent() => Encoding.UTF8.GetString(Convert.FromBase64String(Convert.ToBase64String(PackageContent)));
-
+        /// <summary>
+        /// Returns the md5 hash of the package content.
+        /// </summary>
+        /// <returns>A string containing the package content</returns>
+        public string GetPackageContentHash()
+        {
+            using (var md5 = MD5.Create())
+            {
+                return Convert.ToHexString(md5.ComputeHash(PackageContent));
+            }
+        }
     }
 }

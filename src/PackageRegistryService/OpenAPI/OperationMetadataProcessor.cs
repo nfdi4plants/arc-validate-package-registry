@@ -49,6 +49,27 @@ namespace PackageRegistryService.OpenAPI
                     { "Summary", "Create a content hash for a given package." },
                     { "Description", "Create a content hash for a given package. Hashes are MD5 hex fingerprints. This Endpoint requires API Key authentication." }
                 }
+            },
+            {
+                "GetAllDownloads", new Dictionary<string, string>
+                {
+                    { "Summary", "Get all download statistics" },
+                    { "Description", "Get all download statistics for all validation packages." }
+                }
+            },
+            {
+                "GetAllDownloadsByName", new Dictionary<string, string>
+                {
+                    { "Summary", "Get download statistics for all versions specific package" },
+                    { "Description", "Get download statistics for all versions specific package" }
+                }
+            },
+            {
+                "GetDownloadsByNameAndVersion", new Dictionary<string, string>
+                {
+                    { "Summary", "Get download statistics for a specific version of a specific package" },
+                    { "Description", "Get download statistics for a specific version of a specific package" }
+                }
             }
         };
 

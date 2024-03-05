@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata;
 
 namespace PackageRegistryService.Models
 {
     [PrimaryKey(nameof(PackageName), nameof(PackageMajorVersion), nameof(PackageMinorVersion), nameof(PackagePatchVersion))]
-    public class PackageContentHash
+    public class PackageDownloads
     {
         /// <summary>
         /// The name of the validation package.
@@ -31,9 +32,9 @@ namespace PackageRegistryService.Models
 
         public required int PackagePatchVersion { get; set; }
         /// <summary>
-        /// MD5 hash hex string of the package content.
+        /// Number of downloads for the package.
         /// </summary>
-        /// <example>ACEA630D76D9AE406994641914A4488E</example>
-        public required string Hash { get; set; }
+        /// <example>420691337</example>
+        public required int Downloads { get; set; }
     }
 }

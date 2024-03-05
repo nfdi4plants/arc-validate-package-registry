@@ -95,6 +95,9 @@ app.MapGroup("/api/v1/packages")
 app.MapGroup("/api/v1/verify")
     .MapVerificationApiV1();
 
+app.MapGroup("/api/v1/statistics")
+    .MapStatisticsApiV1();
+
 app.MapGroup("/")
     .MapPageEndpoints();
 
