@@ -1,0 +1,67 @@
+name: "pipeline"
+
+on:
+  push:
+    branches: ['main']
+
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'dry run mode'
+        required: true
+        default: true
+        type: boolean
+
+jobs:   
+  setup:
+    runs-on: ubuntu-latest
+    outputs: 
+      changed_files_staging_area: ${{ steps.changed-files-yaml.outputs.staging_area }}
+      changed_files_test: ${{ steps.changed-files-yaml.outputs.test }}
+      changed_files_api: ${{ steps.changed-files-yaml.outputs.api }}
+      changed_files_client: ${{ steps.changed-files-yaml.outputs.client }}
+      changed_files_index: ${{ steps.changed-files-yaml.outputs.index }}
+      is_dry_run: ${{ steps.decide-on-dry-run.outputs.dry_run }}
+    steps:
+      - name: Get all relevant file changes
+        id: changed-files-yaml
+        uses: tj-actions/changed-files@v42
+        with:
+          files_yaml: |
+            staging_area:
+              - src/PackageRegistryServive/StagingArea/**
+            test:
+              - tests/**
+            api:
+              - src/PackageRegistryServive/**
+              - '!src/PackageRegistryServive/StagingArea/'
+            client:
+              - src/AVPRClient/**
+            index:
+              - src/AVPRIndex/**
+      - name: decide on dry run
+        id: decide-on-dry-run
+        run: |
+          if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
+            dry_run=${{ inputs.dry-run }}
+          else
+            dry_run=false
+          fi
+          if [[ $dry_run == true ]]; then
+            echo "DRYRUN=--dry-run" >> $GITHUB_ENV
+          else
+            :
+          fi
+
+  test_env:
+    runs-on: ubuntu-latest
+    needs: get_changed_files
+    steps:
+      - name: list changes
+        run: |
+          echo "staging area: ${{ needs.get_changed_files.outputs.changed_files_staging_area }}"
+          echo "test: ${{ needs.get_changed_files.outputs.changed_files_test }}"
+          echo "api: ${{ needs.get_changed_files.outputs.changed_files_api }}"
+          echo "client: ${{ needs.get_changed_files.outputs.changed_files_client }}"
+          echo "index: ${{ needs.get_changed_files.outputs.changed_files_index }}"
+          echo "dry run: ${{ needs.get_changed_files.outputs.is_dry_run }}"
