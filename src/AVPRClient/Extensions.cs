@@ -91,7 +91,7 @@ namespace AVPRClient
             }
         }
 
-        public static AVPRIndex.Domain.Author [] toAuthors (
+        public static AVPRIndex.Domain.Author [] GetAuthors (
             this AVPRClient.ValidationPackage validationPackage
         )
         {
@@ -107,7 +107,7 @@ namespace AVPRClient
                 .ToArray();
         }
 
-        public static AVPRIndex.Domain.OntologyAnnotation[] toOntologyAnnotations(
+        public static AVPRIndex.Domain.OntologyAnnotation[] GetOntologyAnnotations(
             this AVPRClient.ValidationPackage validationPackage
         )
         {
@@ -134,8 +134,8 @@ namespace AVPRClient
                 validationPackage.MinorVersion,
                 validationPackage.PatchVersion,
                 Microsoft.FSharp.Core.FSharpOption<bool>.None,
-                validationPackage.toAuthors(),
-                validationPackage.toOntologyAnnotations(),
+                validationPackage.GetAuthors(),
+                validationPackage.GetOntologyAnnotations(),
                 validationPackage.ReleaseNotes
             );
         }
