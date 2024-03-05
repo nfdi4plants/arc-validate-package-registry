@@ -106,5 +106,20 @@ namespace AVPRClient
                     })
                 .ToArray();
         }
+
+        public static AVPRIndex.Domain.OntologyAnnotation[] toOntologyAnnotations(
+            this AVPRClient.ValidationPackage validationPackage
+        )
+        {
+            return validationPackage.Tags
+                .Select(tag =>
+                    new AVPRIndex.Domain.OntologyAnnotation
+                    {
+                        Name = tag.Name,
+                        TermSourceREF = tag.TermSourceREF,
+                        TermAccessionNumber = tag.TermAccessionNumber
+                    })
+                .ToArray();
+        }
     }
 }
