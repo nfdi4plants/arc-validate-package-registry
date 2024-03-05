@@ -1,3 +1,8 @@
+## v0.0.4
+
+- Add more interop extensions between AVPRClient and AVPRIndex
+- Regen Client with new statistics API Endpoints
+
 ## v0.0.3
 
 - Add extensions that connect AVPRIndex and AVPRClient types

@@ -53,7 +53,8 @@ jobs:
               - tests/**
             api:
               - src/PackageRegistryServive/**
-              - '!src/PackageRegistryServive/StagingArea/'
+              - '!src/PackageRegistryServive/StagingArea/**'
+              - '!src/PackageRegistryServive/Data/**'
             client:
               - src/AVPRClient/**
             index:
