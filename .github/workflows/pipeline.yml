@@ -120,5 +120,5 @@ jobs:
           echo "- any: ${{ needs.setup.outputs.index_any_changed }}"
           echo "- all: ${{ needs.setup.outputs.index_all_changed_files }}"
           echo "dry run:"
-          echo "${{ needs.setup.outputs.dry_run }}"
+          echo "${{ needs.setup.outputs.is_dry_run }}"
 
