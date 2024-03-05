@@ -121,5 +121,23 @@ namespace AVPRClient
                     })
                 .ToArray();
         }
+
+        public static AVPRIndex.Domain.ValidationPackageMetadata toValidationPackageMetadata(
+            this AVPRClient.ValidationPackage validationPackage
+        )
+        {
+            return Domain.ValidationPackageMetadata.create(
+                validationPackage.Name,
+                validationPackage.Summary,
+                validationPackage.Description,
+                validationPackage.MajorVersion,
+                validationPackage.MinorVersion,
+                validationPackage.PatchVersion,
+                Microsoft.FSharp.Core.FSharpOption<bool>.None,
+                validationPackage.toAuthors(),
+                validationPackage.toOntologyAnnotations(),
+                validationPackage.ReleaseNotes
+            );
+        }
     }
 }
