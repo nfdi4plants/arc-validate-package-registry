@@ -16,12 +16,25 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs: 
-      full_changes: ${{ steps.changed-files-yaml.outputs }}
-      changed_files_staging_area: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}
-      changed_files_test: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}
-      changed_files_api: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}
-      changed_files_client: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}
-      changed_files_index: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}
+
+      any_changed: ${{ steps.changed-files-yaml.outputs.any_changed }}
+      all_changed_files: ${{ steps.changed-files-yaml.outputs.all_changed_files }}
+
+      staging_area_all_changed_files: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}
+      staging_area_any_changed: ${{ steps.changed-files-yaml.outputs.staging_area_any_changed }}
+
+      tests_all_changed_files: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}
+      tests_any_changed: ${{ steps.changed-files-yaml.outputs.tests_any_changed }}
+
+      api_all_changed_files: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}
+      api_any_changed: ${{ steps.changed-files-yaml.outputs.api_any_changed }}
+
+      client_all_changed_files: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}
+      client_any_changed: ${{ steps.changed-files-yaml.outputs.client_any_changed }}
+
+      index_all_changed_files: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}
+      index_any_changed: ${{ steps.changed-files-yaml.outputs.index_any_changed }}
+
       is_dry_run: ${{ steps.decide-on-dry-run.outputs.dry_run }}
     steps:
       - uses: actions/checkout@v4
@@ -45,12 +58,26 @@ jobs:
               - src/AVPRIndex/**
       - name: list changes
         run: |
-          echo "full changes: ${{ steps.changed-files-yaml.outputs }}"
-          echo "staging area: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}"
-          echo "tests: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}"
-          echo "api: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}"
-          echo "client: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}"
-          echo "index: ${{ steps.changed-files-yaml.outputs.index }}"
+          echo "global:"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}"
+          echo "staging area:"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.staging_area_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}"
+          echo "tests:"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.tests_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}"
+          echo "api:"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.api_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}"
+          echo "client:"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.client_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}"
+          echo "index:"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.index_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}"
+          echo "dry run: ${{ steps.decide-on-dry-run.outputs.dry_run }}"
+
       - name: decide on dry run
         id: decide-on-dry-run
         run: |
@@ -60,6 +87,7 @@ jobs:
             dry_run=false
           fi
           echo "dry_run=$dry_run" >> "$GITHUB_OUTPUT"
+          echo "$GITHUB_OUTPUT"
           echo "dry_run=$dry_run"
 
   test_env:
