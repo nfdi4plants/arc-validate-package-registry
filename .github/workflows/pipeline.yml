@@ -16,11 +16,11 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs: 
-      changed_files_staging_area: ${{ steps.changed-files-yaml.outputs.staging_area }}
-      changed_files_test: ${{ steps.changed-files-yaml.outputs.test }}
-      changed_files_api: ${{ steps.changed-files-yaml.outputs.api }}
-      changed_files_client: ${{ steps.changed-files-yaml.outputs.client }}
-      changed_files_index: ${{ steps.changed-files-yaml.outputs.index }}
+      changed_files_staging_area: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}
+      changed_files_test: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}
+      changed_files_api: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}
+      changed_files_client: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}
+      changed_files_index: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}
       is_dry_run: ${{ steps.decide-on-dry-run.outputs.dry_run }}
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +42,13 @@ jobs:
               - src/AVPRClient/**
             index:
               - src/AVPRIndex/**
+      - name: list changes
+        run: |
+          echo "staging area: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}"
+          echo "tests: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}"
+          echo "api: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}"
+          echo "client: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}"
+          echo "index: ${{ steps.changed-files-yaml.outputs.index }}"
       - name: decide on dry run
         id: decide-on-dry-run
         run: |
@@ -51,6 +58,7 @@ jobs:
             dry_run=false
           fi
           echo "dry_run=$dry_run" >> "$GITHUB_OUTPUT"
+          echo "dry_run=$dry_run"
 
   test_env:
     runs-on: ubuntu-latest
