@@ -113,7 +113,7 @@ jobs:
           echo "api:"
           echo "- any: ${{ needs.setup.outputs.api_any_changed }}"
           echo "- all: ${{ needs.setup.outputs.api_all_changed_files }}"
-          echo "client
+          echo "client"
           echo "- any: ${{ needs.setup.outputs.client_any_changed }}"
           echo "- all: ${{ needs.setup.outputs.client_all_changed_files }}"
           echo "index:"
