@@ -23,6 +23,9 @@ jobs:
       changed_files_index: ${{ steps.changed-files-yaml.outputs.index }}
       is_dry_run: ${{ steps.decide-on-dry-run.outputs.dry_run }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # OR "2" -> To retrieve the preceding commit.
       - name: Get all relevant file changes
         id: changed-files-yaml
         uses: tj-actions/changed-files@v42
