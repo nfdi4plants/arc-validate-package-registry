@@ -1,6 +1,7 @@
 (*
 ---
 Name: pride
+Summary: Validates if the ARC contains the necessary metadata to be publishable via PRIDE.
 Description: |
     Validates if the ARC contains the necessary metadata to be publishable via PRIDE.
     The following metadata is required:
