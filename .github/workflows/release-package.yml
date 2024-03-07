@@ -23,6 +23,6 @@ jobs:
       with:
         dotnet-version: 8.x.x
     - name: pack
-      run: dotnet pack ${{ github.event.inputs.project }} --configuration Release -o ./pkg
+      run: dotnet pack ${{ inputs.project }} --configuration Release -o ./pkg
     - name: push
       run: dotnet nuget push ./pkg/*.nupkg --api-key ${{ secrets.nuget_key }} --source https://api.nuget.org/v3/index.json
