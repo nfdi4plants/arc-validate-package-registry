@@ -108,7 +108,7 @@ jobs:
           echo "index:"
           echo "- any: ${{ steps.changed-files-yaml.outputs.index_any_changed }}"
           echo "- all: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}"
-          echo: "computed outputs:"
+          echo "computed outputs:"
           echo "dry run: ${{ steps.decide-on-dry-run.outputs.dry_run }}"
           echo "trigger build: ${{steps.set-triggers.outputs.trigger-build}}"
           echo "trigger release index: ${{steps.set-triggers.outputs.trigger-release-index}}"
