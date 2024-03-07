@@ -20,9 +20,9 @@ Authors:
     Affiliation: RPTU Kaiserslautern
     AffiliationLink: http://rptu.de/startseite
 Tags:
-  - validation
-  - pride
-  - proteomics
+  - name: validation
+  - name: pride
+  - name: proteomics
 ReleaseNotes: "
   - initial release
   - metadata validation added:
