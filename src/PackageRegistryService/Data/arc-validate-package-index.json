@@ -36,6 +36,24 @@
     }
   },
   {
+    "RepoPath": "src/PackageRegistryService/StagingArea/temp/temp@1.0.0.fsx",
+    "FileName": "temp@1.0.0.fsx",
+    "LastUpdated": "2024-03-07T16:04:01+01:00",
+    "ContentHash": "D41D8CD98F00B204E9800998ECF8427E",
+    "Metadata": {
+      "Name": "",
+      "Summary": "",
+      "Description": "",
+      "MajorVersion": 0,
+      "MinorVersion": 0,
+      "PatchVersion": 0,
+      "Publish": false,
+      "Authors": [],
+      "Tags": [],
+      "ReleaseNotes": ""
+    }
+  },
+  {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.0.fsx",
     "FileName": "test@1.0.0.fsx",
     "LastUpdated": "2024-02-29T17:07:34+01:00",
@@ -81,53 +99,6 @@
       "Summary": "this package is here for testing purposes only.",
       "Description": "this package is here for testing purposes only.",
       "MajorVersion": 2,
-      "MinorVersion": 0,
-      "PatchVersion": 0,
-      "Publish": true,
-      "Authors": [
-        {
-          "FullName": "John Doe",
-          "Email": "j@d.com",
-          "Affiliation": "University of Nowhere",
-          "AffiliationLink": "https://nowhere.edu"
-        },
-        {
-          "FullName": "Jane Doe",
-          "Email": "jj@d.com",
-          "Affiliation": "University of Somewhere",
-          "AffiliationLink": "https://somewhere.edu"
-        }
-      ],
-      "Tags": [
-        {
-          "Name": "validation",
-          "TermSourceREF": "",
-          "TermAccessionNumber": ""
-        },
-        {
-          "Name": "my-package",
-          "TermSourceREF": "",
-          "TermAccessionNumber": ""
-        },
-        {
-          "Name": "thing",
-          "TermSourceREF": "",
-          "TermAccessionNumber": ""
-        }
-      ],
-      "ReleaseNotes": "add authors and tags for further testing"
-    }
-  },
-  {
-    "RepoPath": "src/PackageRegistryService/StagingArea/test/test@2.0.1.fsx",
-    "FileName": "test@2.0.1.fsx",
-    "LastUpdated": "2024-03-07T16:02:19+01:00",
-    "ContentHash": "618DC951075C63B2FDCE12450A584190",
-    "Metadata": {
-      "Name": "test",
-      "Summary": "this package is here for testing purposes only.",
-      "Description": "this package is here for testing purposes only.",
-      "MajorVersion": 3,
       "MinorVersion": 0,
       "PatchVersion": 0,
       "Publish": true,
