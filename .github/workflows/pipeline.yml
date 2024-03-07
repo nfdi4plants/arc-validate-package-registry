@@ -12,6 +12,9 @@ on:
         default: true
         type: boolean
 
+  pull_request:
+    branches: ['main']
+
 jobs:   
   setup:
     runs-on: ubuntu-latest
@@ -40,9 +43,11 @@ jobs:
       is_dry_run: ${{ steps.decide-on-dry-run.outputs.dry_run }}
 
       # trigger other jobs
-      trigger-build: ${{steps.set-triggers.outputs.trigger-build}}
+      trigger-build-and-test-projects: ${{steps.set-triggers.outputs.trigger-build-and-test-projects}}
       trigger-release-index: ${{steps.set-triggers.outputs.trigger-release-index}}
       trigger-release-client: ${{steps.set-triggers.outputs.trigger-release-client}}
+
+      trigger-test-staging-area: ${{steps.set-triggers.outputs.trigger-test-staging-area}}
 
     steps:
       - uses: actions/checkout@v4
@@ -83,9 +88,10 @@ jobs:
       - name: set triggers
         id: set-triggers
         run: |
-          echo "trigger-build=${{steps.changed-files-yaml.outputs.tests_any_changed == 'true' || steps.changed-files-yaml.outputs.api_any_changed  == 'true' || steps.changed-files-yaml.outputs.client_any_changed == 'true'  || steps.changed-files-yaml.outputs.index_any_changed == 'true'}}" >> $GITHUB_OUTPUT
-          echo "trigger-release-index=${{steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_changed_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
-          echo "trigger-release-client=${{steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_changed_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "trigger-build-and-test-projects=${{ steps.changed-files-yaml.outputs.tests_any_changed == 'true' || steps.changed-files-yaml.outputs.api_any_changed  == 'true' || steps.changed-files-yaml.outputs.client_any_changed == 'true'  || steps.changed-files-yaml.outputs.index_any_changed == 'true'}}" >> $GITHUB_OUTPUT
+          echo "trigger-release-index=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_changed_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "trigger-release-client=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_changed_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "trigger-test-staging-area=${{steps.changed-files-yaml.outputs.staging_area_any_changed == 'true'}}" >> $GITHUB_OUTPUT
           echo "$GITHUB_OUTPUT"
 
       - name: list outputs
@@ -110,25 +116,33 @@ jobs:
           echo "- all: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}"
           echo "computed outputs:"
           echo "dry run: ${{ steps.decide-on-dry-run.outputs.dry_run }}"
-          echo "trigger build: ${{steps.set-triggers.outputs.trigger-build}}"
-          echo "trigger release index: ${{steps.set-triggers.outputs.trigger-release-index}}"
-          echo "trigger release client: ${{steps.set-triggers.outputs.trigger-release-client}}"
+          echo "trigger build-and-test-projects: ${{steps.set-triggers.outputs.trigger-build}}"
+          echo "trigger release-index: ${{steps.set-triggers.outputs.trigger-release-index}}"
+          echo "trigger release-client: ${{steps.set-triggers.outputs.trigger-release-client}}"
+          echo "trigger release-index: ${{steps.set-triggers.outputs.trigger-release-index}}"
+          echo "trigger test-staging-area: ${{steps.set-triggers.outputs.trigger-test-staging-area}}"
 
       - name: list triggered jobs
         run: |
           echo "this should trigger the following jobs:"
-          echo "build-and-test: ${{(steps.changed-files-yaml.outputs.tests_any_changed == 'true' || steps.changed-files-yaml.outputs.api_any_changed  == 'true' || steps.changed-files-yaml.outputs.client_any_changed == 'true'  || steps.changed-files-yaml.outputs.index_any_changed == 'true') && steps.decide-on-dry-run.outputs.dry_run == 'false'}}"
-          echo "release-index: ${{steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_changed_files, 'RELEASE_NOTES.md')}}"
-          echo "release-client: ${{steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_changed_files, 'RELEASE_NOTES.md')}}"
+          echo "build-and-test-projects: ${{steps.set-triggers.outputs.trigger-build-and-test-projects}}"
+          echo "release-index: ${{steps.set-triggers.outputs.trigger-release-index}}"
+          echo "release-client: ${{steps.set-triggers.outputs.trigger-release-client}}"
+          echo "test-staging-area: ${{steps.set-triggers.outputs.trigger-test-staging-area}}"
 
-  build-and-test:
+  build-and-test-projects:
+    name: "Build and test projects"
     needs: setup
     # https://github.com/actions/runner/issues/1173
-    if: needs.setup.outputs.trigger-build == 'true'
-    uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test.yml@main
+    if: needs.setup.outputs.trigger-build-and-test-projects == 'true'
+    uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test-solution.yml@main
+    with:
+      solution: ./arc-validate-package-registry.sln
+      configuration: Release
 
-  release-index:
-    needs: [setup, build-and-test]
+  release-index-package:
+    name: "Release index package"
+    needs: [setup, build-and-test-projects]
     if: needs.setup.outputs.trigger-release-index == 'true'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
     with:
@@ -136,8 +150,9 @@ jobs:
     secrets:
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
-  release-client:
-    needs: [setup, build-and-test]
+  release-client-package:
+    name: "Release client package"
+    needs: [setup, build-and-test-projects]
     if: needs.setup.outputs.trigger-release-client == 'true'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
     with:
@@ -145,4 +160,14 @@ jobs:
     secrets:
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
+  test-staging-area:
+    name: "Test staging area"
+    needs: setup
+    # https://github.com/actions/runner/issues/1173
+    if: needs.setup.outputs.trigger-test-staging-area == 'true'
+    uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test-solution.yml@main
+    with:
+      solution: ./PackageStagingArea.sln
+      configuration: Release
+    
   
