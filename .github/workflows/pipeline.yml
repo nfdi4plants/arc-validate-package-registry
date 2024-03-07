@@ -21,23 +21,23 @@ jobs:
     outputs: 
 
       # changed files output, might be relevant for other jobs
-      global_any_changed: ${{ steps.changed-files-yaml.outputs.global_any_changed }}
-      global_all_changed_files: ${{ steps.changed-files-yaml.outputs.global_all_changed_files }}
+      global_any_modified: ${{ steps.changed-files-yaml.outputs.global_any_modified }}
+      global_all_modified_files: ${{ steps.changed-files-yaml.outputs.global_all_modified_files }}
 
-      staging_area_all_changed_files: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}
-      staging_area_any_changed: ${{ steps.changed-files-yaml.outputs.staging_area_any_changed }}
+      staging_area_all_modified_files: ${{ steps.changed-files-yaml.outputs.staging_area_all_modified_files }}
+      staging_area_any_modified: ${{ steps.changed-files-yaml.outputs.staging_area_any_modified }}
 
-      tests_all_changed_files: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}
-      tests_any_changed: ${{ steps.changed-files-yaml.outputs.tests_any_changed }}
+      tests_all_modified_files: ${{ steps.changed-files-yaml.outputs.tests_all_modified_files }}
+      tests_any_modified: ${{ steps.changed-files-yaml.outputs.tests_any_modified }}
 
-      api_all_changed_files: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}
-      api_any_changed: ${{ steps.changed-files-yaml.outputs.api_any_changed }}
+      api_all_modified_files: ${{ steps.changed-files-yaml.outputs.api_all_modified_files }}
+      api_any_modified: ${{ steps.changed-files-yaml.outputs.api_any_modified }}
 
-      client_all_changed_files: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}
-      client_any_changed: ${{ steps.changed-files-yaml.outputs.client_any_changed }}
+      client_all_modified_files: ${{ steps.changed-files-yaml.outputs.client_all_modified_files }}
+      client_any_modified: ${{ steps.changed-files-yaml.outputs.client_any_modified }}
 
-      index_all_changed_files: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}
-      index_any_changed: ${{ steps.changed-files-yaml.outputs.index_any_changed }}
+      index_all_modified_files: ${{ steps.changed-files-yaml.outputs.index_all_modified_files }}
+      index_any_modified: ${{ steps.changed-files-yaml.outputs.index_any_modified }}
 
       # dry run so we can do manual diagnostics
       is_dry_run: ${{ steps.decide-on-dry-run.outputs.dry_run }}
@@ -61,7 +61,7 @@ jobs:
             global:
               - '**'
             staging_area:
-              - src/PackageRegistryServive/StagingArea/**
+              - src/PackageRegistryService/StagingArea/**
             tests:
               - tests/**
             api:
@@ -88,32 +88,32 @@ jobs:
       - name: set triggers
         id: set-triggers
         run: |
-          echo "trigger-build-and-test-projects=${{ steps.changed-files-yaml.outputs.tests_any_changed == 'true' || steps.changed-files-yaml.outputs.api_any_changed  == 'true' || steps.changed-files-yaml.outputs.client_any_changed == 'true'  || steps.changed-files-yaml.outputs.index_any_changed == 'true'}}" >> $GITHUB_OUTPUT
-          echo "trigger-release-index=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_changed_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
-          echo "trigger-release-client=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_changed_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
-          echo "trigger-test-staging-area=${{steps.changed-files-yaml.outputs.staging_area_any_changed == 'true'}}" >> $GITHUB_OUTPUT
+          echo "trigger-build-and-test-projects=${{ steps.changed-files-yaml.outputs.tests_any_modified == 'true' || steps.changed-files-yaml.outputs.api_any_modified  == 'true' || steps.changed-files-yaml.outputs.client_any_modified == 'true'  || steps.changed-files-yaml.outputs.index_any_modified == 'true'}}" >> $GITHUB_OUTPUT
+          echo "trigger-release-index=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_modified_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "trigger-release-client=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_modified_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "trigger-test-staging-area=${{steps.changed-files-yaml.outputs.staging_area_any_modified == 'true' && steps.decide-on-dry-run.outputs.dry_run == 'false'}}" >> $GITHUB_OUTPUT
           echo "$GITHUB_OUTPUT"
 
       - name: list outputs
         run: |
           echo "global:"
-          echo "- any: ${{ steps.changed-files-yaml.outputs.global_any_changed }}"
-          echo "- all: ${{ steps.changed-files-yaml.outputs.global_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.global_any_modified }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.global_all_modified_files }}"
           echo "staging area:"
-          echo "- any: ${{ steps.changed-files-yaml.outputs.staging_area_any_changed }}"
-          echo "- all: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.staging_area_any_modified }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.staging_area_all_modified_files }}"
           echo "tests:"
-          echo "- any: ${{ steps.changed-files-yaml.outputs.tests_any_changed }}"
-          echo "- all: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.tests_any_modified }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.tests_all_modified_files }}"
           echo "api:"
-          echo "- any: ${{ steps.changed-files-yaml.outputs.api_any_changed }}"
-          echo "- all: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.api_any_modified }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.api_all_modified_files }}"
           echo "client:"
-          echo "- any: ${{ steps.changed-files-yaml.outputs.client_any_changed }}"
-          echo "- all: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.client_any_modified }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.client_all_modified_files }}"
           echo "index:"
-          echo "- any: ${{ steps.changed-files-yaml.outputs.index_any_changed }}"
-          echo "- all: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.index_any_modified }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.index_all_modified_files }}"
           echo "computed outputs:"
           echo "dry run: ${{ steps.decide-on-dry-run.outputs.dry_run }}"
           echo "trigger build-and-test-projects: ${{steps.set-triggers.outputs.trigger-build}}"
