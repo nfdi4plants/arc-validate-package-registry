@@ -132,7 +132,7 @@ jobs:
     if: needs.setup.outputs.trigger-release-index == 'true'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
     with:
-      project: src/AVPRIndex/AVPRIndex.csproj
+      project: src/AVPRIndex/AVPRIndex.fsproj
     secrets:
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
