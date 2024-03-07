@@ -24,8 +24,8 @@ jobs:
       global_any_modified: ${{ steps.changed-files-yaml.outputs.global_any_modified }}
       global_all_modified_files: ${{ steps.changed-files-yaml.outputs.global_all_modified_files }}
 
-      staging_area_all_modified_files: ${{ steps.changed-files-yaml.outputs.staging_area_all_modified_files }}
-      staging_area_any_modified: ${{ steps.changed-files-yaml.outputs.staging_area_any_modified }}
+      staging_area_all_modified_files: ${{ steps.changed-files-yaml.outputs.packages_all_modified_files }}
+      staging_area_any_modified: ${{ steps.changed-files-yaml.outputs.packages_any_modified }}
 
       tests_all_modified_files: ${{ steps.changed-files-yaml.outputs.tests_all_modified_files }}
       tests_any_modified: ${{ steps.changed-files-yaml.outputs.tests_any_modified }}
@@ -60,7 +60,7 @@ jobs:
           files_yaml: |
             global:
               - '**'
-            staging_area:
+            packages:
               - src/PackageRegistryService/StagingArea/**
             tests:
               - tests/**
@@ -91,7 +91,7 @@ jobs:
           echo "trigger-build-and-test-projects=${{ steps.changed-files-yaml.outputs.tests_any_modified == 'true' || steps.changed-files-yaml.outputs.api_any_modified  == 'true' || steps.changed-files-yaml.outputs.client_any_modified == 'true'  || steps.changed-files-yaml.outputs.index_any_modified == 'true'}}" >> $GITHUB_OUTPUT
           echo "trigger-release-index=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_modified_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
           echo "trigger-release-client=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_modified_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
-          echo "trigger-test-staging-area=${{steps.changed-files-yaml.outputs.staging_area_any_modified == 'true' && steps.decide-on-dry-run.outputs.dry_run == 'false'}}" >> $GITHUB_OUTPUT
+          echo "trigger-test-staging-area=${{steps.changed-files-yaml.outputs.packages_any_modified == 'true' && steps.decide-on-dry-run.outputs.dry_run == 'false'}}" >> $GITHUB_OUTPUT
           echo "$GITHUB_OUTPUT"
 
       - name: list outputs
@@ -100,8 +100,8 @@ jobs:
           echo "- any: ${{ steps.changed-files-yaml.outputs.global_any_modified }}"
           echo "- all: ${{ steps.changed-files-yaml.outputs.global_all_modified_files }}"
           echo "staging area:"
-          echo "- any: ${{ steps.changed-files-yaml.outputs.staging_area_any_modified }}"
-          echo "- all: ${{ steps.changed-files-yaml.outputs.staging_area_all_modified_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.packages_any_modified }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.packages_all_modified_files }}"
           echo "tests:"
           echo "- any: ${{ steps.changed-files-yaml.outputs.tests_any_modified }}"
           echo "- all: ${{ steps.changed-files-yaml.outputs.tests_all_modified_files }}"
