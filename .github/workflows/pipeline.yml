@@ -169,5 +169,8 @@ jobs:
     with:
       solution: ./PackageStagingArea.sln
       configuration: Release
+      windows: true
+      ubuntu: false
+      macos: false
     
   

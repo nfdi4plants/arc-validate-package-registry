@@ -36,24 +36,6 @@
     }
   },
   {
-    "RepoPath": "src/PackageRegistryService/StagingArea/temp/temp@1.0.0.fsx",
-    "FileName": "temp@1.0.0.fsx",
-    "LastUpdated": "2024-03-07T16:04:01+01:00",
-    "ContentHash": "D41D8CD98F00B204E9800998ECF8427E",
-    "Metadata": {
-      "Name": "",
-      "Summary": "",
-      "Description": "",
-      "MajorVersion": 0,
-      "MinorVersion": 0,
-      "PatchVersion": 0,
-      "Publish": false,
-      "Authors": [],
-      "Tags": [],
-      "ReleaseNotes": ""
-    }
-  },
-  {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.0.fsx",
     "FileName": "test@1.0.0.fsx",
     "LastUpdated": "2024-02-29T17:07:34+01:00",
