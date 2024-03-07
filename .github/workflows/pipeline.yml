@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: 
 
+      # changed files output, might be relevant for other jobs
       global_any_changed: ${{ steps.changed-files-yaml.outputs.global_any_changed }}
       global_all_changed_files: ${{ steps.changed-files-yaml.outputs.global_all_changed_files }}
 
@@ -35,7 +36,14 @@ jobs:
       index_all_changed_files: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}
       index_any_changed: ${{ steps.changed-files-yaml.outputs.index_any_changed }}
 
+      # dry run so we can do manual diagnostics
       is_dry_run: ${{ steps.decide-on-dry-run.outputs.dry_run }}
+
+      # trigger other jobs
+      trigger-build: ${{steps.set-triggers.outputs.trigger-build}}
+      trigger-release-index: ${{steps.set-triggers.outputs.trigger-release-index}}
+      trigger-release-client: ${{steps.set-triggers.outputs.trigger-release-client}}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -72,6 +80,14 @@ jobs:
           echo "$GITHUB_OUTPUT"
           echo "dry_run=$dr"
 
+      - name: set triggers
+        id: set-triggers
+        run: |
+          echo "trigger-build=${{steps.changed-files-yaml.outputs.tests_any_changed == 'true' || steps.changed-files-yaml.outputs.api_any_changed  == 'true' || steps.changed-files-yaml.outputs.client_any_changed == 'true'  || steps.changed-files-yaml.outputs.index_any_changed == 'true'}}" >> $GITHUB_OUTPUT
+          echo "trigger-release-index=${{steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_changed_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "trigger-release-client=${{steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_changed_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "$GITHUB_OUTPUT"
+
       - name: list outputs
         run: |
           echo "global:"
@@ -92,8 +108,11 @@ jobs:
           echo "index:"
           echo "- any: ${{ steps.changed-files-yaml.outputs.index_any_changed }}"
           echo "- all: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}"
-          echo "dry run:"
-          echo "${{ steps.decide-on-dry-run.outputs.dry_run }}"
+          echo: "computed outputs:"
+          echo "dry run: ${{ steps.decide-on-dry-run.outputs.dry_run }}"
+          echo "trigger build: ${{steps.set-triggers.outputs.trigger-build}}"
+          echo "trigger release index: ${{steps.set-triggers.outputs.trigger-release-index}}"
+          echo "trigger release client: ${{steps.set-triggers.outputs.trigger-release-client}}"
 
       - name: list triggered jobs
         run: |
@@ -105,12 +124,12 @@ jobs:
   build-and-test:
     needs: setup
     # https://github.com/actions/runner/issues/1173
-    if: (needs.setup.outputs.tests_any_changed == 'true' || needs.setup.outputs.api_any_changed  == 'true' || needs.setup.outputs.client_any_changed == 'true'  || needs.setup.outputs.index_any_changed == 'true') && needs.setup.outputs.is_dry_run == 'false'
+    if: needs.setup.outputs.trigger-build == 'true'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test.yml@main
 
   release-index:
     needs: [setup, build-and-test]
-    if: needs.setup.outputs.is_dry_run == 'false' && contains(needs.setup.outputs.index_all_changed_files, 'RELEASE_NOTES.md')
+    if: needs.setup.outputs.trigger-release-index == 'true'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
     with:
       project: src/AVPRIndex/AVPRIndex.csproj
@@ -119,9 +138,11 @@ jobs:
 
   release-client:
     needs: [setup, build-and-test]
-    if: needs.setup.outputs.is_dry_run == 'false' && contains(needs.setup.outputs.client_all_changed_files, 'RELEASE_NOTES.md')
+    if: needs.setup.outputs.trigger-release-client == 'true'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
     with:
       project: src/AVPRClient/AVPRClient.csproj
     secrets:
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
+
+  
