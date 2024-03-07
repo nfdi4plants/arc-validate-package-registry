@@ -72,32 +72,28 @@ jobs:
           echo "$GITHUB_OUTPUT"
           echo "dry_run=$dr"
 
-  test_env:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: list changes
+      - name: list outputs
         run: |
           echo "global:"
-          echo "- any: ${{ needs.setup.outputs.global_any_changed }}"
-          echo "- all: ${{ needs.setup.outputs.global_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.global_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.global_all_changed_files }}"
           echo "staging area:"
-          echo "- any: ${{ needs.setup.outputs.staging_area_any_changed }}"
-          echo "- all: ${{ needs.setup.outputs.staging_area_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.staging_area_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.staging_area_all_changed_files }}"
           echo "tests:"
-          echo "- any: ${{ needs.setup.outputs.tests_any_changed }}"
-          echo "- all: ${{ needs.setup.outputs.tests_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.tests_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.tests_all_changed_files }}"
           echo "api:"
-          echo "- any: ${{ needs.setup.outputs.api_any_changed }}"
-          echo "- all: ${{ needs.setup.outputs.api_all_changed_files }}"
-          echo "client"
-          echo "- any: ${{ needs.setup.outputs.client_any_changed }}"
-          echo "- all: ${{ needs.setup.outputs.client_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.api_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.api_all_changed_files }}"
+          echo "client:"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.client_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.client_all_changed_files }}"
           echo "index:"
-          echo "- any: ${{ needs.setup.outputs.index_any_changed }}"
-          echo "- all: ${{ needs.setup.outputs.index_all_changed_files }}"
+          echo "- any: ${{ steps.changed-files-yaml.outputs.index_any_changed }}"
+          echo "- all: ${{ steps.changed-files-yaml.outputs.index_all_changed_files }}"
           echo "dry run:"
-          echo "${{ needs.setup.outputs.is_dry_run }}"
+          echo "${{ steps.decide-on-dry-run.outputs.dry_run }}"
 
   build:
     needs: setup
