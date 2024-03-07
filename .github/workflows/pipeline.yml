@@ -106,7 +106,7 @@ jobs:
     if: needs.setup.outputs.is_dry_run == 'false' && contains(needs.setup.outputs.index_all_changed_files, 'RELEASE_NOTES.md')
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
     with:
-      package: project
+      project: src/AVPRIndex/AVPRIndex.csproj
     secrets:
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
@@ -115,6 +115,6 @@ jobs:
     if: needs.setup.outputs.is_dry_run == 'false' && contains(needs.setup.outputs.client_all_changed_files, 'RELEASE_NOTES.md')
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
     with:
-      package: client
+      project: src/AVPRClient/AVPRClient.csproj
     secrets:
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
