@@ -134,7 +134,7 @@ jobs:
     name: "Build and test projects"
     needs: setup
     # https://github.com/actions/runner/issues/1173
-    if: needs.setup.outputs.trigger-build == 'true'
+    if: needs.setup.outputs.trigger-build-and-test-projects == 'true'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test-solution.yml@main
     with:
       solution: ./arc-validate-package-registry.sln
@@ -164,7 +164,7 @@ jobs:
     name: "Test staging area"
     needs: setup
     # https://github.com/actions/runner/issues/1173
-    if: needs.setup.outputs.trigger-trigger-test-staging-area == 'true'
+    if: needs.setup.outputs.trigger-test-staging-area == 'true'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test-solution.yml@main
     with:
       solution: ./PackageStagingArea.sln
