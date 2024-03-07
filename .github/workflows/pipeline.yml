@@ -99,4 +99,6 @@ jobs:
     needs: setup
     # https://github.com/actions/runner/issues/1173
     if: (needs.setup.outputs.tests_any_changed == 'true' || needs.setup.outputs.api_any_changed  == 'true' || needs.setup.outputs.client_any_changed == 'true'  || needs.setup.outputs.index_any_changed == 'true') && needs.setup.outputs.is_dry_run == 'false'
-    uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test.yml@main 
+    uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test.yml@main
+
+  

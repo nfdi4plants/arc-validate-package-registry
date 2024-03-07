@@ -7,6 +7,10 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(DesignTimeBuild)' != 'true'">
+    <NoWarn>CS1591;$(NoWarn)</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup>
     <Authors>Kevin Schneider</Authors>
     <Description>.NET client library for avpr.nfdi4plants.org</Description>
