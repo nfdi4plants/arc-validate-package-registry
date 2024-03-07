@@ -12,7 +12,7 @@ Description: |
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
-Publish: true
+Publish: false
 Authors:
   - FullName: Oliver Maus
     Email: maus@nfdi4plants.org
