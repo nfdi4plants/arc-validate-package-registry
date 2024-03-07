@@ -95,10 +95,26 @@ jobs:
           echo "dry run:"
           echo "${{ steps.decide-on-dry-run.outputs.dry_run }}"
 
-  build:
+  build-and-test:
     needs: setup
     # https://github.com/actions/runner/issues/1173
     if: (needs.setup.outputs.tests_any_changed == 'true' || needs.setup.outputs.api_any_changed  == 'true' || needs.setup.outputs.client_any_changed == 'true'  || needs.setup.outputs.index_any_changed == 'true') && needs.setup.outputs.is_dry_run == 'false'
     uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test.yml@main
 
-  
+  release-index:
+    needs: [setup, build-and-test]
+    if: needs.setup.outputs.is_dry_run == 'false' && contains(needs.setup.outputs.index_all_changed_files, 'RELEASE_NOTES.md')
+    uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
+    with:
+      package: project
+    secrets:
+      NUGET_KEY: ${{ secrets.NUGET_KEY }}
+
+  release-client:
+    needs: [setup, build-and-test]
+    if: needs.setup.outputs.is_dry_run == 'false' && contains(needs.setup.outputs.client_all_changed_files, 'RELEASE_NOTES.md')
+    uses: nfdi4plants/arc-validate-package-registry/.github/workflows/release-package.yml@main
+    with:
+      package: client
+    secrets:
+      NUGET_KEY: ${{ secrets.NUGET_KEY }}

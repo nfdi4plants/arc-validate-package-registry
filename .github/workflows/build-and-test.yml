@@ -6,7 +6,6 @@ on:
 jobs:
   windows:
     runs-on: windows-latest
-    name: "[windows] Build and test"
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -15,13 +14,12 @@ jobs:
       with:
         dotnet-version: 8.x.x
     - name: Build
-      run: dotnet build ./arc-validate-package-registry.sln
+      run: dotnet build ./arc-validate-package-registry.sln --configuration Release
     - name: Test
-      run: dotnet test ./arc-validate-package-registry.sln
+      run: dotnet test ./arc-validate-package-registry.sln --configuration Release --no-build
 
   ubuntu:
     runs-on: ubuntu-latest
-    name: "[ubuntu] Build and test"
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -30,13 +28,12 @@ jobs:
       with:
         dotnet-version: 8.x.x
     - name: Build
-      run: dotnet build ./arc-validate-package-registry.sln
+      run: dotnet build ./arc-validate-package-registry.sln --configuration Release
     - name: Test
-      run: dotnet test ./arc-validate-package-registry.sln
+      run: dotnet test ./arc-validate-package-registry.sln --configuration Release --no-build
 
   macos:
     runs-on: macos-latest
-    name: "[macOS] Build and test"
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -45,6 +42,6 @@ jobs:
       with:
         dotnet-version: 8.x.x
     - name: Build
-      run: dotnet build ./arc-validate-package-registry.sln
-    - name: Test
-      run: dotnet test ./arc-validate-package-registry.sln
+      run: dotnet build ./arc-validate-package-registry.sln --configuration Release
+    - name: Test 
+      run: dotnet test ./arc-validate-package-registry.sln --configuration Release --no-build

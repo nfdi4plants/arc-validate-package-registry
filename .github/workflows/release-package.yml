@@ -1,0 +1,28 @@
+name: "Release Packages"
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        required: true
+        type: string
+        description: "The project to release"
+    secrets:
+      NUGET_KEY:
+        required: true
+        description: "The key that allows pushing packages to nuget"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x.x
+    - name: pack
+      run: dotnet pack ${{ github.event.inputs.project }} --configuration Release -o ./pkg
+    - name: push
+      run: dotnet nuget push ./pkg/*.nupkg --api-key ${{ secrets.nuget_key }} --source https://api.nuget.org/v3/index.json
