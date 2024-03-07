@@ -95,6 +95,13 @@ jobs:
           echo "dry run:"
           echo "${{ steps.decide-on-dry-run.outputs.dry_run }}"
 
+      - name: list triggered jobs
+        run: |
+          echo "this should trigger the following jobs:"
+          echo "build-and-test: ${{(steps.changed-files-yaml.outputs.tests_any_changed == 'true' || steps.changed-files-yaml.outputs.api_any_changed  == 'true' || steps.changed-files-yaml.outputs.client_any_changed == 'true'  || steps.changed-files-yaml.outputs.index_any_changed == 'true') && steps.decide-on-dry-run.outputs.dry_run == 'false'}}"
+          echo "release-index: ${{steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_changed_files, 'RELEASE_NOTES.md')}}"
+          echo "release-client: ${{steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_changed_files, 'RELEASE_NOTES.md')}}"
+
   build-and-test:
     needs: setup
     # https://github.com/actions/runner/issues/1173
