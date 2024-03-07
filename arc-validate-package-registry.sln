@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8061A76B-1B85-4649-A667-6E7979ABA1AE}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "StagingAreaTests", "tests\PackageTests\StagingAreaTests.fsproj", "{C4D0490E-F8AF-43E6-9A1F-3844292D6247}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{9F6D799F-2DCA-4F66-8123-2B267BF95A63}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
@@ -63,10 +61,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C4D0490E-F8AF-43E6-9A1F-3844292D6247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4D0490E-F8AF-43E6-9A1F-3844292D6247}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4D0490E-F8AF-43E6-9A1F-3844292D6247}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4D0490E-F8AF-43E6-9A1F-3844292D6247}.Release|Any CPU.Build.0 = Release|Any CPU
 		{809F69D2-1740-425C-890A-566BF83993C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{809F69D2-1740-425C-890A-566BF83993C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{809F69D2-1740-425C-890A-566BF83993C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -100,7 +94,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C4D0490E-F8AF-43E6-9A1F-3844292D6247} = {8061A76B-1B85-4649-A667-6E7979ABA1AE}
 		{809F69D2-1740-425C-890A-566BF83993C6} = {412317F5-7FF4-4455-9C9D-CEAF7FE6E7B2}
 		{D1FABAC1-D0F2-4F6C-B975-236E9969FB38} = {412317F5-7FF4-4455-9C9D-CEAF7FE6E7B2}
 		{78A87C32-8957-468A-AFA6-3DCE8F826500} = {412317F5-7FF4-4455-9C9D-CEAF7FE6E7B2}

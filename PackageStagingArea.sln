@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AVPRIndex", "src\AVPRIndex\AVPRIndex.fsproj", "{720F8EF2-C0C8-44A8-9F53-34BB9C9A827A}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "StagingAreaTests", "StagingAreaTests\StagingAreaTests.fsproj", "{510A5F69-72CD-4CBB-95BF-04E716585488}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{720F8EF2-C0C8-44A8-9F53-34BB9C9A827A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{720F8EF2-C0C8-44A8-9F53-34BB9C9A827A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{720F8EF2-C0C8-44A8-9F53-34BB9C9A827A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{720F8EF2-C0C8-44A8-9F53-34BB9C9A827A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{510A5F69-72CD-4CBB-95BF-04E716585488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{510A5F69-72CD-4CBB-95BF-04E716585488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{510A5F69-72CD-4CBB-95BF-04E716585488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{510A5F69-72CD-4CBB-95BF-04E716585488}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

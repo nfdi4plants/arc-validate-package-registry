@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,7 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Tests.fs" />
+    <Content Include="..\src\PackageRegistryService\StagingArea\**" CopyToOutputDirectory="Always" LinkBase="StagingArea" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="ReferenceObjects.fs" />
+    <Compile Include="DirectoryContentTests.fs" />
+    <Compile Include="FileContentTests.fs" />
+    <Compile Include="PackageSanityChecks.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -24,6 +29,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="FSharp.Compiler.Service" Version="43.8.200" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\AVPRIndex\AVPRIndex.fsproj" />
   </ItemGroup>
 
 </Project>
