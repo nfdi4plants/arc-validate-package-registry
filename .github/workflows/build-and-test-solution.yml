@@ -1,0 +1,73 @@
+name: "Build and test solution"
+
+on:
+  workflow_call:
+    inputs: 
+      solution: 
+        description: "The solution file to build and test"
+        type: string
+        required: true
+        default: "arc-validate-package-registry.sln"
+      configuration:
+        type: string
+        description: "The configuration to build and test"
+        required: true
+        default: "Release"
+      windows:
+        type: boolean
+        description: "wether to run on windows"
+        default: true
+      ubuntu:
+        type: boolean
+        description: "wether to run on ubuntu"
+        default: true
+      macos:
+        type: boolean
+        description: "wether to run on macos"
+        default: true
+
+jobs:
+  windows:
+    if: ${{ inputs.windows == true }}
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x.x
+    - name: Build
+      run: dotnet build ${{ inputs.solution }} --configuration ${{ inputs.configuration }}
+    - name: Test
+      run: dotnet test ${{ inputs.solution }} --configuration ${{ inputs.configuration }} --no-build
+
+  ubuntu:
+    if: ${{ inputs.ubuntu == true }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x.x
+    - name: Build
+      run: dotnet build ${{ inputs.solution }} --configuration ${{ inputs.configuration }}
+    - name: Test
+      run: dotnet test ${{ inputs.solution }} --configuration ${{ inputs.configuration }} --no-build
+
+  macos:
+    if: ${{ inputs.macos == true }}
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x.x
+    - name: Build
+      run: dotnet build ${{ inputs.solution }} --configuration ${{ inputs.configuration }}
+    - name: Test
+      run: dotnet test ${{ inputs.solution }} --configuration ${{ inputs.configuration }} --no-build
