@@ -35,6 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "index-workflow", "index-wor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".ci", ".ci", "{24F7CF58-94B9-4FB4-8A59-FD329B3C431D}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-and-test.yml = .github\workflows\build-and-test.yml
 		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
 		.github\workflows\publish-pending-packages.yml = .github\workflows\publish-pending-packages.yml
 		.github\workflows\update-docker-image.yml = .github\workflows\update-docker-image.yml
@@ -50,11 +51,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AVPRClient", "src\AVPRClien
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AVPRIndex", "src\AVPRIndex\AVPRIndex.fsproj", "{78A87C32-8957-468A-AFA6-3DCE8F826500}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ClientTests", "tests\ClientTests\ClientTests.fsproj", "{5276C97F-9F39-4F3D-8360-E2138FE57E35}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ClientTests", "tests\ClientTests\ClientTests.fsproj", "{5276C97F-9F39-4F3D-8360-E2138FE57E35}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IndexTests", "tests\IndexTests\IndexTests.fsproj", "{5096B1A4-D041-4B04-8C90-47050CDBB7BF}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "IndexTests", "tests\IndexTests\IndexTests.fsproj", "{5096B1A4-D041-4B04-8C90-47050CDBB7BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITests", "tests\APITests\APITests.csproj", "{72CBB4AF-511D-4A07-B41F-49A5F6F254F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APITests", "tests\APITests\APITests.csproj", "{72CBB4AF-511D-4A07-B41F-49A5F6F254F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

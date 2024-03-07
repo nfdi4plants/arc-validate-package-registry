@@ -123,3 +123,7 @@ jobs:
           echo "dry run:"
           echo "${{ needs.setup.outputs.is_dry_run }}"
 
+  build:
+    needs: setup
+    if: ${{ needs.setup.outputs.tests_any_changed || needs.setup.outputs.api_any_changed || needs.setup.outputs.client_any_changed || needs.setup.outputs.index_any_changed}}
+    uses: nfdi4plants/arc-validate-package-registry/.github/workflows/build-and-test.yml@main 
