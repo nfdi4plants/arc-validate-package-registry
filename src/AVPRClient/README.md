@@ -1,7 +1,7 @@
 # AVPR Client
 
 .NET client library for https://avpr.nfdi4plants.org.
- 
+
 Generated with NSwag based on the OpenAPI specification.
 
 ## Usage
