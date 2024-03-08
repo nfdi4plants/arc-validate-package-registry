@@ -34,10 +34,11 @@ jobs:
     steps:
       - id: set-matrix
         run: |
-          if [[ ${{ inputs.windows }} == true ]] then win = 'windows-latest,' else win = '' fi
-          if [[ ${{ inputs.ubuntu }} == true ]] then ubu ='ubuntu-latest,' else ubu = '' fi
-          if [[ ${{ inputs.macos }} == true ]] then mac = 'macos-latest' else mac = ''
-          echo "matrix={\"os\":[$win$ubu$mac]}" >> $GITHUB_OUTPUT
+          if [[ ${{ inputs.ubuntu }} == true ]]; then win="windows-latest"; fi
+          if [[ ${{ inputs.ubuntu }} == true ]]; then ubu="ubuntu-latest"; fi
+          if [[ ${{ inputs.macos }} == true ]]; then mac="macos-latest"; fi
+          strategy="[${win:+\"$win\"}${ubu:+,\"$ubu\"}${mac:+,\"$mac\"}]"
+          echo "matrix={\"os\":$strategy}" >> $GITHUB_OUTPUT
 
   build-and-test:
     runs-on: ${{ matrix.os }}
