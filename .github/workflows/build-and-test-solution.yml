@@ -34,7 +34,7 @@ jobs:
     steps:
       - id: set-matrix
         run: |
-          if [[ ${{ inputs.ubuntu }} == true ]]; then win="windows-latest"; fi
+          if [[ ${{ inputs.windows }} == true ]]; then win="windows-latest"; fi
           if [[ ${{ inputs.ubuntu }} == true ]]; then ubu="ubuntu-latest"; fi
           if [[ ${{ inputs.macos }} == true ]]; then mac="macos-latest"; fi
           strategy="[${win:+\"$win\"}${ubu:+,\"$ubu\"}${mac:+,\"$mac\"}]"

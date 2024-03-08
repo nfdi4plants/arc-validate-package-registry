@@ -38,8 +38,8 @@
   {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@0.0.1.fsx",
     "FileName": "test@0.0.1.fsx",
-    "LastUpdated": "2024-03-08T11:36:33+01:00",
-    "ContentHash": "3E9AEA58F3E92BBE954A0448B343ABE7",
+    "LastUpdated": "2024-03-08T11:37:59+01:00",
+    "ContentHash": "4030CC13BFD73E08144EF8910622786E",
     "Metadata": {
       "Name": "test",
       "Summary": "this package is here for testing purposes only.",
