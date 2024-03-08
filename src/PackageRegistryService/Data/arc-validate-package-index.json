@@ -36,6 +36,24 @@
     }
   },
   {
+    "RepoPath": "src/PackageRegistryService/StagingArea/test/test@0.0.1.fsx",
+    "FileName": "test@0.0.1.fsx",
+    "LastUpdated": "2024-03-08T11:36:33+01:00",
+    "ContentHash": "3E9AEA58F3E92BBE954A0448B343ABE7",
+    "Metadata": {
+      "Name": "test",
+      "Summary": "this package is here for testing purposes only.",
+      "Description": "this package is here for testing purposes only.",
+      "MajorVersion": 0,
+      "MinorVersion": 0,
+      "PatchVersion": 1,
+      "Publish": true,
+      "Authors": [],
+      "Tags": [],
+      "ReleaseNotes": ""
+    }
+  },
+  {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@1.0.0.fsx",
     "FileName": "test@1.0.0.fsx",
     "LastUpdated": "2024-02-29T17:07:34+01:00",

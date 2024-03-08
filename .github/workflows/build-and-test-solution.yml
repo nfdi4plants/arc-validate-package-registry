@@ -39,6 +39,8 @@ jobs:
           if [[ ${{ inputs.macos }} == true ]]; then mac="macos-latest"; fi
           strategy="[${win:+\"$win\"}${ubu:+,\"$ubu\"}${mac:+,\"$mac\"}]"
           echo "matrix={\"os\":$strategy}" >> $GITHUB_OUTPUT
+      - name: print strategy
+        run: echo "will run on ${{ steps.set-matrix.outputs.matrix }}"
 
   build-and-test:
     needs: determine-strategy
