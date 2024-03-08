@@ -27,39 +27,20 @@ on:
         default: true
 
 jobs:
-  windows:
-    if: ${{ inputs.windows == true }}
-    runs-on: windows-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Set up .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.x.x
-    - name: Build
-      run: dotnet build ${{ inputs.solution }} --configuration ${{ inputs.configuration }}
-    - name: Test
-      run: dotnet test ${{ inputs.solution }} --configuration ${{ inputs.configuration }} --no-build
-
-  ubuntu:
-    if: ${{ inputs.ubuntu == true }}
+  determine-strategy:
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Set up .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.x.x
-    - name: Build
-      run: dotnet build ${{ inputs.solution }} --configuration ${{ inputs.configuration }}
-    - name: Test
-      run: dotnet test ${{ inputs.solution }} --configuration ${{ inputs.configuration }} --no-build
+      - id: set-matrix
+        run: |
+          win = if ${{ inputs.windows }} == true then 'windows-latest,' else ''
+          ubu = if ${{ inputs.ubuntu }} == true then 'ubuntu-latest,' else ''
+          mac = if ${{ inputs.macos }} == true then 'macos-latest' else ''
+          echo "matrix: [${win}${ubu}${mac}]" >> $GITHUB_OUTPUT
 
-  macos:
-    if: ${{ inputs.macos == true }}
-    runs-on: macos-latest
+  build-and-test:
+    runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
