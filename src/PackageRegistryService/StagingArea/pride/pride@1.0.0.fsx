@@ -23,7 +23,7 @@ Tags:
   - Name: validation
   - Name: pride
   - Name: proteomics
-ReleaseNotes: "
+ReleaseNotes: |
   - initial release
   - metadata validation added:
     - Investigation has title and description
@@ -31,7 +31,6 @@ ReleaseNotes: "
     - All persons in Investigation Contacts must have a first name, last name, affiliation and valid email
     - Study has protocol, tissue & species in correct format
     - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format
-    "
 ---
 *)
 

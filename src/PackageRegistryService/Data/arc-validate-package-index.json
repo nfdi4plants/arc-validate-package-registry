@@ -36,9 +36,50 @@
     }
   },
   {
+    "RepoPath": "src/PackageRegistryService/StagingArea/pride/pride@1.0.0.fsx",
+    "FileName": "pride@1.0.0.fsx",
+    "LastUpdated": "2024-03-11T10:29:29+01:00",
+    "ContentHash": "EE4F9BD7D0249F272B79BAAD9DA02C0C",
+    "Metadata": {
+      "Name": "pride",
+      "Summary": "Validates if the ARC contains the necessary metadata to be publishable via PRIDE.",
+      "Description": "Validates if the ARC contains the necessary metadata to be publishable via PRIDE.\nThe following metadata is required:\n    - Investigation has title and description\n    - Investigation has Keywords comment in correct format\n    - All persons in Investigation Contacts must have a first name, last name, affiliation and valid email\n    - Study has protocol, tissue \u0026 species in correct format\n    - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format\n",
+      "MajorVersion": 1,
+      "MinorVersion": 0,
+      "PatchVersion": 0,
+      "Publish": false,
+      "Authors": [
+        {
+          "FullName": "Oliver Maus",
+          "Email": "maus@nfdi4plants.org",
+          "Affiliation": "RPTU Kaiserslautern",
+          "AffiliationLink": "http://rptu.de/startseite"
+        }
+      ],
+      "Tags": [
+        {
+          "Name": "validation",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "pride",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "proteomics",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
+      ],
+      "ReleaseNotes": "- initial release\n- metadata validation added:\n  - Investigation has title and description\n  - Investigation has Keywords comment in correct format\n  - All persons in Investigation Contacts must have a first name, last name, affiliation and valid email\n  - Study has protocol, tissue \u0026 species in correct format\n  - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format\n"
+    }
+  },
+  {
     "RepoPath": "src/PackageRegistryService/StagingArea/test/test@0.0.1.fsx",
     "FileName": "test@0.0.1.fsx",
-    "LastUpdated": "2024-03-08T11:37:59+01:00",
+    "LastUpdated": "2024-03-08T11:37:58+01:00",
     "ContentHash": "4030CC13BFD73E08144EF8910622786E",
     "Metadata": {
       "Name": "test",
