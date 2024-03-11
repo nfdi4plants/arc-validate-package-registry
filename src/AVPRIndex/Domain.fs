@@ -104,9 +104,9 @@ module Domain =
         member val Name = "" with get,set
         member val Summary = "" with get,set
         member val Description = "" with get,set
-        member val MajorVersion = 0 with get,set
-        member val MinorVersion = 0 with get,set
-        member val PatchVersion = 0 with get,set
+        member val MajorVersion = -1 with get,set
+        member val MinorVersion = -1 with get,set
+        member val PatchVersion = -1 with get,set
         // optional fields
         member val Publish = false with get,set
         member val Authors: Author [] = Array.empty<Author> with get,set

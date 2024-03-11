@@ -1,3 +1,7 @@
+## v0.0.4
+
+- Replace line endings when parsing frontmatter
+
 ## v0.0.3
 
 - Add create function to Author and OntologyAnnotation (https://github.com/nfdi4plants/arc-validate-package-registry/pull/27) 

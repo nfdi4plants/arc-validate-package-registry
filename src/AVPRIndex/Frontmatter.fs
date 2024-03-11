@@ -20,7 +20,7 @@ module Frontmatter =
     type ValidationPackageMetadata with
         
         static member extractFromScript (scriptPath: string) =
-            let script = File.ReadAllText(scriptPath)
+            let script = File.ReadAllText(scriptPath).ReplaceLineEndings()
             if script.StartsWith(frontMatterStart, StringComparison.Ordinal) && script.Contains(frontMatterEnd) then
                 let frontmatter = 
                     script.Substring(
@@ -32,6 +32,7 @@ module Frontmatter =
                     result
                 with e as exn -> 
                     printfn $"error parsing package metadata at {scriptPath}. Make sure that all required metadata tags are included."
+                    printfn $"Error msg: {e.Message}."
                     ValidationPackageMetadata()
             else 
                 printfn $"script at {scriptPath} has no correctly formatted frontmatter."
