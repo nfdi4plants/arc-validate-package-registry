@@ -172,3 +172,30 @@ jobs:
       windows: true
       ubuntu: false
       macos: false
+
+  staging-area-pre-publish-checks:
+    name: "Staging area pre-publish checks"
+    needs: test-staging-area
+    runs-on: ubuntu-latest
+    outputs: 
+      trigger-update-preview-index: ${{ steps.staging-area-pre-publish-checks.outputs.trigger-release-staging-area }}
+      trigger-publish-pending-packages: ${{ steps.staging-area-pre-publish-checks.outputs.trigger-publish-pending-packages }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x.x
+      - name: Run pre-publish checks
+        run: dotnet fsi scripts/pre-publish-checks.fsx
+      - name: set triggers
+        id: set-triggers
+        run: |
+          echo "trigger-update-preview-index=$UPDATE_PREVIEW_INDEX" >> $GITHUB_OUTPUT
+          echo "trigger-publish-pending-packages=$PUBLISH_PENDING_PACKAGES" >> $GITHUB_OUTPUT
+
+      - name: list triggered jobs
+        run: |
+          echo "this should trigger the following jobs:"
+          echo "trigger-update-preview-index: ${{steps.set-triggers.outputs.trigger-update-preview-index}}"
+          echo "trigger-publish-pending-packages: ${{steps.set-triggers.outputs.trigger-publish-pending-packages}}"

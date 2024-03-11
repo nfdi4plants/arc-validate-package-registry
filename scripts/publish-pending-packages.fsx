@@ -1,8 +1,9 @@
 #r "nuget: dotenv.net, 3.1.3"
-#r "nuget: AVPRIndex, 0.0.1"
-#r "nuget: AVPRClient, 0.0.2"
+#r "nuget: AVPRIndex, 0.0.4"
+#r "nuget: AVPRClient, 0.0.4"
 
 open AVPRIndex
+open type AVPRClient.Extensions
 open Domain
 open System
 open System.IO
@@ -38,40 +39,7 @@ let apiKey =
 let jsonSerializerOptions = JsonSerializerOptions(WriteIndented = true)
 
 type AVPRClient.ValidationPackage with
-    static member createOfIndex (i: ValidationPackageIndex) = 
-        let p = new AVPRClient.ValidationPackage()
-        p.Name <- i.Metadata.Name
-        p.Summary <- i.Metadata.Summary
-        p.Description <- i.Metadata.Description
-        p.MajorVersion <- i.Metadata.MajorVersion
-        p.MinorVersion <- i.Metadata.MinorVersion
-        p.PatchVersion <- i.Metadata.PatchVersion
-        p.PackageContent <- File.ReadAllBytes(i.RepoPath)
-        p.ReleaseDate <- DateTimeOffset.Now
-        p.Tags <- (
-            i.Metadata.Tags
-            |> Array.map (fun tag ->
-                let t = AVPRClient.OntologyAnnotation()
-                t.Name <- tag.Name
-                t.TermAccessionNumber <- tag.TermAccessionNumber
-                t.TermSourceREF <- tag.TermSourceREF
-                t
-            )
-        )
-        p.ReleaseNotes <- i.Metadata.ReleaseNotes
-        p.Authors <- (
-            i.Metadata.Authors
-            |> Array.map (fun author -> 
-                let a = AVPRClient.Author()
-                a.FullName <- author.FullName
-                a.Email <- author.Email
-                a.Affiliation <- author.Affiliation
-                a.AffiliationLink <- author.AffiliationLink
-                a
-            )
-        )
-        p
-
+    
     static member toJson (p: AVPRClient.ValidationPackage) = 
         JsonSerializer.Serialize(p, jsonSerializerOptions)
 
@@ -81,19 +49,8 @@ type AVPRClient.ValidationPackage with
         printfn $"Package info:{System.Environment.NewLine}{json}"
         printfn ""
 
-
 type AVPRClient.PackageContentHash with
-    static member createOfIndex (i: ValidationPackageIndex) = 
-        let h = new AVPRClient.PackageContentHash()
-        h.PackageName <- i.Metadata.Name
-        h.PackageMajorVersion <- i.Metadata.MajorVersion
-        h.PackageMinorVersion <- i.Metadata.MinorVersion
-        h.PackagePatchVersion <- i.Metadata.PatchVersion
-        h.Hash <- 
-            let md5 = MD5.Create()
-            md5.ComputeHash(File.ReadAllBytes(i.RepoPath)) |> Convert.ToHexString
-        h
-
+   
     static member toJson (h: AVPRClient.PackageContentHash) = 
         JsonSerializer.Serialize(h, jsonSerializerOptions)
 
@@ -102,6 +59,8 @@ type AVPRClient.PackageContentHash with
         printfn ""
         printfn $"Hash info:{System.Environment.NewLine}{json}"
         printfn ""
+
+
 
 let client = 
     let httpClient = new System.Net.Http.HttpClient()
@@ -159,9 +118,8 @@ published_indexed_packages
 |> Array.iter (fun i -> 
     let repo_hash = md5.ComputeHash(File.ReadAllBytes(i.RepoPath)) |> Convert.ToHexString
     try
-        client.VerifyPackageContentAsync(
-            AVPRClient.PackageContentHash.createOfIndex i
-        )
+        i.toPackageContentHash()
+        |> client.VerifyPackageContentAsync
         |> Async.AwaitTask
         |> Async.RunSynchronously
     with e ->
@@ -180,8 +138,8 @@ if isDryRun then
     printfn ""
     pending_indexed_packages
     |> Array.iter (fun i ->
-        let p = AVPRClient.ValidationPackage.createOfIndex(i)
-        let h = AVPRClient.PackageContentHash.createOfIndex(i)
+        let p = i.toValidationPackage()
+        let h = i.toPackageContentHash()
         AVPRClient.ValidationPackage.printJson p
         AVPRClient.PackageContentHash.printJson h
 )
@@ -192,11 +150,12 @@ else
     printfn ""
     pending_indexed_packages
     |> Array.iter (fun i ->
-        let p = AVPRClient.ValidationPackage.createOfIndex(i)
-        let h = AVPRClient.PackageContentHash.createOfIndex(i)
+        let p = i.toValidationPackage()
+        let h = i.toPackageContentHash()
         try
             printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Publishing package..."
-            client.CreatePackageAsync(p)
+            p
+            |> client.CreatePackageAsync
             |> Async.AwaitTask
             |> Async.RunSynchronously
             |> ignore
@@ -206,9 +165,8 @@ else
             failwith $"CreatePackage: [{i.RepoPath}]: failed with {System.Environment.NewLine}{e.Message}{System.Environment.NewLine}Package info:{System.Environment.NewLine}{AVPRClient.ValidationPackage.toJson p}"
         try
             printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Publishing package content hash..."
-            client.CreatePackageContentHashAsync(
-                AVPRClient.PackageContentHash.createOfIndex(i)
-            )
+            h
+            |> client.CreatePackageContentHashAsync
             |> Async.AwaitTask
             |> Async.RunSynchronously
             |> ignore

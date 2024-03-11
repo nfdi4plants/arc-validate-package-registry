@@ -21,28 +21,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackageRegistryService", "s
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{91911DC0-4736-4A1A-807C-FE9430899AB7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "index-workflow", "index-workflow", "{A5D4286F-B049-42B8-9A0F-C68C3692F72D}"
-	ProjectSection(SolutionItems) = preProject
-		src\PackageRegistryService\Data\arc-validate-package-index.json = src\PackageRegistryService\Data\arc-validate-package-index.json
-		scripts\domain.fsx = scripts\domain.fsx
-		pre-commit.sh = pre-commit.sh
-		setup.cmd = setup.cmd
-		setup.sh = setup.sh
-		scripts\update-index.fsx = scripts\update-index.fsx
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".ci", ".ci", "{24F7CF58-94B9-4FB4-8A59-FD329B3C431D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build-and-test.yml = .github\workflows\build-and-test.yml
 		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
 		.github\workflows\publish-pending-packages.yml = .github\workflows\publish-pending-packages.yml
 		.github\workflows\update-docker-image.yml = .github\workflows\update-docker-image.yml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "publish-workflow", "publish-workflow", "{B479BD02-0253-4CFA-B2AE-F29EC29C6B70}"
-	ProjectSection(SolutionItems) = preProject
-		scripts\domain.fsx = scripts\domain.fsx
-		scripts\publish-pending-packages.fsx = scripts\publish-pending-packages.fsx
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AVPRClient", "src\AVPRClient\AVPRClient.csproj", "{D1FABAC1-D0F2-4F6C-B975-236E9969FB38}"
@@ -54,6 +38,12 @@ EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "IndexTests", "tests\IndexTests\IndexTests.fsproj", "{5096B1A4-D041-4B04-8C90-47050CDBB7BF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APITests", "tests\APITests\APITests.csproj", "{72CBB4AF-511D-4A07-B41F-49A5F6F254F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{C4DBD5F6-4A14-44F4-9E5A-AC6B72AAEB81}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\publish-pending-packages.fsx = scripts\publish-pending-packages.fsx
+		scripts\update-index.fsx = scripts\update-index.fsx
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,6 +90,7 @@ Global
 		{5276C97F-9F39-4F3D-8360-E2138FE57E35} = {8061A76B-1B85-4649-A667-6E7979ABA1AE}
 		{5096B1A4-D041-4B04-8C90-47050CDBB7BF} = {8061A76B-1B85-4649-A667-6E7979ABA1AE}
 		{72CBB4AF-511D-4A07-B41F-49A5F6F254F5} = {8061A76B-1B85-4649-A667-6E7979ABA1AE}
+		{C4DBD5F6-4A14-44F4-9E5A-AC6B72AAEB81} = {24F7CF58-94B9-4FB4-8A59-FD329B3C431D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D95036E6-C4D5-4E93-8474-BA6F74965635}
