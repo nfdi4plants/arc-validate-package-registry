@@ -27,7 +27,7 @@ namespace PackageRegistryService.API.Handlers
         public static async Task<Results<Ok<ValidationPackage>, NotFound<string>, Conflict<string>>> GetLatestPackageByName(string name, ValidationPackageDb database)
         {
             var package = await database.ValidationPackages
-                .Where(p => p.Name == name)
+                .Where(p => p.Name == name) 
                 .OrderByDescending(p => p.MajorVersion)
                 .ThenByDescending(p => p.MinorVersion)
                 .ThenByDescending(p => p.PatchVersion)
