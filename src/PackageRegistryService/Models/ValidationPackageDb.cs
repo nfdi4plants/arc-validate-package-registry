@@ -29,14 +29,20 @@
 
         public static bool ValidatePackageContent(ValidationPackage package, ValidationPackageDb database)
         {
-            var hash = database.Hashes.Single(h => h.PackageName == package.Name && h.PackageMajorVersion == package.MajorVersion && h.PackageMinorVersion == package.MinorVersion && h.PackagePatchVersion == package.PatchVersion);
+            var hash = database.Hashes.SingleOrDefault(h => h.PackageName == package.Name && h.PackageMajorVersion == package.MajorVersion && h.PackageMinorVersion == package.MinorVersion && h.PackagePatchVersion == package.PatchVersion);
+            
+            if (hash == null)
+            {
+                return false;
+            }
+            
             var packageHash = package.GetPackageContentHash();
             return hash.Hash == packageHash;
         }
 
         public static void IncrementDownloadCount(ValidationPackage package, ValidationPackageDb database)
         {
-            var result = database.Downloads.Single(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion);
+            var result = database.Downloads.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion);
             
             if (result != null)
             {
