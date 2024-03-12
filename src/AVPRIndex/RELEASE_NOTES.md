@@ -1,3 +1,7 @@
+## v0.0.5
+
+- Add `getPreviewIndex` function that downloads the currently released preview index from the github release.
+
 ## v0.0.4
 
 - Replace line endings when parsing frontmatter

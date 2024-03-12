@@ -6,6 +6,7 @@ open System.Text.Json
 open Domain
 open Globals
 open Frontmatter
+open FsHttp
 
 type AVPRRepo =
 
@@ -26,17 +27,16 @@ type AVPRRepo =
                 lastUpdated = Utils.truncateDateTime DateTimeOffset.Now // take local time with offset if file will be changed with this commit
             )
         )
-    
-    ///! Paths are relative to the root of the project, since the script is executed from the repo root in CI
-    /// Path is adjustable by passing `RepoRoot`
-    static member getIndexedPackages(?RepoRoot: string) = 
 
-        let path = 
-            defaultArg 
-                (RepoRoot |> Option.map (fun p -> Path.Combine(p, PACKAGE_INDEX_RELATIVE_PATH))) 
-                PACKAGE_INDEX_RELATIVE_PATH
+    static member getPreviewIndex() = 
+        try
+            http {
+                GET "https://github.com/nfdi4plants/arc-validate-package-registry/releases/download/preview-index/arc-validate-package-index.json"
+            }
+            |> Request.send
+            |> Response.deserializeJson<ValidationPackageIndex[]>
+        with e as exn ->
+            printfn $"Failed to fetch current preview index: {exn.Message}"
+            [||]
 
-        path
-        |> File.ReadAllText
-        |> JsonSerializer.Deserialize<ValidationPackageIndex[]>
 
