@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PackageRegistryService.API.Handlers;
  
 namespace PackageRegistryService.API.Endpoints
-{
+{ 
     public static class PackagesEndpointsV1
     {
         public static RouteGroupBuilder MapPackagesApiV1(this RouteGroupBuilder group)
