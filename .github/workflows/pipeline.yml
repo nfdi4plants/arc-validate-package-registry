@@ -62,13 +62,11 @@ jobs:
             global:
               - '**'
             packages:
-              - src/PackageRegistryService/StagingArea/**
+              - StagingArea/**
             tests:
               - tests/**
             api:
               - src/PackageRegistryServive/**
-              - '!src/PackageRegistryServive/StagingArea/**'
-              - '!src/PackageRegistryServive/Data/**'
             client:
               - src/AVPRClient/**
             index:

@@ -8,25 +8,20 @@ using System.Text.Json;
 using AVPRIndex;
 using static AVPRIndex.Domain;
 using static AVPRIndex.Frontmatter;
+using System.Reflection;
 
 namespace PackageRegistryService.Data
     
 {
     public class DataInitializer
     {
-        public static List<ValidationPackageIndex> ReadIndex()
-        {
-            var json = File.ReadAllText(@"Data/arc-validate-package-index.json");
-            var index = JsonSerializer.Deserialize<List<ValidationPackageIndex>>(json);
-            return index ?? [];
-        }
         public static void SeedData(ValidationPackageDb context)
         {
             MD5 md5 = MD5.Create();
 
             if (!context.ValidationPackages.Any())
             {
-                var index = ReadIndex();
+                var index = AVPRRepo.getPreviewIndex();
 
                 context.SaveChanges();
 
@@ -34,7 +29,12 @@ namespace PackageRegistryService.Data
                     index
                         .Select((i) =>
                         {
-                            var content = File.ReadAllBytes($"StagingArea/{i.Metadata.Name}/{i.FileName}");
+                            var path = 
+                                Path.Combine(
+                                    Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
+                                    $"StagingArea/{i.Metadata.Name}/{i.FileName}"
+                                );
+                            var content = File.ReadAllBytes(path);
 
                             return new ValidationPackage
                             {
@@ -58,7 +58,13 @@ namespace PackageRegistryService.Data
                     index
                         .Select((i) =>
                         {
-                            var content = File.ReadAllBytes($"StagingArea/{i.Metadata.Name}/{i.FileName}");
+                            var path =
+                                Path.Combine(
+                                    Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
+                                    $"StagingArea/{i.Metadata.Name}/{i.FileName}"
+                                );
+                            var content = File.ReadAllBytes(path);
+
                             var hash = Convert.ToHexString(md5.ComputeHash(content));
                             if (hash != i.ContentHash)
                             {

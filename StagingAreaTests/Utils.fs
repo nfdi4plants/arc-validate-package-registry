@@ -25,22 +25,6 @@ type Assert with
             script.Contains(Frontmatter.frontMatterEnd)
         )
 
-    static member MetadataValid(m: ValidationPackageMetadata) =
-        //test wether all required fields are present
-        Assert.NotNull(m)
-        Assert.NotNull(m.Name)
-        Assert.NotEqual<string>(m.Name, "")
-        Assert.NotNull(m.Summary)
-        Assert.NotEqual<string>(m.Summary, "")
-        Assert.NotNull(m.Description)
-        Assert.NotEqual<string>(m.Description, "")
-        Assert.NotNull(m.MajorVersion)
-        Assert.True(m.MajorVersion >= 0)
-        Assert.NotNull(m.MinorVersion)
-        Assert.True(m.MinorVersion >= 0)
-        Assert.NotNull(m.PatchVersion)
-        Assert.True(m.PatchVersion >= 0)
-
     static member FileNameValid(path:string) =
         let fileName = Path.GetFileName(path)
         let folderName = Path.GetDirectoryName(path) |> Path.GetFileName

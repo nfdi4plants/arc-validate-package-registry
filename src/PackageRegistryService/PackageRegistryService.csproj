@@ -15,7 +15,11 @@
   <PropertyGroup Condition="'$(DesignTimeBuild)' != 'true'">
     <NoWarn>CS1591;$(NoWarn)</NoWarn>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <Content Include="..\..\StagingArea\**" CopyToOutputDirectory="Always" LinkBase="StagingArea" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.1" />

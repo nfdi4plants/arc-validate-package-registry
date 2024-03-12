@@ -24,13 +24,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageVersion>0.0.4</PackageVersion>
   </PropertyGroup>
-
+	
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <None Include="README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AVPRIndex\AVPRIndex.fsproj" />
   </ItemGroup>
 

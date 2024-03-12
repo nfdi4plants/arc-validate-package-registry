@@ -16,6 +16,7 @@ let current_preview_index =
         |> Request.send
         |> Response.deserializeJson<ValidationPackageIndex[]>
     with e as exn ->
+        printfn $"Failed to fetch current preview index: {exn.Message}"
         [||]
 
 let all_packages_in_staging_area =

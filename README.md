@@ -25,7 +25,7 @@ This repository contains:
 
 ## The package index
 
-This repo runs a [custom pre-commit hook](pre-commit.sh) that will run a [script](./update-index.fsx) automatically add any `.fsx` file in the [staging area](src/PackageRegistryService/StagingArea/) to [the package index](src/PackageRegistryService/Data/arc-validate-package-index.json) when it is commited to the repo.
+This repo runs a [custom pre-commit hook](pre-commit.sh) that will run a [script](./update-index.fsx) automatically add any `.fsx` file in the [staging area](StagingArea/) to [the package index](src/PackageRegistryService/Data/arc-validate-package-index.json) when it is commited to the repo.
 
 ## Automated package testing
 
@@ -68,7 +68,7 @@ install the following prerequisites:
 
 To add a package to the staging area, make sure that you installed the pre-commit hook as described in the [Setup](#setup) section. 
 
-Then, simply add a new `.fsx` file to the [staging area](src/PackageRegistryService/StagingArea/), and commit it to the repo. The pre-commit hook will automatically add the new package to the package index.
+Then, simply add a new `.fsx` file to the [staging area](StagingArea/), and commit it to the repo. The pre-commit hook will automatically add the new package to the package index.
 
 All packages in the staging area are automatically tested on every commit. Additionally, all packages set to `publish: true` in their yml frontmatter will be pushed to the registry service if they pass all tests and are not already present in the registry.
 
@@ -194,7 +194,7 @@ Publishing a package to the registry is a multi-step process:
 
 Suppose you want to develop version 1.0.0 of a package called `my-package`.
 
-1. Add a new blank `my-package@1.0.0.fsx` file to the [staging area](./src/PackageRegistryService/StagingArea/) in the folder `my-package`.
+1. Add a new blank `my-package@1.0.0.fsx` file to the [staging area](./StagingArea/) in the folder `my-package`.
 2. Develop the package, using this repositories CI to perform automates integrity tests on it.
 3. Once the package is ready, add `publish: true` to the yml frontmatter of the package file. This will trigger the CI to build and push the package to the registry.
 4. Once a package is published, it cannot be unpublished or changed. To update a package, create a new script with the same name and a higher version number.

@@ -1,6 +1,5 @@
 ﻿namespace AVPRIndex
 
-
 open Domain
 open System
 open System.IO
@@ -9,8 +8,26 @@ open YamlDotNet.Serialization
 
 module Frontmatter = 
    
-    let frontMatterStart = $"(*{System.Environment.NewLine}---"
-    let frontMatterEnd = $"---{System.Environment.NewLine}*)"
+    let [<Literal>] frontMatterStart = "(*\n---"
+    let [<Literal>] frontMatterEnd = "---\n*)"
+
+    let containsFrontmatter (str: string) =
+        str.StartsWith(frontMatterStart, StringComparison.Ordinal) && str.Contains(frontMatterEnd)
+
+    let tryExtractFromString (str: string) =
+        let norm = str.ReplaceLineEndings("\n")
+        if containsFrontmatter norm then
+            norm.Substring(
+                frontMatterStart.Length, 
+                (norm.IndexOf(frontMatterEnd, StringComparison.Ordinal) - frontMatterEnd.Length))
+            |> Some
+        else 
+            None
+
+    let extractFromString (str: string) =
+        match tryExtractFromString str with
+        | Some frontmatter -> frontmatter
+        | None -> failwith $"input has no correctly formatted frontmatter."
 
     let yamlDeserializer = 
         DeserializerBuilder()
@@ -19,24 +36,34 @@ module Frontmatter =
 
     type ValidationPackageMetadata with
         
+        static member extractFromString (str: string) =
+            let frontmatter = tryExtractFromString str
+            match frontmatter with
+            | Some frontmatter ->
+                let result = 
+                    yamlDeserializer.Deserialize<ValidationPackageMetadata>(frontmatter)
+                result
+            | None ->
+                failwith $"string has no correctly formatted frontmatter."
+
+        static member tryExtractFromString (str: string) =
+            try 
+                ValidationPackageMetadata.extractFromString str |> Some
+            with e ->
+                printfn $"error parsing package metadata: {e.Message}"
+                None
+
         static member extractFromScript (scriptPath: string) =
-            let script = File.ReadAllText(scriptPath).ReplaceLineEndings()
-            if script.StartsWith(frontMatterStart, StringComparison.Ordinal) && script.Contains(frontMatterEnd) then
-                let frontmatter = 
-                    script.Substring(
-                        frontMatterStart.Length, 
-                        (script.IndexOf(frontMatterEnd, StringComparison.Ordinal) - frontMatterEnd.Length))
-                try 
-                    let result = 
-                        yamlDeserializer.Deserialize<ValidationPackageMetadata>(frontmatter)
-                    result
-                with e as exn -> 
-                    printfn $"error parsing package metadata at {scriptPath}. Make sure that all required metadata tags are included."
-                    printfn $"Error msg: {e.Message}."
-                    ValidationPackageMetadata()
-            else 
-                printfn $"script at {scriptPath} has no correctly formatted frontmatter."
-                ValidationPackageMetadata()
+            scriptPath
+            |> File.ReadAllText
+            |> ValidationPackageMetadata.extractFromString 
+
+        static member tryExtractFromScript (scriptPath: string) =
+            try 
+                ValidationPackageMetadata.extractFromScript scriptPath |> Some
+            with e ->
+                printfn $"error parsing package metadata: {e.Message}"
+                None
 
     type ValidationPackageIndex with
 

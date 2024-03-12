@@ -21,7 +21,7 @@ let all_staged_packages_contents =
     all_staged_packages_paths
     |> Array.map (fun p ->
         p, 
-        p |> (File.ReadAllText >> fun x -> x.ReplaceLineEndings())
+        p |> (File.ReadAllText >> fun x -> x.ReplaceLineEndings("\n"))
     )
 
 let all_staged_packages_metadata =

@@ -1,6 +1,8 @@
 ## v0.0.5
 
 - Add `getPreviewIndex` function that downloads the currently released preview index from the github release.
+- Add `ValidationPackageMetadata.extractFromString` to extract metadata from a string
+- Refactor and expose some Frontmatter parsing functions
 
 ## v0.0.4
 
