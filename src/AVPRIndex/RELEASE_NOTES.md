@@ -1,8 +1,22 @@
+## v0.0.6
+- Refactor and expose parsing & convenience functions:
+  - Frontmatter
+    - containsFrontmatter
+    - tryExtractFromString
+    - extractFromString
+  - ValidationPackageMetadata
+    - tryExtractFromString
+    - extractFromString
+    - tryExtractFromScript
+    - extractFromScript
+
+all frontmatter/metadata extraction functions will replace line endings with "\n", as YamlDotNet will replace any line endings with new line when presented the string anyways.
+
+that way, the extracted frontmatter/metadata (especially field values, which caused problems due to YamlDotNet's default behavior) will be consistent across different platforms.
+
 ## v0.0.5
 
 - Add `getPreviewIndex` function that downloads the currently released preview index from the github release.
-- Add `ValidationPackageMetadata.extractFromString` to extract metadata from a string
-- Refactor and expose some Frontmatter parsing functions
 
 ## v0.0.4
 
