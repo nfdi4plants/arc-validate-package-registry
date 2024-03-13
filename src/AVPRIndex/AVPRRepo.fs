@@ -31,7 +31,7 @@ type AVPRRepo =
     static member getPreviewIndex() = 
         try
             http {
-                GET "https://github.com/nfdi4plants/arc-validate-package-registry/releases/download/preview-index/arc-validate-package-index.json"
+                GET "https://github.com/nfdi4plants/arc-validate-package-registry/releases/download/preview-index/avpr-preview-index.json"
             }
             |> Request.send
             |> Response.deserializeJson<ValidationPackageIndex[]>

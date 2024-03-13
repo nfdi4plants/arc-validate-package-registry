@@ -1,4 +1,9 @@
+## v0.0.7
+
+fix preview index download url
+
 ## v0.0.6
+
 - Refactor and expose parsing & convenience functions:
   - Frontmatter
     - containsFrontmatter
