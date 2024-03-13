@@ -1,5 +1,5 @@
 #r "nuget: dotenv.net, 3.1.3"
-#r "nuget: AVPRIndex, 0.0.4"
+#r "nuget: AVPRIndex, 0.0.6"
 #r "nuget: AVPRClient, 0.0.4"
 #r "nuget: FsHttp, 14.5.0"
 
@@ -9,15 +9,7 @@ open type AVPRClient.Extensions
 open FsHttp
 
 let current_preview_index = 
-    try
-        http {
-            GET "https://github.com/nfdi4plants/arc-validate-package-registry/releases/download/preview-index/arc-validate-package-index.json"
-        }
-        |> Request.send
-        |> Response.deserializeJson<ValidationPackageIndex[]>
-    with e as exn ->
-        printfn $"Failed to fetch current preview index: {exn.Message}"
-        [||]
+    AVPRRepo.getPreviewIndex()
 
 let all_packages_in_staging_area =
     AVPRRepo.getStagedPackages()

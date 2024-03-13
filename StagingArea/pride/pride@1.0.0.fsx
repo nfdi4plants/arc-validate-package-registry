@@ -29,7 +29,7 @@ ReleaseNotes: |
     - Investigation has title and description
     - Investigation has Keywords comment in correct format
     - All persons in Investigation Contacts must have a first name, last name, affiliation and valid email
-    - Study has protocol, tissue & species in correct format
+    - Study has protocol, tissue & species in correct format 
     - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format
 ---
 *)
