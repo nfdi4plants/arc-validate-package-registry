@@ -51,7 +51,7 @@
 <b>How can i contribute my own validation package?</b>
 </blockquote>
 <p>In short, you create a validation package by submitting it to the <a href=""https://github.com/nfdi4plants/arc-validate-package-registry/tree/main/src/PackageRegistryService/StagingArea"">AVPR staging area on GitHub</a>. Once it is reviewed and approved, it will be published and available for download and use by others.</p>
-<p>The process of submission with the correct metadata is extensively documented <a href=""https://github.com/nfdi4plants/arc-validate-package-registry?tab=readme-ov-file#how-to-add-packages"">here</a></p>
+<p>The process of submission with the correct metadata is extensively documented <a href=""https://github.com/nfdi4plants/arc-validate-package-registry?tab=readme-ov-file#validation-package-staging-area"">here</a></p>
 <p>The process of writing validation packages with the ARCExpect reference implementation is documented <a href=""https://nfdi4plants.github.io/arc-validate/ARCExpect/design.html"">here</a></p>
 <blockquote>
 <b>How can i validate my ARC locally?</b>
