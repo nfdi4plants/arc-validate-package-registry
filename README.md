@@ -13,13 +13,13 @@ Read more at [avpr.nfdi4plants.org/about](https://avpr.nfdi4plants.org/about)
 # Table of contents
 
 - [General](#general)
+  - [CI/CD pipeline](#cicd-pipeline)
 - [Validation package staging area](#validation-package-staging-area)
   - [Allowed validation package file formats](#allowed-validation-package-file-formats)
   - [Automated package testing](#automated-package-testing)
-  - [The preview package index](#the-preview-package-index)
-  - [How to add packages](#how-to-add-packages)
-  - [Versioning packages](#versioning-packages)
   - [Package publication workflow](#package-publication-workflow)
+  - [package publication tutorial](#package-publication-tutorial)
+  - [Versioning packages](#versioning-packages)
 - [Package metadata](#package-metadata)
   - [Mandatory fields](#mandatory-fields)
   - [Optional fields](#optional-fields)
@@ -33,6 +33,8 @@ Read more at [avpr.nfdi4plants.org/about](https://avpr.nfdi4plants.org/about)
   - [local development](#local-development-1)
 
 # General
+
+## CI/CD pipeline
 
 This repo runs an [extensive CI/CD pipeline](.github/workflows/pipeline.yml) on every commit and PR on the `main` branch. The pipeline includes:
 
@@ -87,28 +89,42 @@ StagingArea
 
 ## Allowed validation package file formats
 
-As all reference implementations are written in F#, the only currently allowed file format for validation packages is `.fsx` (F# script files). This can and will be expanded in the future.
+As all reference implementations are written in F#/.NET, the only currently allowed file format for validation packages is `.fsx` (F# script files). This can and will be expanded in the future.
 
 ## Automated package testing
 
-Tests located at [./tests](./tests) are run on every package in the index. Only if all packages pass these tests, the docker container will be built and pushed to the registry.
+Any change to a package in the staging area triggers the tests located at [/StagingAreaTests](./StagingAreaTests), which are run on every package. (see also [CI/CD pipeline](#cicd-pipeline)). publishing packages to the preview index or the production registry is only possible if all tests pass.
 
-## The preview package index
+## Package publication workflow
 
-Besides the published packages available at [avpr.nfdi4plants.org](https://avpr.nfdi4plants.org),
+In principle, packages can be published via 2 channels:
 
-The pipeline includes a `Update preview index` CI step that extracts metadata from the [yml frontmatter](#package-metadata) of every `.fsx` file in the staging area and (if tests and sanity checks pass) adds it to the `avpr-preview-index.json` on this repo's [preview-index](https://github.com/nfdi4plants/arc-validate-package-registry/releases/tag/preview-index) release
+- **The preview index:**
+  
+  The pipeline includes a `Update preview index` CI step that extracts metadata from the [yml frontmatter](#package-metadata) of every `.fsx` file in the staging area and (if tests and sanity checks pass) adds it to the `avpr-preview-index.json` on this repo's [preview-index](https://github.com/nfdi4plants/arc-validate-package-registry/releases/tag/preview-index) release.
 
-## How to add packages
+  This process is done automatically for ervery package mewrged into main, and needs no manual intervention.
 
-To add a package, follow these steps:
+- **The production registry:**
 
-- fork this repo
-- add a new `.fsx` file to the respective folder in the [staging area](StagingArea/). For more info on the staging area structure, see [Validation package staging area](#validation-package-staging-area).
-- commit it to the repo
-- open a PR to the `main` branch of this repo
+  Packages set to `publish: true` in their yml frontmatter will be published to the production registry database if they pass all tests and pre-publish checks. 
 
-All packages in the staging area are automatically tested on every PR. Additionally, all packages set to `publish: true` in their yml frontmatter will be pushed to the registry service if they pass all tests and are not already present in the registry (see [Package publication workflow](#package-publication-workflow) for more info).
+## Package publication tutorial
+
+Publishing a package to the registry is a multi-step process:
+
+Suppose you want to develop version 1.0.0 of a package called `my-package`.
+
+1. fork this repo
+2. Add a new blank `my-package@1.0.0.fsx` file to the [staging area](./StagingArea/) in the folder `my-package`.
+3. Develop the package, using a work-in-process pull request to use this repository's CI to perform automated integrity tests on it. If you want to pre-release the package to the preview index, request a review for a merge into the `main` branch at any time.
+4. Once the package is ready for production use, add `publish: true` to the [yml frontmatter](#package-metadata) of the package file. This will trigger the CI to build and push the package to the registry once the PR is reviewed and merged.
+5. Once a package is published, it cannot be unpublished or changed. To update a package, create a new script with the same name and a higher version number.
+
+| stage | availability | mutability |
+| --- | --- | --- |
+| staging: development in this repo | version of current HEAD commit in this repo via github API-based execution in `arc-validate` CLI | any changes are allowed |
+| published: available in the registry | version of the published package via the registry API | no changes are allowed |
 
 ## Versioning packages
 
@@ -117,22 +133,6 @@ Packages SHOULD be versioned according to the [semantic versioning](https://semv
 - **Major version**: incremented when you make changes incompatible with previous versions
 - **Minor version**: incremented when you add functionality in a backwards-compatible manner
 - **Patch version**: incremented when you make backwards-compatible bug fixes
-
-## Package publication workflow
-
-Publishing a package to the registry is a multi-step process:
-
-Suppose you want to develop version 1.0.0 of a package called `my-package`.
-
-1. Add a new blank `my-package@1.0.0.fsx` file to the [staging area](./StagingArea/) in the folder `my-package`.
-2. Develop the package, using a work-in-process pull request to use this repository's CI to perform automated integrity tests on it.
-3. Once the package is ready, add `publish: true` to the yml frontmatter of the package file. This will trigger the CI to build and push the package to the registry once the PR is merged.
-4. Once a package is published, it cannot be unpublished or changed. To update a package, create a new script with the same name and a higher version number.
-
-| stage | availability | mutability |
-| --- | --- | --- |
-| staging: development in this repo | version of current HEAD commit in this repo via github API-based execution in `arc-validate` CLI | any changes are allowed |
-| published: available in the registry | version of the published package via the registry API | no changes are allowed |
 
 [🔼 Back to top](#table-of-contents)
 
@@ -258,35 +258,59 @@ Tags can be any string with an optional ontology annotation from a controlled vo
 
 [🔼 Back to top](#table-of-contents)
 
-# Web API (PackageRegistryService)
+# Development
 
-The `PackageRegistryService` project located in `/src` is a simple ASP.NET Core (8) web API that serves validation packages and/or associated metadata via a few endpoints.
+Prerequisites:
 
-It is developed specifically for containerization and use in a docker environment. 
-
-The service will eventually be continuously deployed to a public endpoint on the nfdi4plants infrastructure.
-
-## Local development
-
-To run the `PackageRegistryService` locally, ideally use VisualStudio and run the `Docker Compose` project in Debug mode. This will launch the stack defined at [`docker-compose.yml`](docker-compose.yml), which includes:
-
-- the containerized `PackageRegistryService` application 
-- a `postgres` database seeded with the [latest indexed packages](src/PackageRegistryService/Data/arc-validate-package-index.json)
-- an `adminer` instance for database management (will maybe be replaced by pgAdmin in the future)
-
-## OpenAPI endpoint documentation via Swagger UI
-
-The `PackageRegistryService` has a built-in Swagger UI endpoint for API documentation. It is served at `/swagger/index.html`.
-
-[🔼 Back to top](#table-of-contents)
-
-# Repository setup
-
-## local development
-
-install the following prerequisites:
 - .NET 8 SDK
 - Docker
 - Docker Compose
+
+Advanced local dev functionality has only been tested on Windows with Visual Studio. For that, install the ASP.NET core workload including container features, which will enable running the `Docker Compose` project in Debug mode.
+
+## AVPRIndex and AVPRClient libraries
+
+The `AVPRIndex` and `AVPRClient` libraries are located in `/src` and are intended for use in consuming applications.
+
+To build them, just run `dotnet build` in the respective project folders or build the `arc-validate-package-registry` solution.
+
+### Triggering a nuget release
+
+- Bump the version in the respective `csproj` or `fsproj` file
+- Update the respective RELEASE_NOTES.md file
+- CI will automatically publish the package to the nuget feed
+
+## Web API and website (PackageRegistryService)
+
+The `PackageRegistryService` project located in `/src` is a simple ASP.NET Core (8) web API that serves validation packages and/or associated metadata via a few endpoints.
+
+It is developed specifically for containerization and use in a docker environment.
+
+To run the `PackageRegistryService` locally, ideally use VisualStudio and run the `Docker Compose` project in Debug mode. This will launch the stack defined at [`docker-compose.yml`](docker-compose.yml), which includes:
+
+- the containerized `PackageRegistryService` application
+- a `postgres` database seeded with the [latest indexed packages](src/PackageRegistryService/Data/arc-validate-package-index.json)
+- an `adminer` instance for database management (will maybe be replaced by pgAdmin in the future)
+
+In other IDEs, you can run the `PackageRegistryService` project directly or adjust the stack, but you will need to either set up a local postgres database and configure the connection string in `appsettings.json` accordingly or fine-tune the existing docker-compose file..
+
+### Triggering a image release
+
+Currently, any change in `src/PackageRegistryService` will trigger a release to the production registry. This is done by the CI/CD pipeline, which builds and pushes a docker image to the registry on every relevant commit to the `main` branch.
+
+This will move to a versioned release process in the future.
+
+### OpenAPI endpoint documentation via Swagger UI
+
+The `PackageRegistryService` has a built-in Swagger UI endpoint for API documentation. It is served at `/swagger/index.html`.
+
+## Testing
+
+There are 2 solutions that contain test projects:
+
+- `arc-validate-package-registry.sln` contains the test projects for the `AVPRIndex` and `AVPRClient` libraries, as well as future API and integration tests located in `/tests`.
+- `PackageStagingArea.sln` contains the tests and sanity checks for all packages in the staging area.
+
+Run the tests with `dotnet test` in the respective test project folders or on the respective solution.
 
 [🔼 Back to top](#table-of-contents)
