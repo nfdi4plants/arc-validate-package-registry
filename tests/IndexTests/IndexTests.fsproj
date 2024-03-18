@@ -13,6 +13,7 @@
     <Content Include="..\..\StagingArea\**" CopyToOutputDirectory="Always" LinkBase="StagingArea" />
     <Compile Include="Utils.fs" />
     <Compile Include="ReferenceObjects.fs" />
+    <Compile Include="DomainTests.fs" />
     <Compile Include="FrontmatterTests.fs" />
     <Compile Include="MetadataTests.fs" />
     <Compile Include="ValidationPackageIndexTests.fs" />

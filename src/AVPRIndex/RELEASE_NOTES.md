@@ -1,3 +1,8 @@
+## v0.0.8
+- Fix content hash being dependent on line endings (now, all content is normalized to \n before hashing)
+- Fix code duplication in create functions for `ValidationPackageIndex`
+- Unify `create` functions for Domain types
+
 ## v0.0.7
 
 fix preview index download url

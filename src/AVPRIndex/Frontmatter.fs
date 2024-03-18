@@ -2,12 +2,13 @@
 
 open Domain
 open System
+open System.Text
 open System.IO
 open System.Security.Cryptography
 open YamlDotNet.Serialization
 
 module Frontmatter = 
-   
+
     let [<Literal>] frontMatterStart = "(*\n---"
     let [<Literal>] frontMatterEnd = "---\n*)"
 
@@ -71,13 +72,8 @@ module Frontmatter =
             repoPath: string, 
             lastUpdated: System.DateTimeOffset
         ) = 
-
-            let md5 = MD5.Create()
-
             ValidationPackageIndex.create(
                 repoPath = repoPath,
-                fileName = Path.GetFileName(repoPath),
                 lastUpdated = lastUpdated,
-                contentHash = (md5.ComputeHash(File.ReadAllBytes(repoPath)) |> Convert.ToHexString),
                 metadata = ValidationPackageMetadata.extractFromScript(repoPath)
             )

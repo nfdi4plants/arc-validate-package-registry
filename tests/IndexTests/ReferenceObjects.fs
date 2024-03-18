@@ -1,7 +1,32 @@
 ﻿module ReferenceObjects
 
+open Utils
 open AVPRIndex
 open AVPRIndex.Domain
+
+let testDate = System.DateTimeOffset.Parse("01/01/2024")
+
+module Author = 
+    
+    let mandatoryFields = Author(FullName = "test")
+
+    let allFields =
+        Author(
+            FullName = "test",
+            Email = "test@test.test",
+            Affiliation = "testaffiliation",
+            AffiliationLink = "test.com"
+        )
+
+module OntologyAnnotation = 
+    
+    let mandatoryFields = OntologyAnnotation(Name = "test")
+
+    let allFields = OntologyAnnotation(
+        Name = "test",
+        TermSourceREF = "REF",
+        TermAccessionNumber = "TAN"
+    )
 
 module Frontmatter = 
 
@@ -210,4 +235,33 @@ It does it very fast, it does it very swell.
 It does it very good, it does it very well.
 It does it very fast, it does it very swell.
 """.ReplaceLineEndings("\n")
+        )
+
+module ValidationPackageIndex =
+    
+    let validMandatoryFrontmatter = 
+        ValidationPackageIndex.create(
+            repoPath = "fixtures/valid@1.0.0.fsx",
+            fileName = "valid@1.0.0.fsx",
+            lastUpdated = testDate,
+            contentHash = (Frontmatter.validMandatoryFrontmatter |> md5hash),
+            metadata = Metadata.validMandatoryFrontmatter
+        )
+
+    let validFullFrontmatter = 
+        ValidationPackageIndex.create(
+            repoPath = "fixtures/valid@2.0.0.fsx",
+            fileName = "valid@2.0.0.fsx",
+            lastUpdated = testDate,
+            contentHash = (Frontmatter.validFullFrontmatter |> md5hash),
+            metadata = Metadata.validFullFrontmatter
+        )
+
+    let invalidMissingMandatoryFrontmatter = 
+        ValidationPackageIndex.create(
+            repoPath = "fixtures/invalid@0.0.fsx",
+            fileName = "invalid@0.0.fsx",
+            lastUpdated = testDate,
+            contentHash = (Frontmatter.invalidMissingMandatoryFrontmatter |> md5hash),
+            metadata = Metadata.invalidMissingMandatoryFrontmatter
         )

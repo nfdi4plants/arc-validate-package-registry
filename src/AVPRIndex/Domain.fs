@@ -2,6 +2,7 @@
 
 open System
 open System.IO
+open System.Text
 open System.Text.Json
 open System.Security.Cryptography
 
@@ -45,15 +46,12 @@ module Domain =
             ?affiliation: string,
             ?affiliationLink: string
         ) =
-            let tmp = new Author()
-
-            tmp.FullName <- fullName
-            if email.IsSome then
-                tmp.Email <- email.Value
-            if affiliation.IsSome then
-                tmp.Affiliation <- affiliation.Value
-            if affiliationLink.IsSome then
-                tmp.AffiliationLink <- affiliationLink.Value
+            let tmp = Author(
+                FullName = fullName
+            )
+            email |> Option.iter (fun x -> tmp.Email <- x)
+            affiliation |> Option.iter (fun x -> tmp.Affiliation <- x)
+            affiliationLink |> Option.iter (fun x -> tmp.AffiliationLink <- x)
 
             tmp
 
@@ -89,14 +87,9 @@ module Domain =
             ?termSourceRef: string,
             ?termAccessionNumber: string
         ) =
-            let tmp = new OntologyAnnotation()
-
-            tmp.Name <- name
-            if termSourceRef.IsSome then
-                tmp.TermSourceREF <- termSourceRef.Value
-            if termAccessionNumber.IsSome then
-                tmp.TermAccessionNumber <- termAccessionNumber.Value
-
+            let tmp = new OntologyAnnotation(Name = name)
+            termSourceRef |> Option.iter (fun x -> tmp.TermSourceREF <- x)
+            termAccessionNumber |> Option.iter (fun x -> tmp.TermAccessionNumber <- x)
             tmp
 
     type ValidationPackageMetadata() =
@@ -167,13 +160,15 @@ module Domain =
             ?Tags: OntologyAnnotation [],
             ?ReleaseNotes
         ) = 
-            let tmp = ValidationPackageMetadata()
-            tmp.Name <- name
-            tmp.Summary <- summary
-            tmp.Description <- description
-            tmp.MajorVersion <- majorVersion
-            tmp.MinorVersion <- minorVersion
-            tmp.PatchVersion <- patchVersion
+            let tmp = ValidationPackageMetadata(
+                Name = name,
+                Summary = summary,
+                Description = description,
+                MajorVersion = majorVersion,
+                MinorVersion = minorVersion,
+                PatchVersion = patchVersion
+            )
+
             Publish |> Option.iter (fun x -> tmp.Publish <- x)
             Authors |> Option.iter (fun x -> tmp.Authors <- x)
             Tags |> Option.iter (fun x -> tmp.Tags <- x)
@@ -215,9 +210,16 @@ module Domain =
 
                 ValidationPackageIndex.create(
                     repoPath = repoPath,
-                    fileName = Path.GetFileNameWithoutExtension(repoPath),
+                    fileName = Path.GetFileName(repoPath),
                     lastUpdated = lastUpdated,
-                    contentHash = (md5.ComputeHash(File.ReadAllBytes(repoPath)) |> Convert.ToHexString),
+                    contentHash = (
+                        repoPath
+                        |> File.ReadAllText
+                        |> fun s -> s.ReplaceLineEndings("\n")
+                        |> Encoding.UTF8.GetBytes
+                        |> md5.ComputeHash
+                        |> Convert.ToHexString
+                    ),
                     metadata = metadata
                 )
                 

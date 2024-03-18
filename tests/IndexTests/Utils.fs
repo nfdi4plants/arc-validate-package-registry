@@ -4,7 +4,16 @@ open AVPRIndex
 open AVPRIndex.Domain
 open Xunit
 open System 
+open System.Text
 open System.IO
+open System.Security.Cryptography
+
+let md5hash (content: string) =
+    let md5 = MD5.Create()
+    content
+    |> Encoding.UTF8.GetBytes
+    |> md5.ComputeHash
+    |> Convert.ToHexString
 
 type Assert with
     static member MetadataValid(m: ValidationPackageMetadata) =
