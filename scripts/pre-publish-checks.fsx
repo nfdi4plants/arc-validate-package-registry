@@ -39,10 +39,14 @@ let staging_diff =
     )
 
 open System
+open System.IO
+
+// https://stackoverflow.com/questions/70123328/how-to-set-environment-variables-in-github-actions-using-python
+let GITHUB_ENV = Environment.GetEnvironmentVariable("GITHUB_ENV")
 
 if staging_diff.Length > 0 then 
-    Environment.SetEnvironmentVariable("UPDATE_PREVIEW_INDEX", "true")
+    File.AppendAllLines(GITHUB_ENV, ["UPDATE_PREVIEW_INDEX=true"])
 else
-    Environment.SetEnvironmentVariable("UPDATE_PREVIEW_INDEX", "false")
+    File.AppendAllLines(GITHUB_ENV, ["UPDATE_PREVIEW_INDEX=false"])
 
-printfn $"""UPDATE_PREVIEW_INDEX={Environment.GetEnvironmentVariable("UPDATE_PREVIEW_INDEX")}"""
+printfn $"""GITHUB_ENV={File.ReadAllText(GITHUB_ENV)}"""
