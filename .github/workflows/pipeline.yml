@@ -217,8 +217,8 @@ jobs:
     needs: test-staging-area
     runs-on: ubuntu-latest
     outputs: 
-      trigger-update-preview-index: ${{ steps.ppc.outputs.trigger-release-staging-area }}
-      trigger-publish-pending-packages: ${{ steps.ppc.outputs.trigger-publish-pending-packages }}
+      trigger-update-preview-index: ${{ steps.set-output.outputs.trigger-update-preview-index }}
+      trigger-publish-pending-packages: ${{ steps.set-output.outputs.trigger-publish-pending-packages }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up .NET
@@ -229,11 +229,18 @@ jobs:
         id: ppc
         run: |
           dotnet fsi scripts/pre-publish-checks.fsx
+      - name: set-output
+        id: set-output
+        run: |
+          echo "trigger-update-preview-index=$UPDATE_PREVIEW_INDEX"
+          echo "trigger-update-preview-index=$UPDATE_PREVIEW_INDEX" >> $GITHUB_OUTPUT
+          echo "trigger-publish-pending-packages=$PUBLISH_PENDING_PACKAGES"
+          echo "trigger-publish-pending-packages=$PUBLISH_PENDING_PACKAGES" >> $GITHUB_OUTPUT
       - name: list triggered jobs
         run: |
           echo "this should trigger the following jobs:"
-          echo "trigger-update-preview-index: ${{steps.ppc.outputs.trigger-update-preview-index}}"
-          echo "trigger-publish-pending-packages: ${{steps.ppc.outputs.trigger-publish-pending-packages}}"
+          echo "trigger-update-preview-index: ${{steps.set-output.outputs.trigger-update-preview-index}}"
+          echo "trigger-publish-pending-packages: ${{steps.set-output.outputs.trigger-publish-pending-packages}}"
 
   update-preview-index:
     needs: staging-area-pre-publish-checks

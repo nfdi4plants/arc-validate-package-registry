@@ -20,7 +20,7 @@ Tags:
   - Name: validation
   - Name: my-package
   - Name: thing
-ReleaseNotes: "Trigger another CI run!"
+ReleaseNotes: "Trigger another CI run"
 ---
 *)
 
