@@ -1,0 +1,274 @@
+[
+  {
+    "RepoPath": "StagingArea/invenio/invenio@1.0.0.fsx",
+    "FileName": "invenio@1.0.0.fsx",
+    "LastUpdated": "2024-03-19T09:56:48+01:00",
+    "ContentHash": "BF1B6EA8CAD51CCA05C5D17A20572A39",
+    "Metadata": {
+      "Name": "invenio",
+      "Summary": "Validates if the ARC contains the necessary metadata to be publishable via Invenio.",
+      "Description": "Validates if the ARC contains the necessary metadata to be publishable via Invenio.\nThe following metadata is required:\n    - Investigation has title and description\n    - All persons in Investigation Contacts must have a name, last name, affiliation and valid email\n",
+      "MajorVersion": 1,
+      "MinorVersion": 0,
+      "PatchVersion": 0,
+      "Publish": true,
+      "Authors": [
+        {
+          "FullName": "Oliver Maus",
+          "Email": "",
+          "Affiliation": "DataPLANT",
+          "AffiliationLink": ""
+        }
+      ],
+      "Tags": [
+        {
+          "Name": "ARC",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "data publication",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
+      ],
+      "ReleaseNotes": "Initial release"
+    }
+  },
+  {
+    "RepoPath": "StagingArea/pride/pride@1.0.0.fsx",
+    "FileName": "pride@1.0.0.fsx",
+    "LastUpdated": "2024-03-19T09:56:48+01:00",
+    "ContentHash": "FDB97EA9588B82513327C46800E8C1E4",
+    "Metadata": {
+      "Name": "pride",
+      "Summary": "Validates if the ARC contains the necessary metadata to be publishable via PRIDE.",
+      "Description": "Validates if the ARC contains the necessary metadata to be publishable via PRIDE.\nThe following metadata is required:\n    - Investigation has title and description\n    - Investigation has Keywords comment in correct format\n    - All persons in Investigation Contacts must have a first name, last name, affiliation and valid email\n    - Study has protocol, tissue \u0026 species in correct format\n    - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format\n",
+      "MajorVersion": 1,
+      "MinorVersion": 0,
+      "PatchVersion": 0,
+      "Publish": false,
+      "Authors": [
+        {
+          "FullName": "Oliver Maus",
+          "Email": "maus@nfdi4plants.org",
+          "Affiliation": "RPTU Kaiserslautern",
+          "AffiliationLink": "http://rptu.de/startseite"
+        }
+      ],
+      "Tags": [
+        {
+          "Name": "validation",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "pride",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "proteomics",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
+      ],
+      "ReleaseNotes": "- initial release\n- metadata validation added:\n  - Investigation has title and description\n  - Investigation has Keywords comment in correct format\n  - All persons in Investigation Contacts must have a first name, last name, affiliation and valid email\n  - Study has protocol, tissue \u0026 species in correct format \n  - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format\n"
+    }
+  },
+  {
+    "RepoPath": "StagingArea/test/test@0.0.1.fsx",
+    "FileName": "test@0.0.1.fsx",
+    "LastUpdated": "2024-03-19T09:56:48+01:00",
+    "ContentHash": "48B0DD3A0D9D2B38F6A7C8F9A2A2A777",
+    "Metadata": {
+      "Name": "test",
+      "Summary": "this package is here for testing purposes only.",
+      "Description": "this package is here for testing purposes only.",
+      "MajorVersion": 0,
+      "MinorVersion": 0,
+      "PatchVersion": 1,
+      "Publish": true,
+      "Authors": [],
+      "Tags": [],
+      "ReleaseNotes": ""
+    }
+  },
+  {
+    "RepoPath": "StagingArea/test/test@1.0.0.fsx",
+    "FileName": "test@1.0.0.fsx",
+    "LastUpdated": "2024-03-19T09:56:48+01:00",
+    "ContentHash": "59B460E9ED4A780B6376941EB6023918",
+    "Metadata": {
+      "Name": "test",
+      "Summary": "this package is here for testing purposes only.",
+      "Description": "this package is here for testing purposes only.",
+      "MajorVersion": 1,
+      "MinorVersion": 0,
+      "PatchVersion": 0,
+      "Publish": true,
+      "Authors": [],
+      "Tags": [],
+      "ReleaseNotes": ""
+    }
+  },
+  {
+    "RepoPath": "StagingArea/test/test@1.0.1.fsx",
+    "FileName": "test@1.0.1.fsx",
+    "LastUpdated": "2024-03-19T09:56:48+01:00",
+    "ContentHash": "1A9AC71D168C32F528C1E55AB8421E81",
+    "Metadata": {
+      "Name": "test",
+      "Summary": "this package is here for testing purposes only.",
+      "Description": "this package is here for testing purposes only.",
+      "MajorVersion": 1,
+      "MinorVersion": 0,
+      "PatchVersion": 1,
+      "Publish": true,
+      "Authors": [],
+      "Tags": [],
+      "ReleaseNotes": ""
+    }
+  },
+  {
+    "RepoPath": "StagingArea/test/test@2.0.0.fsx",
+    "FileName": "test@2.0.0.fsx",
+    "LastUpdated": "2024-03-19T09:56:48+01:00",
+    "ContentHash": "DAD570E5AA67959FE2D87D9CB63DD210",
+    "Metadata": {
+      "Name": "test",
+      "Summary": "this package is here for testing purposes only.",
+      "Description": "this package is here for testing purposes only.",
+      "MajorVersion": 2,
+      "MinorVersion": 0,
+      "PatchVersion": 0,
+      "Publish": true,
+      "Authors": [
+        {
+          "FullName": "John Doe",
+          "Email": "j@d.com",
+          "Affiliation": "University of Nowhere",
+          "AffiliationLink": "https://nowhere.edu"
+        },
+        {
+          "FullName": "Jane Doe",
+          "Email": "jj@d.com",
+          "Affiliation": "University of Somewhere",
+          "AffiliationLink": "https://somewhere.edu"
+        }
+      ],
+      "Tags": [
+        {
+          "Name": "validation",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "my-package",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "thing",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
+      ],
+      "ReleaseNotes": "add authors and tags for further testing"
+    }
+  },
+  {
+    "RepoPath": "StagingArea/test/test@2.0.1.fsx",
+    "FileName": "test@2.0.1.fsx",
+    "LastUpdated": "2024-03-19T09:56:48+01:00",
+    "ContentHash": "4E812D7BA3064A9C720BC098928EB874",
+    "Metadata": {
+      "Name": "test",
+      "Summary": "this package is here for testing purposes only.",
+      "Description": "this package is here for testing purposes only.",
+      "MajorVersion": 2,
+      "MinorVersion": 0,
+      "PatchVersion": 1,
+      "Publish": false,
+      "Authors": [
+        {
+          "FullName": "John Doe",
+          "Email": "j@d.com",
+          "Affiliation": "University of Nowhere",
+          "AffiliationLink": "https://nowhere.edu"
+        },
+        {
+          "FullName": "Jane Doe",
+          "Email": "jj@d.com",
+          "Affiliation": "University of Somewhere",
+          "AffiliationLink": "https://somewhere.edu"
+        }
+      ],
+      "Tags": [
+        {
+          "Name": "validation",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "my-package",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "thing",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
+      ],
+      "ReleaseNotes": "add authors and tags for further testing"
+    }
+  },
+  {
+    "RepoPath": "StagingArea/test/test@3.0.0.fsx",
+    "FileName": "test@3.0.0.fsx",
+    "LastUpdated": "2024-03-19T09:56:48+01:00",
+    "ContentHash": "384174B1D02FCA8255442306AC53FF80",
+    "Metadata": {
+      "Name": "test",
+      "Summary": "this package is here for testing purposes only.",
+      "Description": "this package is here for testing purposes only.",
+      "MajorVersion": 3,
+      "MinorVersion": 0,
+      "PatchVersion": 0,
+      "Publish": true,
+      "Authors": [
+        {
+          "FullName": "John Doe",
+          "Email": "j@d.com",
+          "Affiliation": "University of Nowhere",
+          "AffiliationLink": "https://nowhere.edu"
+        },
+        {
+          "FullName": "Jane Doe",
+          "Email": "jj@d.com",
+          "Affiliation": "University of Somewhere",
+          "AffiliationLink": "https://somewhere.edu"
+        }
+      ],
+      "Tags": [
+        {
+          "Name": "validation",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "my-package",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        },
+        {
+          "Name": "thing",
+          "TermSourceREF": "",
+          "TermAccessionNumber": ""
+        }
+      ],
+      "ReleaseNotes": "add authors and tags for further testing"
+    }
+  }
+]
