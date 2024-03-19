@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using PackageRegistryService.Models;
 using System.Security.Policy;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using AVPRIndex;
 using static AVPRIndex.Domain;
@@ -34,7 +35,9 @@ namespace PackageRegistryService.Data
                                     Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
                                     $"StagingArea/{i.Metadata.Name}/{i.FileName}"
                                 );
-                            var content = File.ReadAllBytes(path);
+                            var content = 
+                                File.ReadAllText(path)
+                                .ReplaceLineEndings("\n");
 
                             return new ValidationPackage
                             {
@@ -44,7 +47,7 @@ namespace PackageRegistryService.Data
                                 MajorVersion = i.Metadata.MajorVersion,
                                 MinorVersion = i.Metadata.MinorVersion,
                                 PatchVersion = i.Metadata.PatchVersion,
-                                PackageContent = content,
+                                PackageContent = Encoding.UTF8.GetBytes(content),
                                 ReleaseDate = new(i.LastUpdated.Year, i.LastUpdated.Month, i.LastUpdated.Day),
                                 Tags = i.Metadata.Tags,
                                 ReleaseNotes = i.Metadata.ReleaseNotes,
@@ -63,9 +66,11 @@ namespace PackageRegistryService.Data
                                     Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
                                     $"StagingArea/{i.Metadata.Name}/{i.FileName}"
                                 );
-                            var content = File.ReadAllBytes(path);
+                            var content =
+                                File.ReadAllText(path)
+                                .ReplaceLineEndings("\n");
 
-                            var hash = Convert.ToHexString(md5.ComputeHash(content));
+                            var hash = Convert.ToHexString(md5.ComputeHash(Encoding.UTF8.GetBytes(content)));
                             if (hash != i.ContentHash)
                             {
                                 throw new Exception($"Hash collision for indexed hash vs content hash: {$"StagingArea/{i.Metadata.Name}/{i.FileName}"}");
@@ -76,7 +81,7 @@ namespace PackageRegistryService.Data
                                 PackageMajorVersion = i.Metadata.MajorVersion,
                                 PackageMinorVersion = i.Metadata.MinorVersion,
                                 PackagePatchVersion = i.Metadata.PatchVersion,
-                                Hash = Convert.ToHexString(md5.ComputeHash(content)),
+                                Hash = hash,
                             };
                         });
 

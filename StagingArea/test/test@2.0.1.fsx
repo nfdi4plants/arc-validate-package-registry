@@ -20,7 +20,7 @@ Tags:
   - Name: validation
   - Name: my-package
   - Name: thing
-ReleaseNotes: "add authors and tags for further testing"
+ReleaseNotes: "Trigger another CI run"
 ---
 *)
  

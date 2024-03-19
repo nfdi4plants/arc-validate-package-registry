@@ -1,4 +1,4 @@
-#r "nuget: AVPRIndex, 0.0.7"
+#r "nuget: AVPRIndex, 0.0.8"
 
 open AVPRIndex
 open System.IO

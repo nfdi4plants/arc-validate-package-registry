@@ -1,5 +1,5 @@
 #r "nuget: dotenv.net, 3.1.3"
-#r "nuget: AVPRIndex, 0.0.7"
+#r "nuget: AVPRIndex, 0.0.8"
 #r "nuget: AVPRClient, 0.0.4"
 #r "nuget: FsHttp, 14.5.0"
 
