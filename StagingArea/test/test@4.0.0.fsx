@@ -35,6 +35,8 @@ let metadata = ValidationPackageMetadata.extractFromString(PACKAGE_METADATA)
 // this file is intended for testing purposes only.
 printfn "If you can read this in your console, you successfully executed test package v4.0.0!" 
 
+printfn "%A" metadata.Summary
+
 #r "nuget: ARCExpect, 1.0.1"
 
 open ARCExpect
