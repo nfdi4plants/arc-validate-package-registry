@@ -6,6 +6,7 @@ open System.Text
 open System.Text.Json
 open System.Security.Cryptography
 
+[<AutoOpen>]
 module Domain =
 
     let jsonSerializerOptions = JsonSerializerOptions(WriteIndented = true)

@@ -7,20 +7,37 @@ open System.IO
 open System.Security.Cryptography
 open YamlDotNet.Serialization
 
+[<AutoOpen>]
 module Frontmatter = 
 
-    let [<Literal>] frontMatterStart = "(*\n---"
-    let [<Literal>] frontMatterEnd = "---\n*)"
+    /// the frontmatter start string if the package uses yaml frontmatter as comment
+    let [<Literal>] frontMatterCommentStart = "(*\n---"
+    /// the frontmatter end string if the package uses yaml frontmatter as comment
+    let [<Literal>] frontMatterCommentEnd = "---\n*)"
 
-    let containsFrontmatter (str: string) =
-        str.StartsWith(frontMatterStart, StringComparison.Ordinal) && str.Contains(frontMatterEnd)
+    /// the frontmatter start string if the package uses yaml frontmatter as a string binding to be re-used in the package code
+    let [<Literal>] frontmatterBindingStart = "let [<Literal>]PACKAGE_METADATA = \"\"\"(*\n---"
+    /// the frontmatter end string if the package uses yaml frontmatter as a string binding to be re-used in the package code
+    let [<Literal>] frontmatterBindingEnd = "---\n*)\"\"\""
+
+
+    let containsCommentFrontmatter (str: string) =
+        str.StartsWith(frontMatterCommentStart, StringComparison.Ordinal) && str.Contains(frontMatterCommentEnd)
+
+    let containsBindingFrontmatter (str: string) =
+        str.StartsWith(frontmatterBindingStart, StringComparison.Ordinal) && str.Contains(frontmatterBindingEnd)
 
     let tryExtractFromString (str: string) =
         let norm = str.ReplaceLineEndings("\n")
-        if containsFrontmatter norm then
+        if containsCommentFrontmatter norm then
             norm.Substring(
-                frontMatterStart.Length, 
-                (norm.IndexOf(frontMatterEnd, StringComparison.Ordinal) - frontMatterEnd.Length))
+                frontMatterCommentStart.Length, 
+                (norm.IndexOf(frontMatterCommentEnd, StringComparison.Ordinal) - frontMatterCommentStart.Length))
+            |> Some
+        elif containsBindingFrontmatter norm then
+            norm.Substring(
+                frontmatterBindingStart.Length, 
+                (norm.IndexOf(frontmatterBindingEnd, StringComparison.Ordinal) - frontmatterBindingStart.Length))
             |> Some
         else 
             None
@@ -30,7 +47,7 @@ module Frontmatter =
         | Some frontmatter -> frontmatter
         | None -> failwith $"input has no correctly formatted frontmatter."
 
-    let yamlDeserializer = 
+    let yamlDeserializer() = 
         DeserializerBuilder()
             .WithNamingConvention(NamingConventions.PascalCaseNamingConvention.Instance)
             .Build()
@@ -42,7 +59,7 @@ module Frontmatter =
             match frontmatter with
             | Some frontmatter ->
                 let result = 
-                    yamlDeserializer.Deserialize<ValidationPackageMetadata>(frontmatter)
+                    yamlDeserializer().Deserialize<ValidationPackageMetadata>(frontmatter)
                 result
             | None ->
                 failwith $"string has no correctly formatted frontmatter."
