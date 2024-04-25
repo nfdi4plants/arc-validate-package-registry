@@ -20,10 +20,10 @@ type Assert with
         Assert.Equal(0, exitCode)
 
     static member ContainsFrontmatter (script: string) =
-        Assert.True(
-            script.StartsWith(Frontmatter.frontMatterStart, StringComparison.Ordinal) && 
-            script.Contains(Frontmatter.frontMatterEnd)
-        )
+        let containsCommentFrontmatter = script.StartsWith(Frontmatter.frontMatterCommentStart, StringComparison.Ordinal) && script.Contains(Frontmatter.frontMatterCommentEnd)
+        let containsBindingFrontmatter = script.StartsWith(Frontmatter.frontmatterBindingStart, StringComparison.Ordinal) && script.Contains(Frontmatter.frontmatterBindingEnd)
+        Assert.True(containsCommentFrontmatter || containsBindingFrontmatter)
+
 
     static member FileNameValid(path:string) =
         let fileName = Path.GetFileName(path)
