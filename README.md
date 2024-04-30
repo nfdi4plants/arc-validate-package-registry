@@ -21,6 +21,8 @@ Read more at [avpr.nfdi4plants.org/about](https://avpr.nfdi4plants.org/about)
   - [Package publication tutorial](#package-publication-tutorial)
   - [Versioning packages](#versioning-packages)
 - [Package metadata](#package-metadata)
+  - [YAML frontmatter](#yaml-frontmatter)
+  - [Frontmatter bindings](#frontmatter-bindings)
   - [Mandatory fields](#mandatory-fields)
   - [Optional fields](#optional-fields)
     - [Objects](#objects)
@@ -140,6 +142,8 @@ Packages SHOULD be versioned according to the [semantic versioning](https://semv
 
 # Package metadata
 
+## YAML frontmatter
+
 Package metadata is extracted from **yml frontmatter** at the start of the `.fsx` file, indicated by a multiline comment (`(* ... *)`)containing the frontmatter fenced by `---` at its start and end:
   
 ```fsharp
@@ -148,6 +152,35 @@ Package metadata is extracted from **yml frontmatter** at the start of the `.fsx
 <yaml frontmatter here>
 ---
 *)
+```
+
+## Frontmatter bindings
+
+You can additionally bind YAML frontmatter as a string inside your package. **This is recommended** because you can now re-use the metadata in your package code.
+
+This binding must be placed at the start of the file to the name `PACKAGE_METADATA` with a `[<Literal>]` attribute _exactly_ like this:
+
+```fsharp
+let [<Literal>] PACKAGE_METADATA = """(*
+---
+<yaml frontmatter here>
+---
+*)"""
+```
+
+further down in your package code, you can now extract and use this metadata. This for example prevents you from having to repeat the package name in your package code.
+
+```fsharp
+#r "nuget: ARCExpect"
+#r "nuget: AVPRIndex"
+let metadata = ValidationPackageMetadata.extractFromString PACKAGE_METADATA
+
+let validationCases = ...
+
+cases
+|> Execute.ValidationPipeline(
+    metadata = metadata // use metadata to determine output paths and names instead of doing it manually
+)
 ```
 
 ## Mandatory fields

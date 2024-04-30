@@ -30,7 +30,9 @@ module OntologyAnnotation =
 
 module Frontmatter = 
 
-    let validMandatoryFrontmatter = """(*
+    module Comment =
+
+        let validMandatoryFrontmatter = """(*
 ---
 Name: valid
 MajorVersion: 1
@@ -44,7 +46,7 @@ Description: |
 ---
 *)"""                                                                         .ReplaceLineEndings("\n")
 
-    let validMandatoryFrontmatterExtracted = """
+        let validMandatoryFrontmatterExtracted = """
 Name: valid
 MajorVersion: 1
 MinorVersion: 0
@@ -57,7 +59,7 @@ Description: |
 """                                                                         .ReplaceLineEndings("\n")
 
 
-    let validFullFrontmatter = """(*
+        let validFullFrontmatter = """(*
 ---
 Name: valid
 MajorVersion: 2
@@ -90,7 +92,7 @@ ReleaseNotes: |
 ---
 *)"""                                                                         .ReplaceLineEndings("\n")
 
-    let validFullFrontmatterExtracted = """
+        let validFullFrontmatterExtracted = """
 Name: valid
 MajorVersion: 2
 MinorVersion: 0
@@ -121,7 +123,7 @@ ReleaseNotes: |
     - does it well
 """                                                                         .ReplaceLineEndings("\n")
 
-    let invalidStartFrontmatter = """(
+        let invalidStartFrontmatter = """(
 ---
 Name: invalid
 MajorVersion: 1
@@ -135,7 +137,7 @@ Description: |
 ---
 *)"""                                                                         .ReplaceLineEndings("\n")
 
-    let invalidEndFrontmatter = """(*
+        let invalidEndFrontmatter = """(*
 ---
 Name: invalid
 MajorVersion: 1
@@ -147,7 +149,7 @@ Description: |
   It does it very good, it does it very well.
   It does it very fast, it does it very swell.---*)""".ReplaceLineEndings("\n")
 
-    let invalidMissingMandatoryFrontmatter = """(*
+        let invalidMissingMandatoryFrontmatter = """(*
 ---
 Name: invalid
 MinorVersion: 0
@@ -160,7 +162,150 @@ Description: |
 ---
 *)"""                                                                         .ReplaceLineEndings("\n")
 
-    let invalidMissingMandatoryFrontmatterExtracted = """
+        let invalidMissingMandatoryFrontmatterExtracted = """
+Name: invalid
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: |
+  My package does the thing.
+  It does it very good, it does it very well.
+  It does it very fast, it does it very swell.
+"""                                                                         .ReplaceLineEndings("\n")
+
+    module Binding = 
+
+        let validMandatoryFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"(*
+---
+Name: valid
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: |
+  My package does the thing.
+  It does it very good, it does it very well.
+  It does it very fast, it does it very swell.
+---
+*)\"\"\""                                                                         .ReplaceLineEndings("\n")
+
+        let validMandatoryFrontmatterExtracted = """
+Name: valid
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: |
+  My package does the thing.
+  It does it very good, it does it very well.
+  It does it very fast, it does it very swell.
+"""                                                                         .ReplaceLineEndings("\n")
+
+
+        let validFullFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"(*
+---
+Name: valid
+MajorVersion: 2
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: |
+  My package does the thing.
+  It does it very good, it does it very well.
+  It does it very fast, it does it very swell.
+Publish: true
+Authors:
+  - FullName: John Doe
+    Email: j@d.com
+    Affiliation: University of Nowhere
+    AffiliationLink: https://nowhere.edu
+  - FullName: Jane Doe
+    Email: jj@d.com
+    Affiliation: University of Somewhere
+    AffiliationLink: https://somewhere.edu
+Tags:
+  - Name: validation
+  - Name: my-tag
+    TermSourceREF: my-ontology
+    TermAccessionNumber: MO:12345
+ReleaseNotes: |
+  - initial release
+    - does the thing
+    - does it well
+---
+*)\"\"\""                                                                         .ReplaceLineEndings("\n")
+
+        let validFullFrontmatterExtracted = """
+Name: valid
+MajorVersion: 2
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: |
+  My package does the thing.
+  It does it very good, it does it very well.
+  It does it very fast, it does it very swell.
+Publish: true
+Authors:
+  - FullName: John Doe
+    Email: j@d.com
+    Affiliation: University of Nowhere
+    AffiliationLink: https://nowhere.edu
+  - FullName: Jane Doe
+    Email: jj@d.com
+    Affiliation: University of Somewhere
+    AffiliationLink: https://somewhere.edu
+Tags:
+  - Name: validation
+  - Name: my-tag
+    TermSourceREF: my-ontology
+    TermAccessionNumber: MO:12345
+ReleaseNotes: |
+  - initial release
+    - does the thing
+    - does it well
+"""                                                                         .ReplaceLineEndings("\n")
+
+        let invalidStartFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"
+---
+Name: invalid
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: |
+  My package does the thing.
+  It does it very good, it does it very well.
+  It does it very fast, it does it very swell.
+---
+*)\"\"\""                                                                         .ReplaceLineEndings("\n")
+
+        let invalidEndFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"(*
+---
+Name: invalid
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: |
+  My package does the thing.
+  It does it very good, it does it very well.
+  It does it very fast, it does it very swell.---*)".ReplaceLineEndings("\n")
+
+        let invalidMissingMandatoryFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"(*
+---
+Name: invalid
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: |
+  My package does the thing.
+  It does it very good, it does it very well.
+  It does it very fast, it does it very swell.
+---
+*)\"\"\""                                                                        .ReplaceLineEndings("\n")
+
+        let invalidMissingMandatoryFrontmatterExtracted = """
 Name: invalid
 MinorVersion: 0
 PatchVersion: 0
@@ -172,7 +317,6 @@ Description: |
 """                                                                         .ReplaceLineEndings("\n")
 
 module Metadata =
-    
     
     let validMandatoryFrontmatter = 
     
@@ -225,43 +369,74 @@ It does it very fast, it does it very swell.
         )
 
     let invalidMissingMandatoryFrontmatter = 
-        ValidationPackageMetadata(
-            Name = "invalid",
-            MajorVersion = -1,
-            MinorVersion = 0,
-            PatchVersion = 0,
-            Summary = "My package does the thing.",
-            Description = """My package does the thing.
+            ValidationPackageMetadata(
+                Name = "invalid",
+                MajorVersion = -1,
+                MinorVersion = 0,
+                PatchVersion = 0,
+                Summary = "My package does the thing.",
+                Description = """My package does the thing.
 It does it very good, it does it very well.
 It does it very fast, it does it very swell.
 """.ReplaceLineEndings("\n")
-        )
+            )
 
 module ValidationPackageIndex =
     
-    let validMandatoryFrontmatter = 
-        ValidationPackageIndex.create(
-            repoPath = "fixtures/valid@1.0.0.fsx",
-            fileName = "valid@1.0.0.fsx",
-            lastUpdated = testDate,
-            contentHash = (Frontmatter.validMandatoryFrontmatter |> md5hash),
-            metadata = Metadata.validMandatoryFrontmatter
-        )
+    module CommentFrontmatter =
 
-    let validFullFrontmatter = 
-        ValidationPackageIndex.create(
-            repoPath = "fixtures/valid@2.0.0.fsx",
-            fileName = "valid@2.0.0.fsx",
-            lastUpdated = testDate,
-            contentHash = (Frontmatter.validFullFrontmatter |> md5hash),
-            metadata = Metadata.validFullFrontmatter
-        )
+        let validMandatoryFrontmatter = 
+            ValidationPackageIndex.create(
+                repoPath = "fixtures/Frontmatter/Comment/valid@1.0.0.fsx",
+                fileName = "valid@1.0.0.fsx",
+                lastUpdated = testDate,
+                contentHash = (Frontmatter.Comment.validMandatoryFrontmatter |> md5hash),
+                metadata = Metadata.validMandatoryFrontmatter
+            )
 
-    let invalidMissingMandatoryFrontmatter = 
-        ValidationPackageIndex.create(
-            repoPath = "fixtures/invalid@0.0.fsx",
-            fileName = "invalid@0.0.fsx",
-            lastUpdated = testDate,
-            contentHash = (Frontmatter.invalidMissingMandatoryFrontmatter |> md5hash),
-            metadata = Metadata.invalidMissingMandatoryFrontmatter
-        )
+        let validFullFrontmatter = 
+            ValidationPackageIndex.create(
+                repoPath = "fixtures/Frontmatter/Comment/valid@2.0.0.fsx",
+                fileName = "valid@2.0.0.fsx",
+                lastUpdated = testDate,
+                contentHash = (Frontmatter.Comment.validFullFrontmatter |> md5hash),
+                metadata = Metadata.validFullFrontmatter
+            )
+
+        let invalidMissingMandatoryFrontmatter = 
+            ValidationPackageIndex.create(
+                repoPath = "fixtures/Frontmatter/Comment/invalid@0.0.fsx",
+                fileName = "invalid@0.0.fsx",
+                lastUpdated = testDate,
+                contentHash = (Frontmatter.Comment.invalidMissingMandatoryFrontmatter |> md5hash),
+                metadata = Metadata.invalidMissingMandatoryFrontmatter
+            )
+
+    module BindingFrontmatter =
+
+        let validMandatoryFrontmatter = 
+            ValidationPackageIndex.create(
+                repoPath = "fixtures/Frontmatter/Binding/valid@1.0.0.fsx",
+                fileName = "valid@1.0.0.fsx",
+                lastUpdated = testDate,
+                contentHash = (Frontmatter.Binding.validMandatoryFrontmatter |> md5hash),
+                metadata = Metadata.validMandatoryFrontmatter
+            )
+
+        let validFullFrontmatter = 
+            ValidationPackageIndex.create(
+                repoPath = "fixtures/Frontmatter/Binding/valid@2.0.0.fsx",
+                fileName = "valid@2.0.0.fsx",
+                lastUpdated = testDate,
+                contentHash = (Frontmatter.Binding.validFullFrontmatter |> md5hash),
+                metadata = Metadata.validFullFrontmatter
+            )
+
+        let invalidMissingMandatoryFrontmatter = 
+            ValidationPackageIndex.create(
+                repoPath = "fixtures/Frontmatter/Binding/invalid@0.0.fsx",
+                fileName = "invalid@0.0.fsx",
+                lastUpdated = testDate,
+                contentHash = (Frontmatter.Binding.invalidMissingMandatoryFrontmatter |> md5hash),
+                metadata = Metadata.invalidMissingMandatoryFrontmatter
+            )

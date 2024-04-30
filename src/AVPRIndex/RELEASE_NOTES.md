@@ -1,3 +1,7 @@
+## v0.1.0
+
+Add support for in-package frontmatter bindings. Enables re-use of the frontmatter inside the package code
+
 ## v0.0.8
 - Fix content hash being dependent on line endings (now, all content is normalized to \n before hashing)
 - Fix code duplication in create functions for `ValidationPackageIndex`
