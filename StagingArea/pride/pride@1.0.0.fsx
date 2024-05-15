@@ -1,4 +1,4 @@
-(*
+let [<Literal>] PACKAGE_METADATA = """(*
 ---
 Name: pride
 Summary: Validates if the ARC contains the necessary metadata to be publishable via PRIDE.
@@ -36,28 +36,22 @@ ReleaseNotes: |
     - Study has protocol, tissue & species in correct format 
     - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format
 ---
-*)
+*)"""
 
-#r "nuget: ARCTokenization,5.0.0"
-#r "nuget: ARCExpect"
-#r "nuget: Anybadge.NET"
-#r "nuget: FSharpAux"
+#r "nuget: ARCTokenization, 6.0.0"
+#r "nuget: ARCExpect, 2.0.0"
 
-open ARCTokenization
-open ARCTokenization.StructuralOntology
 open ControlledVocabulary
 open Expecto
 open ARCExpect
+open ARCTokenization
+open ARCTokenization.StructuralOntology
 open System.IO
 open System.Text
-
+open FSharpAux
 
 // Input:
-
 let arcDir = Directory.GetCurrentDirectory()
-let outDirBadge = Path.Combine(arcDir, "Pride_badge.svg")
-let outDirResXml = Path.Combine(arcDir, "Pride_results.xml")
-
 
 // Values:
 let absoluteDirectoryPaths = FileSystem.parseARCFileSystem arcDir
@@ -294,5 +288,10 @@ let cases =
 
 
 // Execution:
-
-Execute.ValidationPipeline(jUnitPath = outDirResXml, badgePath = outDirBadge, labelText = "PRIDE") cases
+Setup.ValidationPackage(
+    metadata = Setup.Metadata(PACKAGE_METADATA),
+    CriticalValidationCases = [cases]
+)
+|> Execute.ValidationPipeline(
+    basePath = arcDir
+)

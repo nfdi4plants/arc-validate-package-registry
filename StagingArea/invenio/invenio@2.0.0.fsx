@@ -1,48 +1,43 @@
-(*
+let [<Literal>] PACKAGE_METADATA = """(*
 ---
 Name: invenio
 Summary: Validates if the ARC contains the necessary metadata to be publishable via Invenio.
 Description: |
-    Validates if the ARC contains the necessary metadata to be publishable via Invenio.
-    The following metadata is required:
-        - Investigation has title and description
-        - All persons in Investigation Contacts must have a name, last name, affiliation and valid email
+  Validates if the ARC contains the necessary metadata to be publishable via Invenio.
+  The following metadata is required:
+  - Investigation has title and description
+  - All persons in Investigation Contacts must have a name, last name, affiliation and valid email
 MajorVersion: 2
 MinorVersion: 0
 PatchVersion: 0
 Publish: true
 Authors:
-    - FullName: Oliver Maus
-      Affiliation: DataPLANT
-    - FullName: Christopher Lux
-      Email: lux@csbiology.de
-      Affiliation: RPTU Kaiserslautern
-      AffiliationLink: http://rptu.de/startseite
+  - FullName: Oliver Maus
+    Affiliation: DataPLANT
+  - FullName: Christopher Lux
+    Email: lux@csbiology.de
+    Affiliation: RPTU Kaiserslautern
+    AffiliationLink: http://rptu.de/startseite
 Tags:
-    - Name: ARC
-    - Name: data publication
-ReleaseNotes: "Initial release"
-  - Rework the tokenisation and acess to the metadata in Accordance to ARKTokenization 5.0.0
+  - Name: ARC
+  - Name: data publication
+ReleaseNotes: |
+  - Rework the tokenisation and acess to the metadata in Accordance to ARKTokenization 6.0.0/ARCExpect 2.0.0
 ---
-*)
+*)"""
 
-#r "nuget: ARCTokenization,5.0.0"
-#r "nuget: ARCExpect"
-#r "nuget: Anybadge.NET"
-#r "nuget: FSharpAux"
+#r "nuget: ARCTokenization, 6.0.0"
+#r "nuget: ARCExpect, 2.0.0"
 
-open ARCTokenization
-open ARCTokenization.StructuralOntology
 open ControlledVocabulary
 open Expecto
 open ARCExpect
+open ARCTokenization
+open ARCTokenization.StructuralOntology
 open System.IO
 
 // Input:
 let arcDir = Directory.GetCurrentDirectory()
-let outDirBadge = Path.Combine(arcDir, "Invenio_badge.svg")
-let outDirResXml = Path.Combine(arcDir, "Invenio_results.xml")
-
 
 // Values:
 let absoluteDirectoryPaths = FileSystem.parseARCFileSystem arcDir
@@ -52,25 +47,8 @@ let investigationMetadata =
     |> Investigation.parseMetadataSheetsFromTokens() arcDir 
     |> List.concat 
 
-let studyMetadata = 
-    absoluteDirectoryPaths
-    |> Study.parseMetadataSheetsFromTokens() arcDir
-
-let assayMetadata =
-    absoluteDirectoryPaths
-    |> Assay.parseMetadataSheetsFromTokens() arcDir
-
-
-let studyFiles = 
-    try 
-        absoluteDirectoryPaths
-        |> Study.parseProcessGraphColumnsFromTokens arcDir
-    with
-        | _ -> seq{Map.empty}
-
 
 // Validation Cases:
-
 let cases = 
     testList INVMSO.``Investigation Metadata``.INVESTIGATION.key.Name [
         // Investigation has title
@@ -128,10 +106,12 @@ let cases =
         }
     ]
 
-
 // Execution:
-cases
+
+Setup.ValidationPackage(
+    metadata = Setup.Metadata(PACKAGE_METADATA),
+    CriticalValidationCases = [cases]
+)
 |> Execute.ValidationPipeline(
-    basePath = arcDir,
-    packageName = "invenio"
+    basePath = arcDir
 )
