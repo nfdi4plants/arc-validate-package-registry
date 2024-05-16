@@ -245,7 +245,7 @@ jobs:
   update-preview-index:
     needs: staging-area-pre-publish-checks
     runs-on: ubuntu-latest
-    if: needs.staging-area-pre-publish-checks.outputs.trigger-update-preview-index == 'true'
+    if: needs.staging-area-pre-publish-checks.outputs.trigger-update-preview-index == 'true' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
       - name: Set up .NET
