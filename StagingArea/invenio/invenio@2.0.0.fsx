@@ -1,4 +1,4 @@
-let [<Literal>] PACKAGE_METADATA = """(*
+let [<Literal>]PACKAGE_METADATA = """(*
 ---
 Name: invenio
 Summary: Validates if the ARC contains the necessary metadata to be publishable via Invenio.
@@ -26,7 +26,6 @@ ReleaseNotes: |
 ---
 *)"""
 
-#r "nuget: ARCTokenization, 6.0.0"
 #r "nuget: ARCExpect, 2.0.0"
 
 open ControlledVocabulary

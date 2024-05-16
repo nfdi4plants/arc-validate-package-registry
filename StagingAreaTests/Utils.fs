@@ -5,19 +5,32 @@ open AVPRIndex.Domain
 open Xunit
 open System 
 open System.IO
-open FSharp.Compiler.CodeAnalysis
+open Fake.DotNet
 
 type Assert with
 
-    static member ScriptCompiles (script: string) =
-        let t = Path.GetTempFileName()
-        let tempPath = Path.ChangeExtension(t, ".dll")
-        let checker = FSharpChecker.Create()
-        let errors, exitCode =
-            checker.Compile([| "fsc.exe"; "-o"; tempPath; "-a"; script |]) 
-            |> Async.RunSynchronously
-        Assert.Empty(errors)
-        Assert.Equal(0, exitCode)
+    static member ScriptRuns (args: string []) (scriptPath: string)=
+        let args = Array.concat [|[|scriptPath|]; args|]
+        //let outPath = Path.GetDirectoryName scriptPath
+        let result = 
+            DotNet.exec 
+                (fun p -> 
+                    {
+                        p with
+                            RedirectOutput = true
+                            PrintRedirectedOutput = true
+                    }
+                )
+                "fsi" 
+                (args |> String.concat " ")
+        //let packageName = Path.GetFileNameWithoutExtension(scriptPath)
+        //let outputFolder = Path.Combine([|outPath; ".arc-validate-results"; packageName|])
+        //Assert.True(Directory.Exists(outputFolder))
+        //Assert.True(File.Exists(Path.Combine(outputFolder,"badge.svg")))
+        //Assert.True(File.Exists(Path.Combine(outputFolder,"validation_report.xml")))
+        //Assert.True(File.Exists(Path.Combine(outputFolder,"validation_summary.json")))
+        Assert.Equal(result.ExitCode, 0)
+        Assert.Empty(result.Errors)
 
     static member ContainsFrontmatter (script: string) =
         let containsCommentFrontmatter = script.StartsWith(Frontmatter.frontMatterCommentStart, StringComparison.Ordinal) && script.Contains(Frontmatter.frontMatterCommentEnd)
