@@ -1,0 +1,27 @@
+name: Add issues and pull requests to project
+
+on:
+  issues:
+    types:
+      - opened
+      - reopened
+      - transferred
+      - labeled
+
+  pull_request:
+    types:
+       - opened
+       - reopened
+       - labeled
+
+jobs:
+  add-to-project:
+    name: Add issue to project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v1.0.1
+        with:
+          # You can target a project in a different organization
+          # to the issue
+          project-url: https://github.com/orgs/nfdi4plants/projects/10
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
