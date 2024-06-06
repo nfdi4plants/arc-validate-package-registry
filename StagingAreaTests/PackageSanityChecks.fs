@@ -23,8 +23,8 @@ module Metadata =
 module ValidationScripts =
     
     [<Fact>]
-    let ``All packages compile`` () =
+    let ``All packages run`` () =
         Assert.All(
             ReferenceObjects.all_staged_packages_paths,
-            Assert.ScriptCompiles
+            Assert.ScriptRuns [||]
         )

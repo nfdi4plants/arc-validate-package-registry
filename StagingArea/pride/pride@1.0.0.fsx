@@ -1,4 +1,4 @@
-(*
+let [<Literal>]PACKAGE_METADATA = """(*
 ---
 Name: pride
 Summary: Validates if the ARC contains the necessary metadata to be publishable via PRIDE.
@@ -19,6 +19,10 @@ Authors:
     Email: maus@nfdi4plants.org
     Affiliation: RPTU Kaiserslautern
     AffiliationLink: http://rptu.de/startseite
+  - FullName: Christopher Lux
+    Email: lux@csbiology.de
+    Affiliation: RPTU Kaiserslautern
+    AffiliationLink: http://rptu.de/startseite
 Tags:
   - Name: validation
   - Name: pride
@@ -32,175 +36,71 @@ ReleaseNotes: |
     - Study has protocol, tissue & species in correct format 
     - Assay has protocol, technology type, instrument model, and fixed and/or variable modification in correct format
 ---
-*)
+*)"""
 
-#r "nuget: ARCExpect"
-#r "nuget: Anybadge.NET"
-#r "nuget: ARCValidationPackages"
-#r "nuget: FSharpAux"
+#r "nuget: ARCExpect, 2.0.0"
 
+open ControlledVocabulary
+open Expecto
 open ARCExpect
 open ARCTokenization
 open ARCTokenization.StructuralOntology
-open ControlledVocabulary
-open Expecto
-open ARCValidationPackages
-open ARCValidationPackages.API
 open System.IO
+open System.Text
 open FSharpAux
 
-
 // Input:
-
 let arcDir = Directory.GetCurrentDirectory()
-let outDirBadge = Path.Combine(arcDir, "Invenio_badge.svg")
-let outDirResXml = Path.Combine(arcDir, "Invenio_results.xml")
-
 
 // Values:
+let absoluteDirectoryPaths = FileSystem.parseARCFileSystem arcDir
 
-let absoluteDirectoryPaths = FileSystem.parseAbsoluteDirectoryPaths arcDir
-let absoluteFilePaths = FileSystem.parseAbsoluteFilePaths arcDir
+let investigationMetadata = 
+    absoluteDirectoryPaths
+    |> Investigation.parseMetadataSheetsFromTokens() arcDir 
+    |> List.concat 
 
-let invFileTokens = 
-    Investigation.parseMetadataSheetsFromTokens() absoluteFilePaths 
-    |> List.concat
-    |> ARCGraph.fillTokenList Terms.InvestigationMetadata.ontology
-    |> Seq.concat
-    |> Seq.concat
-    |> Seq.map snd
+let studyMetadata = 
+    absoluteDirectoryPaths
+    |> Study.parseMetadataSheetsFromTokens() arcDir
 
-Investigation.parseMetadataSheetsFromTokens() absoluteFilePaths |> List.concat |> Seq.iter (Param.getCvName >> printfn "%s")
-Investigation.parseMetadataSheetsFromTokens() absoluteFilePaths |> List.concat |> Seq.iter (Param.getTerm >> printfn "%A")
+let assayMetadata =
+    absoluteDirectoryPaths
+    |> Assay.parseMetadataSheetsFromTokens() arcDir
 
-let invFileTokensNoMdSecKeys =
-    invFileTokens
-    |> Seq.filter (Param.getValue >> (<>) Terms.StructuralTerms.metadataSectionKey.Name) 
+let studyFiles = 
+    try 
+        absoluteDirectoryPaths
+        |> Study.parseProcessGraphColumnsFromTokens arcDir
+    with
+        | _ -> seq{Map.empty}
 
-let contactsFns =
-    invFileTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person First Name``)
-
-let contactsLns =
-    invFileTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Last Name``)
-
-let contactsAffs =
-    invFileTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Affiliation``)
-
-let contactsEmails =
-    invFileTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Email``)
-
-let commis =
-    invFileTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) Terms.StructuralTerms.userComment)
-
-let stdFileProcTokens =
-    absoluteFilePaths
-    |> Seq.choose (
-        fun cvp ->
-            let cvpV = CvParam.getValueAsString cvp
-            if String.contains "isa.study.xlsx" cvpV then
-                ARCTokenization.Study.parseProcessGraphColumnsFromFile cvpV
-                |> Some
-            else None
-    )
-
-let stdFileMdsTokens =
-    Study.parseMetadataSheetsFromTokens () absoluteFilePaths
-    |> List.concat
-    |> ARCGraph.fillTokenList Terms.StudyMetadata.ontology
-    |> Seq.concat
-    |> Seq.concat
-    |> Seq.map snd
-
-let stdFileMdsTokensNoMdSecKeys =
-    stdFileMdsTokens
-    |> Seq.filter (Param.getValue >> (<>) Terms.StructuralTerms.metadataSectionKey.Name) 
-
-let stdProtocols =
-    stdFileMdsTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) STDMSO.``Study Metadata``.``STUDY PROTOCOLS``.key)
-
-let allStdGraphTokens = 
-    stdFileProcTokens
-    |> Seq.collect Map.values
-    |> List.concat
-    |> List.concat
-
-let organismTokens =
-    stdFileProcTokens
+let organismTokens=
+    studyFiles
     |> Seq.collect Map.values
     |> List.concat
     |> List.tryFind (fun cvpList -> cvpList.Head |> Param.getValueAsTerm = (CvTerm.create("OBI:0100026","organism","OBI")))
     |> Option.defaultValue []
 
-let tissueTokens =
-    stdFileProcTokens
+let tissueTokens=
+    studyFiles
     |> Seq.collect Map.values
     |> List.concat
     |> List.tryFind (fun cvpList -> cvpList.Head |> Param.getValueAsTerm = (CvTerm.create("NCIT:12801","Tissue","NCIT")))
     |> Option.defaultValue []
 
-let assFileProcTokens =
-    absoluteFilePaths
-    |> Seq.choose (
-        fun cvp ->
-            let cvpV = CvParam.getValueAsString cvp
-            if String.contains "isa.assay.xlsx" cvpV then
-                ARCTokenization.Assay.parseProcessGraphColumnsFromFile cvpV
-                |> Some
-            else None
-    )
-
-let assFileMdsTokens =
-    Assay.parseMetadataSheetsFromTokens () absoluteFilePaths
-    |> List.concat
-    |> ARCGraph.fillTokenList Terms.AssayMetadata.ontology
-    |> Seq.concat
-    |> Seq.concat
-    |> Seq.map snd
 
 let techTypeName = CvTerm.create("ASSMSO:00000011", "Assay Technology Type", "ASSMSO")
 let techTypeTAN = CvTerm.create("ASSMSO:00000013", "Assay Technology Type Term Accession Number", "ASSMSO")
 let techTypeTSR = CvTerm.create("ASSMSO:00000015", "Assay Technology Type Term Source REF", "ASSMSO")
 
-let assFileMdsTokensNoMdSecKeys =
-    assFileMdsTokens
-    |> Seq.filter (Param.getValue >> (<>) Terms.StructuralTerms.metadataSectionKey.Name) 
-
-let assTechTypeTAN =
-    stdFileMdsTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) techTypeTAN)
-
-let assTechTypeTSR =
-    stdFileMdsTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) techTypeTSR)
-
-let assTechTypeName =
-    stdFileMdsTokensNoMdSecKeys
-    |> Seq.filter (Param.getTerm >> (=) techTypeName)
-
-let allAssGraphTokens = 
-    assFileProcTokens
-    |> Seq.collect Map.values
-    |> List.concat
-    |> List.concat
-
-
 // Helper functions (to deposit in ARCExpect later):
-
 let characterLimit (lowerLimit : int option) (upperLimit : int option) =
     match lowerLimit, upperLimit with
     | None, None -> System.Text.RegularExpressions.Regex(@"^.{0,}$")
     | Some ll, None -> System.Text.RegularExpressions.Regex($"^.{{{ll},}}$")
     | None, Some ul -> System.Text.RegularExpressions.Regex($"^.{{0,{ul}}}$")
     | Some ll, Some ul -> System.Text.RegularExpressions.Regex($"^.{{{ll},{ul}}}$")
-
-
-open System.Text
 
 type ErrorMessage with
 
@@ -253,37 +153,54 @@ type Validate.ParamCollection with
 
 
 // Validation Cases:
-
 let cases = 
     testList "cases" [  // naming is difficult here
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``.INVESTIGATION.``Investigation Title``.Name) {
-            invFileTokensNoMdSecKeys
+            investigationMetadata
             |> Validate.ParamCollection.ContainsParamWithTerm
                 INVMSO.``Investigation Metadata``.INVESTIGATION.``Investigation Title``
         }
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``.INVESTIGATION.``Investigation Description``.Name) {
-            invFileTokensNoMdSecKeys
+            investigationMetadata
             |> Validate.ParamCollection.ContainsParamWithTerm
                 INVMSO.``Investigation Metadata``.INVESTIGATION.``Investigation Description``
+        }//recheck
+        ARCExpect.validationCase (TestID.Name $"{INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person First Name``.Name} exists") {
+            investigationMetadata
+            |> Validate.ParamCollection.ContainsParamWithTerm INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person First Name``
         }
-        ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person First Name``.Name) {
-            contactsFns
+        ARCExpect.validationCase (TestID.Name $"{INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person First Name``.Name} is not empty") {
+            investigationMetadata
+            |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person First Name``)
             |> Seq.iter Validate.Param.ValueIsNotEmpty
         }
-        ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Last Name``.Name) {
-            contactsLns
-            |> Seq.iter Validate.Param.ValueIsNotEmpty
+        //recheck
+        ARCExpect.validationCase (TestID.Name $"{INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Last Name``.Name} exists") {
+            investigationMetadata
+            |> Validate.ParamCollection.ContainsParamWithTerm INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Last Name``
         }
-        ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Affiliation``.Name) {
-            contactsAffs
+        ARCExpect.validationCase (TestID.Name $"{INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Last Name``.Name} is not empty") {
+            investigationMetadata
+            |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Last Name``)
             |> Seq.iter Validate.Param.ValueIsNotEmpty
+        }     
+        //recheck
+        ARCExpect.validationCase (TestID.Name $"{INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Affiliation``.Name} exists") {
+            investigationMetadata
+            |> Validate.ParamCollection.ContainsParamWithTerm INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Affiliation``
         }
-        ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Email``.Name) {
-            contactsEmails
-            |> Validate.ParamCollection.ContainsParamWithTerm INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Email``
+        ARCExpect.validationCase (TestID.Name $"{INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Affiliation``.Name} is not empty") {
+            investigationMetadata
+            |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Affiliation``)
+            |> Seq.iter Validate.Param.ValueIsNotEmpty
+        } 
+        ARCExpect.validationCase (TestID.Name $"{INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Email``.Name} exists") {
+        investigationMetadata
+        |> Validate.ParamCollection.ContainsParamWithTerm INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Email``
         }
         ARCExpect.validationCase (TestID.Name INVMSO.``Investigation Metadata``. ``INVESTIGATION CONTACTS``.``Investigation Person Email``.Name) {
-            contactsEmails
+            investigationMetadata
+            |> Seq.filter (Param.getTerm >> (=) INVMSO.``Investigation Metadata``.``INVESTIGATION CONTACTS``.``Investigation Person Email``)
             |> Seq.iter (Validate.Param.ValueMatchesRegex StringValidationPattern.email)
         }
         // missing: how to get specific comment? (here: Keywords Comment)
@@ -292,51 +209,77 @@ let cases =
         //    |> Seq.iter (Validate.Param.ValueMatchesRegex StringValidationPattern.email)    // needs special Regex
         //}
         ARCExpect.validationCase (TestID.Name STDMSO.``Study Metadata``.``STUDY PROTOCOLS``.key.Name) {
-            stdProtocols
-            |> Validate.ParamCollection.ContainsParamWithTerm STDMSO.``Study Metadata``.``STUDY PROTOCOLS``.key
+            studyMetadata
+            |> List.iter(fun study ->
+                study
+                |> Validate.ParamCollection.ContainsParamWithTerm STDMSO.``Study Metadata``.``STUDY PROTOCOLS``.key
+            )
         }
         ARCExpect.validationCase (TestID.Name STDMSO.``Study Metadata``.``STUDY PROTOCOLS``.key.Name) {
-            stdProtocols
-            |> Seq.iter (Validate.Param.ValueMatchesRegex (characterLimit (Some 50) (Some 500)))
+            studyMetadata
+            |> List.iter(fun study ->
+                study
+                |> Seq.iter (Validate.Param.ValueMatchesRegex (characterLimit (Some 50) (Some 500)))
+            )
         }
         ARCExpect.validationCase (TestID.Name "organism") {
-            allStdGraphTokens
+            studyMetadata
+            |> List.concat
             |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("OBI:0100026","organism","OBI"))
+            
+        }
+        ARCExpect.validationCase (TestID.Name "organism terms exist") {
+            studyMetadata
+            |> List.concat
+            |> Validate.ParamCollection.forAll (fun ip -> match ip.Value with CvValue _ -> true | _ -> false)
         }
         ARCExpect.validationCase (TestID.Name "organism terms") {
             organismTokens
             |> Validate.ParamCollection.forAll (fun ip -> match ip.Value with CvValue _ -> true | _ -> false)
         }
         ARCExpect.validationCase (TestID.Name "Tissue") {
-            allStdGraphTokens
+            studyMetadata
+            |> List.concat
             |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("NCIT:12801","Tissue","NCIT"))
-        }
+        }//recheck
         ARCExpect.validationCase (TestID.Name "Tissue terms") {
             tissueTokens
             |> Validate.ParamCollection.forAll (fun ip -> match ip.Value with CvValue _ -> true | _ -> false)
         }
         ARCExpect.validationCase (TestID.Name techTypeName.Name) {
-            assTechTypeName
-            |> Validate.ParamCollection.ContainsParamWithTerm techTypeName
+            assayMetadata
+            |> List.iter(fun assay -> 
+                assay
+                |> Validate.ParamCollection.ContainsParamWithTerm techTypeName
+            )
         }
         ARCExpect.validationCase (TestID.Name techTypeTAN.Name) {
-            assTechTypeTAN
-            |> Validate.ParamCollection.ContainsParamWithTerm techTypeTAN
+            assayMetadata
+            |> List.iter(fun assay -> 
+                assay
+                |> Validate.ParamCollection.ContainsParamWithTerm techTypeTAN
+            )
         }
         ARCExpect.validationCase (TestID.Name techTypeTSR.Name) {
-            assTechTypeTSR
-            |> Validate.ParamCollection.ContainsParamWithTerm techTypeTSR
+            assayMetadata
+            |> List.iter(fun assay -> 
+                assay
+                |>  Validate.ParamCollection.ContainsParamWithTerm techTypeTSR
+            )
         }
         ARCExpect.validationCase (TestID.Name "Instrument Model") {
-            allStdGraphTokens
+            studyMetadata
+            |> List.concat
             |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("MS:1000031","instrument model","MS"))
         }
         ARCExpect.validationCase (TestID.Name "Modification") {
             ARCExpect.either (fun _ ->
-                allStdGraphTokens
+                studyMetadata
+                |> List.concat
                 |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("MS:1003021","Fixed modification","MS"))
             ) (fun _ ->
-                allStdGraphTokens
+                studyMetadata
+                |> List.concat
                 |> Validate.ParamCollection.ContainsParamWithTerm (CvTerm.create("MS:1003022","Variable modification","MS"))
             )
         }
@@ -344,5 +287,10 @@ let cases =
 
 
 // Execution:
-
-Execute.ValidationPipeline(jUnitPath = outDirResXml, badgePath = outDirBadge, labelText = "PRIDE") cases
+Setup.ValidationPackage(
+    metadata = Setup.Metadata(PACKAGE_METADATA),
+    CriticalValidationCases = [cases]
+)
+|> Execute.ValidationPipeline(
+    basePath = arcDir
+)
