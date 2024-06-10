@@ -80,6 +80,6 @@ module ValidationPackageMetadata =
                 )
             |],
             ReleaseNotes = "releasenotes",
-            HookEndpoint = "hookendpoint"
+            CQCHookEndpoint = "hookendpoint"
         )
         Assert.Equivalent(ValidationPackageMetadata.allFields, actual)

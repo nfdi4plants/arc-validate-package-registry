@@ -50,7 +50,7 @@ module ValidationPackageMetadata =
         Authors = [|Author.allFields|],
         Tags = [|OntologyAnnotation.allFields|],
         ReleaseNotes = "releasenotes",
-        HookEndpoint = "hookendpoint"
+        CQCHookEndpoint = "hookendpoint"
     )
 
 module Frontmatter = 
@@ -114,7 +114,7 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
-HookEndpoint: https://hook.com
+CQCHookEndpoint: https://hook.com
 ---
 *)"""                                                                         .ReplaceLineEndings("\n")
 
@@ -147,7 +147,7 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
-HookEndpoint: https://hook.com
+CQCHookEndpoint: https://hook.com
 """                                                                         .ReplaceLineEndings("\n")
 
         let invalidStartFrontmatter = """(
@@ -259,7 +259,7 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
-HookEndpoint: https://hook.com
+CQCHookEndpoint: https://hook.com
 ---
 *)\"\"\""                                                                         .ReplaceLineEndings("\n")
 
@@ -292,7 +292,7 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
-HookEndpoint: https://hook.com
+CQCHookEndpoint: https://hook.com
 """                                                                         .ReplaceLineEndings("\n")
 
         let invalidStartFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"
@@ -395,7 +395,7 @@ It does it very fast, it does it very swell.
   - does the thing
   - does it well
 """.ReplaceLineEndings("\n"),
-            HookEndpoint = "https://hook.com"
+            CQCHookEndpoint = "https://hook.com"
         )
 
     let invalidMissingMandatoryFrontmatter = 
