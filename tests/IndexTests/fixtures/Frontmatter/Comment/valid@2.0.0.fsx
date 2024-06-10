@@ -28,5 +28,6 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
+HookEndpoint: https://hook.com
 ---
 *)
