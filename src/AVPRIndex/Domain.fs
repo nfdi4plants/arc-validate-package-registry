@@ -106,6 +106,7 @@ module Domain =
         member val Authors: Author [] = Array.empty<Author> with get,set
         member val Tags: OntologyAnnotation [] = Array.empty<OntologyAnnotation> with get,set
         member val ReleaseNotes = "" with get,set
+        member val CQCHookEndpoint = "" with get,set
 
         override this.GetHashCode() =
             hash (
@@ -118,7 +119,8 @@ module Domain =
                 this.Publish,
                 this.Authors,
                 this.Tags,
-                this.ReleaseNotes
+                this.ReleaseNotes,
+                this.CQCHookEndpoint
             )
 
         override this.Equals(other) =
@@ -134,7 +136,8 @@ module Domain =
                     this.Publish,
                     this.Authors,
                     this.Tags,
-                    this.ReleaseNotes
+                    this.ReleaseNotes,
+                    this.CQCHookEndpoint
                 ) = (
                     vpm.Name, 
                     vpm.Summary, 
@@ -145,7 +148,8 @@ module Domain =
                     vpm.Publish,
                     vpm.Authors,
                     vpm.Tags,
-                    vpm.ReleaseNotes
+                    vpm.ReleaseNotes,
+                    vpm.CQCHookEndpoint
                 )
             | _ -> false
         
@@ -159,7 +163,8 @@ module Domain =
             ?Publish: bool,
             ?Authors: Author [],
             ?Tags: OntologyAnnotation [],
-            ?ReleaseNotes
+            ?ReleaseNotes,
+            ?CQCHookEndpoint
         ) = 
             let tmp = ValidationPackageMetadata(
                 Name = name,
@@ -174,6 +179,7 @@ module Domain =
             Authors |> Option.iter (fun x -> tmp.Authors <- x)
             Tags |> Option.iter (fun x -> tmp.Tags <- x)
             ReleaseNotes |> Option.iter (fun x -> tmp.ReleaseNotes <- x)
+            CQCHookEndpoint |> Option.iter (fun x -> tmp.CQCHookEndpoint <- x)
         
             tmp
         

@@ -28,6 +28,31 @@ module OntologyAnnotation =
         TermAccessionNumber = "TAN"
     )
 
+module ValidationPackageMetadata = 
+    
+    let mandatoryFields = ValidationPackageMetadata(
+        Name = "name",
+        Summary = "summary" ,
+        Description = "description" ,
+        MajorVersion = 1,
+        MinorVersion = 0,
+        PatchVersion = 0
+    )
+
+    let allFields = ValidationPackageMetadata(
+        Name = "name",
+        Summary = "summary" ,
+        Description = "description" ,
+        MajorVersion = 1,
+        MinorVersion = 0,
+        PatchVersion = 0,
+        Publish = true,
+        Authors = [|Author.allFields|],
+        Tags = [|OntologyAnnotation.allFields|],
+        ReleaseNotes = "releasenotes",
+        CQCHookEndpoint = "hookendpoint"
+    )
+
 module Frontmatter = 
 
     module Comment =
@@ -89,6 +114,7 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
+CQCHookEndpoint: https://hook.com
 ---
 *)"""                                                                         .ReplaceLineEndings("\n")
 
@@ -121,6 +147,7 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
+CQCHookEndpoint: https://hook.com
 """                                                                         .ReplaceLineEndings("\n")
 
         let invalidStartFrontmatter = """(
@@ -232,6 +259,7 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
+CQCHookEndpoint: https://hook.com
 ---
 *)\"\"\""                                                                         .ReplaceLineEndings("\n")
 
@@ -264,6 +292,7 @@ ReleaseNotes: |
   - initial release
     - does the thing
     - does it well
+CQCHookEndpoint: https://hook.com
 """                                                                         .ReplaceLineEndings("\n")
 
         let invalidStartFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"
@@ -365,7 +394,8 @@ It does it very fast, it does it very swell.
             ReleaseNotes = """- initial release
   - does the thing
   - does it well
-""".ReplaceLineEndings("\n")
+""".ReplaceLineEndings("\n"),
+            CQCHookEndpoint = "https://hook.com"
         )
 
     let invalidMissingMandatoryFrontmatter = 

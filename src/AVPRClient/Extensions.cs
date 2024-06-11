@@ -136,7 +136,8 @@ namespace AVPRClient
                 Microsoft.FSharp.Core.FSharpOption<bool>.None,
                 validationPackage.Authors.AsIndexType(),
                 validationPackage.Tags.AsIndexType(),
-                validationPackage.ReleaseNotes
+                validationPackage.ReleaseNotes,
+                Microsoft.FSharp.Core.FSharpOption<string>.None
             );
         }
     }

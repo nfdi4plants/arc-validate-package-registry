@@ -1,3 +1,7 @@
+## v0.1.1
+
+Add `CQCHookEndpoint` field to `ValidationPackageMetadata`
+
 ## v0.1.0
 
 Add support for in-package frontmatter bindings. Enables re-use of the frontmatter inside the package code
