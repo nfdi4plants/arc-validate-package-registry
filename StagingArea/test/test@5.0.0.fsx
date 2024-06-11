@@ -20,7 +20,7 @@ Tags:
   - Name: validation
   - Name: my-package
   - Name: thing
-ReleaseNotes: "Use ARCExpect v3"
+ReleaseNotes: Use ARCExpect v3
 CQCHookEndpoint: https://avpr.nfdi4plants.org
 ---
 *)"""
