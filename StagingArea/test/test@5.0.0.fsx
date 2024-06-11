@@ -1,7 +1,7 @@
 let [<Literal>]PACKAGE_METADATA = """(*
 ---
 Name: test
-MajorVersion: 4
+MajorVersion: 5
 MinorVersion: 0
 PatchVersion: 0
 Publish: true
@@ -20,7 +20,8 @@ Tags:
   - Name: validation
   - Name: my-package
   - Name: thing
-ReleaseNotes: "use in-package metadata"
+ReleaseNotes: "Use ARCExpect v3"
+CQCHookEndpoint: https://avpr.nfdi4plants.org
 ---
 *)"""
 
