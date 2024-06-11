@@ -21,6 +21,7 @@ namespace AVPRClient
             return new AVPRClient.ValidationPackage
             {
                 Name = indexedPackage.Metadata.Name,
+                Summary = indexedPackage.Metadata.Summary,
                 Description = indexedPackage.Metadata.Description,
                 MajorVersion = indexedPackage.Metadata.MajorVersion,
                 MinorVersion = indexedPackage.Metadata.MinorVersion,
@@ -74,6 +75,7 @@ namespace AVPRClient
                 MD5 md5 = MD5.Create();
                 return new AVPRClient.PackageContentHash
                 {
+                    PackageName = indexedPackage.Metadata.Name,
                     Hash = Convert.ToHexString(md5.ComputeHash(File.ReadAllBytes(indexedPackage.RepoPath))),
                     PackageMajorVersion = indexedPackage.Metadata.MajorVersion,
                     PackageMinorVersion = indexedPackage.Metadata.MinorVersion,
@@ -84,6 +86,7 @@ namespace AVPRClient
             {
                 return new AVPRClient.PackageContentHash
                 {
+                    PackageName = indexedPackage.Metadata.Name,
                     Hash = indexedPackage.ContentHash,
                     PackageMajorVersion = indexedPackage.Metadata.MajorVersion,
                     PackageMinorVersion = indexedPackage.Metadata.MinorVersion,

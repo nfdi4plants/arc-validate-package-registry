@@ -1,3 +1,6 @@
+## v0.0.6
+- Fix some missing fields in type extensions
+
 ## v0.0.5
 - Regen Client with new `CQCHookEndpoint` field in package metadata
 

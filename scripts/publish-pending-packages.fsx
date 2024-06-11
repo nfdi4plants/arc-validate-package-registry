@@ -75,7 +75,7 @@ let published_packages =
 
 //! Paths are relative to the root of the project, since the script is executed from the repo root in CI
 let all_indexed_packages = 
-    AVPRRepo.getIndexedPackages()
+    AVPRRepo.getPreviewIndex()
 
 let published_indexed_packages = 
     all_indexed_packages
@@ -124,6 +124,7 @@ published_indexed_packages
         |> Async.RunSynchronously
     with e ->
         if isDryRun then
+            printfn $"[E]: {e.Message}"
             printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Package content hash {repo_hash} does not match the published package"
             printfn $"  Make sure that the package file has not been modified after publication! ({i.RepoPath})"
         else
