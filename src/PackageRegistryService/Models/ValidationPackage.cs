@@ -72,6 +72,10 @@ namespace PackageRegistryService.Models
         /// <summary>
         /// 
         /// </summary>
+        public string? CQCHookEndpoint { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<AVPRIndex.Domain.Author>? Authors { get; set; } // https://www.learnentityframeworkcore.com/relationships#navigation-properties
         /// <summary>
         /// 

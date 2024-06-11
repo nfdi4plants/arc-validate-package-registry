@@ -51,7 +51,8 @@ namespace PackageRegistryService.Data
                                 ReleaseDate = new(i.LastUpdated.Year, i.LastUpdated.Month, i.LastUpdated.Day),
                                 Tags = i.Metadata.Tags,
                                 ReleaseNotes = i.Metadata.ReleaseNotes,
-                                Authors = i.Metadata.Authors
+                                Authors = i.Metadata.Authors,
+                                CQCHookEndpoint = i.Metadata.CQCHookEndpoint
                             };
                         });
 
