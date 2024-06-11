@@ -52,7 +52,8 @@ namespace AVPRClient
                             AffiliationLink = author.AffiliationLink
                         };
                     })
-                    .ToList()
+                    .ToList(),
+                CQCHookEndpoint = indexedPackage.Metadata.CQCHookEndpoint
             };
         }
 
@@ -137,7 +138,7 @@ namespace AVPRClient
                 validationPackage.Authors.AsIndexType(),
                 validationPackage.Tags.AsIndexType(),
                 validationPackage.ReleaseNotes,
-                Microsoft.FSharp.Core.FSharpOption<string>.None
+                validationPackage.CQCHookEndpoint
             );
         }
     }

@@ -1180,6 +1180,9 @@ namespace AVPRClient
         [Newtonsoft.Json.JsonProperty("ReleaseNotes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ReleaseNotes { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("CQCHookEndpoint", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CQCHookEndpoint { get; set; }
+
         [Newtonsoft.Json.JsonProperty("Authors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<Author> Authors { get; set; }
 

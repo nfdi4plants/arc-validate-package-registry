@@ -1,3 +1,6 @@
+## v0.0.5
+- Regen Client with new `CQCHookEndpoint` field in package metadata
+
 ## v0.0.4
 
 - Add more interop extensions between AVPRClient and AVPRIndex
