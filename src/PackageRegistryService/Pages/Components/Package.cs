@@ -53,7 +53,7 @@ namespace PackageRegistryService.Pages.Components
   <hr />
   <details>
     <summary role=""button"" class=""primary"">Browse code (v{packageVersion})</summary>
-      <pre><code>{packageContent}</code></pre>
+      <pre><code>{System.Security.SecurityElement.Escape(packageContent)}</code></pre>
   </details>
   <hr />
   <details>
