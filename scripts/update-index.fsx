@@ -1,4 +1,4 @@
-#r "nuget: AVPRIndex, 0.0.1"
+#r "nuget: AVPRIndex, 0.1.1"
 
 open AVPRIndex
 open Domain
