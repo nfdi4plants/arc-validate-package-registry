@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Tests.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="ReferenceObjects.fs" />
+    <Compile Include="TypeExtensionsTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -24,6 +26,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AVPRClient\AVPRClient.csproj" />
+    <ProjectReference Include="..\..\src\AVPRIndex\AVPRIndex.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="fixtures\**" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

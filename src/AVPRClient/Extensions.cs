@@ -76,7 +76,14 @@ namespace AVPRClient
                 return new AVPRClient.PackageContentHash
                 {
                     PackageName = indexedPackage.Metadata.Name,
-                    Hash = Convert.ToHexString(md5.ComputeHash(File.ReadAllBytes(indexedPackage.RepoPath))),
+                    Hash = Convert.ToHexString(
+                        md5.ComputeHash(
+                            Encoding.UTF8.GetBytes(
+                                File.ReadAllText(indexedPackage.RepoPath)
+                                    .ReplaceLineEndings("\n")
+                            )
+                        )
+                    ),
                     PackageMajorVersion = indexedPackage.Metadata.MajorVersion,
                     PackageMinorVersion = indexedPackage.Metadata.MinorVersion,
                     PackagePatchVersion = indexedPackage.Metadata.PatchVersion
@@ -95,20 +102,39 @@ namespace AVPRClient
             }
         }
 
+        public static AVPRIndex.Domain.Author AsIndexType(
+            this Author authors
+        )
+        {             
+            return 
+                new AVPRIndex.Domain.Author
+                {
+                    FullName = authors.FullName,
+                    Email = authors.Email,
+                    Affiliation = authors.Affiliation,
+                    AffiliationLink = authors.AffiliationLink
+                };
+        }
+
         public static AVPRIndex.Domain.Author [] AsIndexType (
             this ICollection<Author> authors
         )
         {
             return authors
-                .Select(author =>
-                    new AVPRIndex.Domain.Author
-                    {
-                        FullName = author.FullName,
-                        Email = author.Email,
-                        Affiliation = author.Affiliation,
-                        AffiliationLink = author.AffiliationLink
-                    })
+                .Select(author => author.AsIndexType())
                 .ToArray();
+        }
+
+        public static AVPRIndex.Domain.OntologyAnnotation AsIndexType(
+            this OntologyAnnotation tag
+        )
+        {
+            return new AVPRIndex.Domain.OntologyAnnotation
+            {
+                Name = tag.Name,
+                TermSourceREF = tag.TermSourceREF,
+                TermAccessionNumber = tag.TermAccessionNumber
+            };
         }
 
         public static AVPRIndex.Domain.OntologyAnnotation[] AsIndexType(
@@ -116,13 +142,7 @@ namespace AVPRClient
         )
         {
             return ontologyAnnotations
-                .Select(tag =>
-                    new AVPRIndex.Domain.OntologyAnnotation
-                    {
-                        Name = tag.Name,
-                        TermSourceREF = tag.TermSourceREF,
-                        TermAccessionNumber = tag.TermAccessionNumber
-                    })
+                .Select(tag => tag.AsIndexType())
                 .ToArray();
         }
 

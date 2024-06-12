@@ -1,3 +1,6 @@
+## v0.0.7
+- Further TypeExtension improvements and fixes
+
 ## v0.0.6
 - Fix some missing fields in type extensions
 
