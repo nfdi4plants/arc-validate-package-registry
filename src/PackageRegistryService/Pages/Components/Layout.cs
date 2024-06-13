@@ -11,6 +11,9 @@
     <meta name=""viewport"" content=""width=device-width, initial-scale=1"">
     <meta name=""color-scheme"" content=""light dark"" />
     <link rel=""stylesheet"" href=""/css/pico.cyan.min.css"" />
+    <link rel=""stylesheet"" href=""/css/highlightjs.atom-one-dark.min.css"" />
+    <script src=""/js/highlight.min.js""></script>
+    <script>hljs.highlightAll();</script>
     <title>{title}</title>
   </head>
   <body>

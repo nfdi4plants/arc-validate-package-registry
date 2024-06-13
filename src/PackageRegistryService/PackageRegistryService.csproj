@@ -38,7 +38,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\js\" />
     <None Include="StagingArea\**" />
   </ItemGroup>
