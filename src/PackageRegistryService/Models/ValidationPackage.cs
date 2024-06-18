@@ -93,10 +93,15 @@ namespace PackageRegistryService.Models
         /// <returns>A string containing the package content</returns>
         public string GetPackageContentHash()
         {
-            using (var md5 = MD5.Create())
-            {
-                return Convert.ToHexString(md5.ComputeHash(PackageContent));
-            }
+            return AVPRIndex.Hash.hashContent(PackageContent);
+        }
+        /// <summary>
+        /// Returns whether the package content CR characters - meaning its is has not been unified to only use LF.
+        /// </summary>
+        /// <returns>true or false</returns>
+        public bool ContentContainsCarriageReturn()
+        {
+            return GetPackageScriptContent().Contains("\r");
         }
     }
 }

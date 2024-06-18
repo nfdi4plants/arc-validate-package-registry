@@ -7,8 +7,8 @@
 
   <PropertyGroup>
     <Authors>Kevin Schneider</Authors>
-    <Description>Type system for the indexing backend of avpr.nfdi4plants.org</Description>
-    <Summary>Type system for the indexing backend of avpr.nfdi4plants.org</Summary>
+    <Description>Type system and utils for the indexing backend of avpr.nfdi4plants.org</Description>
+    <Summary>Type system and utils for the indexing backend of avpr.nfdi4plants.org</Summary>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>C# F# ARC annotated-research-context rdm research-data-management validation</PackageTags>
     <PackageProjectUrl>https://github.com/nfdi4plants/arc-validate-package-registry</PackageProjectUrl>
@@ -16,22 +16,23 @@
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/RELEASE_NOTES.md"))</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>0.1.1</PackageVersion>
+    <PackageVersion>0.1.2</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="RELEASE_NOTES.md" />
     <Compile Include="Globals.fs" />
-    <Compile Include="Domain.fs" />
+    <Compile Include="MD5Hash.fs" />
     <Compile Include="Utils.fs" />
+    <Compile Include="Domain.fs" />
     <Compile Include="Frontmatter.fs" />
     <Compile Include="AVPRRepo.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="YamlDotNet" Version="15.1.2" />
-    <PackageReference Include="FsHttp" Version="14.5.0" />
+    <PackageReference Include="YamlDotNet" Version="[15.1.2, 16.0.0)" />
+    <PackageReference Include="FsHttp" Version="[14.5.0, 15.0.0)" />
   </ItemGroup>
 
 </Project>

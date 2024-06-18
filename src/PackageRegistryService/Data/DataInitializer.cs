@@ -18,8 +18,6 @@ namespace PackageRegistryService.Data
     {
         public static void SeedData(ValidationPackageDb context)
         {
-            MD5 md5 = MD5.Create();
-
             if (!context.ValidationPackages.Any())
             {
                 var index = AVPRRepo.getPreviewIndex();
@@ -67,11 +65,9 @@ namespace PackageRegistryService.Data
                                     Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
                                     $"StagingArea/{i.Metadata.Name}/{i.FileName}"
                                 );
-                            var content =
-                                File.ReadAllText(path)
-                                .ReplaceLineEndings("\n");
 
-                            var hash = Convert.ToHexString(md5.ComputeHash(Encoding.UTF8.GetBytes(content)));
+                            var hash = AVPRIndex.Hash.hashFile(path);
+
                             if (hash != i.ContentHash)
                             {
                                 throw new Exception($"Hash collision for indexed hash vs content hash: {$"StagingArea/{i.Metadata.Name}/{i.FileName}"}");

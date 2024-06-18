@@ -8,7 +8,7 @@ open System.Text
 open System.IO
 open System.Security.Cryptography
 
-let md5hash (content: string) =
+let md5hashNoReplace (content: string) =
     let md5 = MD5.Create()
     content
     |> Encoding.UTF8.GetBytes
@@ -42,4 +42,5 @@ type Assert with
         Assert.Equivalent(expected.Authors, actual.Authors, strict = true)
         Assert.Equivalent(expected.Tags, actual.Tags, strict = true)
         Assert.Equal(expected.ReleaseNotes, actual.ReleaseNotes)
+        Assert.Equal(expected.CQCHookEndpoint, actual.CQCHookEndpoint)
         Assert.Equivalent(expected, actual, strict = true)

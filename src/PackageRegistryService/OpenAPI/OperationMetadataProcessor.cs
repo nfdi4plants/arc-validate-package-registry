@@ -43,13 +43,13 @@ namespace PackageRegistryService.OpenAPI
                     { "Description", "Verify a content hash for a given package. Hashes are MD5 hex fingerprints." }
                 }
             },
-            {
-                "CreatePackageContentHash", new Dictionary<string, string>
-                {
-                    { "Summary", "Create a content hash for a given package." },
-                    { "Description", "Create a content hash for a given package. Hashes are MD5 hex fingerprints. This Endpoint requires API Key authentication." }
-                }
-            },
+            //{
+            //    "CreatePackageContentHash", new Dictionary<string, string>
+            //    {
+            //        { "Summary", "Create a content hash for a given package." },
+            //        { "Description", "Create a content hash for a given package. Hashes are MD5 hex fingerprints. This Endpoint requires API Key authentication." }
+            //    }
+            //},
             {
                 "GetAllDownloads", new Dictionary<string, string>
                 {

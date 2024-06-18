@@ -86,7 +86,7 @@ namespace PackageRegistryService.API.Handlers
             return TypedResults.Ok(package);
         }
 
-        public static async Task<Results<Ok<ValidationPackage>, Conflict, UnauthorizedHttpResult>> CreatePackage(ValidationPackage package, ValidationPackageDb database)
+        public static async Task<Results<Ok<ValidationPackage>, Conflict, UnauthorizedHttpResult, UnprocessableEntity<string>>> CreatePackage(ValidationPackage package, ValidationPackageDb database)
         {
             var existing = await database.ValidationPackages.FindAsync(package.Name, package.MajorVersion, package.MinorVersion, package.PatchVersion);
             if (existing != null)
@@ -94,6 +94,12 @@ namespace PackageRegistryService.API.Handlers
                 return TypedResults.Conflict();
             }
 
+            if (package.ContentContainsCarriageReturn())
+            {
+                return TypedResults.UnprocessableEntity("package content contained non-LF line endings");
+            }
+
+            ValidationPackageDb.CreatePackageContentHash(package, database);
             database.ValidationPackages.Add(package);
             await database.SaveChangesAsync();
 

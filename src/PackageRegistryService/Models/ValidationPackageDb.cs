@@ -39,7 +39,28 @@
             var packageHash = package.GetPackageContentHash();
             return hash.Hash == packageHash;
         }
+        public static bool CreatePackageContentHash(ValidationPackage package, ValidationPackageDb database)
+        {
+            var result = database.Hashes.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion);
 
+            if (result != null)
+            {
+                return false; // there is an existing hash!
+            }
+            else
+            {
+                var h = new PackageContentHash
+                {
+                    PackageName = package.Name,
+                    PackageMajorVersion = package.MajorVersion,
+                    PackageMinorVersion = package.MinorVersion,
+                    PackagePatchVersion = package.PatchVersion,
+                    Hash = package.GetPackageContentHash()
+                };
+                database.Hashes.Add(h);
+                return true;
+            }
+        }
         public static void IncrementDownloadCount(ValidationPackage package, ValidationPackageDb database)
         {
             var result = database.Downloads.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion);

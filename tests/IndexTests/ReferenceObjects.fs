@@ -6,6 +6,41 @@ open AVPRIndex.Domain
 
 let testDate = System.DateTimeOffset.Parse("01/01/2024")
 
+module Hash =
+    
+    module Input =
+        
+        let noLineEndings = "This is a test string with no line endings."
+
+        let windowsLineEndings = "This is a test string with Windows line endings.\r\nanother one"
+
+        let unixLineEndings = "This is a test string with Unix line endings.\nanother one"
+
+        let mixedLineEndings = "This is a test string with mixed line endings.\r\nanother one\nand another one"
+
+    module Hashes =
+        
+        // note that these hashes represent the input with unified line endings!
+
+        let noLineEndings = "810F403210CD3D056F2DF13676D9385A"
+        let windowsLineEndings = "259AA1C2F8EE8F0A12A6077E60176973"
+        let unixLineEndings = "A85A58F412C6358B3FF1638876579FC6"
+        let mixedLineEndings = "EC425DD2233B497BCD9B9FDDFD35FA84"
+
+        module CommentFrontmatter =
+            
+            let validMandatoryFrontmatter = "2A29D85A29D908C7DE214D56119DE207"
+            let validFullFrontmatter = "E3742447779570EC372DD5DA9C56846F"
+            let invalidMissingMandatoryFrontmatter = "4331EE804414463D7E6DE9B8B6A3D49C"
+
+        module BindingFrontmatter =
+            
+            let validMandatoryFrontmatter = "FC9558E6681A4114794BA912925FC283"
+            let validFullFrontmatter = "7996D96B4690896224B8D1D1FB621FC7"
+            let invalidMissingMandatoryFrontmatter = "94C704CFD2538A819CC2C0FFA406A355"
+
+
+
 module Author = 
     
     let mandatoryFields = Author(FullName = "test")
@@ -420,7 +455,7 @@ module ValidationPackageIndex =
                 repoPath = "fixtures/Frontmatter/Comment/valid@1.0.0.fsx",
                 fileName = "valid@1.0.0.fsx",
                 lastUpdated = testDate,
-                contentHash = (Frontmatter.Comment.validMandatoryFrontmatter |> md5hash),
+                contentHash = (Frontmatter.Comment.validMandatoryFrontmatter |> md5hashNoReplace),
                 metadata = Metadata.validMandatoryFrontmatter
             )
 
@@ -429,7 +464,7 @@ module ValidationPackageIndex =
                 repoPath = "fixtures/Frontmatter/Comment/valid@2.0.0.fsx",
                 fileName = "valid@2.0.0.fsx",
                 lastUpdated = testDate,
-                contentHash = (Frontmatter.Comment.validFullFrontmatter |> md5hash),
+                contentHash = (Frontmatter.Comment.validFullFrontmatter |> md5hashNoReplace),
                 metadata = Metadata.validFullFrontmatter
             )
 
@@ -438,7 +473,7 @@ module ValidationPackageIndex =
                 repoPath = "fixtures/Frontmatter/Comment/invalid@0.0.fsx",
                 fileName = "invalid@0.0.fsx",
                 lastUpdated = testDate,
-                contentHash = (Frontmatter.Comment.invalidMissingMandatoryFrontmatter |> md5hash),
+                contentHash = (Frontmatter.Comment.invalidMissingMandatoryFrontmatter |> md5hashNoReplace),
                 metadata = Metadata.invalidMissingMandatoryFrontmatter
             )
 
@@ -449,7 +484,7 @@ module ValidationPackageIndex =
                 repoPath = "fixtures/Frontmatter/Binding/valid@1.0.0.fsx",
                 fileName = "valid@1.0.0.fsx",
                 lastUpdated = testDate,
-                contentHash = (Frontmatter.Binding.validMandatoryFrontmatter |> md5hash),
+                contentHash = (Frontmatter.Binding.validMandatoryFrontmatter |> md5hashNoReplace),
                 metadata = Metadata.validMandatoryFrontmatter
             )
 
@@ -458,7 +493,7 @@ module ValidationPackageIndex =
                 repoPath = "fixtures/Frontmatter/Binding/valid@2.0.0.fsx",
                 fileName = "valid@2.0.0.fsx",
                 lastUpdated = testDate,
-                contentHash = (Frontmatter.Binding.validFullFrontmatter |> md5hash),
+                contentHash = (Frontmatter.Binding.validFullFrontmatter |> md5hashNoReplace),
                 metadata = Metadata.validFullFrontmatter
             )
 
@@ -467,6 +502,6 @@ module ValidationPackageIndex =
                 repoPath = "fixtures/Frontmatter/Binding/invalid@0.0.fsx",
                 fileName = "invalid@0.0.fsx",
                 lastUpdated = testDate,
-                contentHash = (Frontmatter.Binding.invalidMissingMandatoryFrontmatter |> md5hash),
+                contentHash = (Frontmatter.Binding.invalidMissingMandatoryFrontmatter |> md5hashNoReplace),
                 metadata = Metadata.invalidMissingMandatoryFrontmatter
             )

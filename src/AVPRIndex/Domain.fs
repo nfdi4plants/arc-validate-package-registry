@@ -212,21 +212,11 @@ module Domain =
                 lastUpdated: System.DateTimeOffset,
                 metadata: ValidationPackageMetadata
             ) = 
-
-                let md5 = MD5.Create()
-
                 ValidationPackageIndex.create(
                     repoPath = repoPath,
                     fileName = Path.GetFileName(repoPath),
                     lastUpdated = lastUpdated,
-                    contentHash = (
-                        repoPath
-                        |> File.ReadAllText
-                        |> fun s -> s.ReplaceLineEndings("\n")
-                        |> Encoding.UTF8.GetBytes
-                        |> md5.ComputeHash
-                        |> Convert.ToHexString
-                    ),
+                    contentHash = Hash.hashFile repoPath,
                     metadata = metadata
                 )
                 

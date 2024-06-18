@@ -38,27 +38,27 @@ namespace PackageRegistryService.API.Handlers
             return TypedResults.Ok();
         }
 
-        public static async Task<Results<Ok<PackageContentHash>, Conflict, UnauthorizedHttpResult>> CreateContentHash(PackageContentHash hashedPackage, ValidationPackageDb database)
-        {
+        //public static async Task<Results<Ok<PackageContentHash>, Conflict, UnauthorizedHttpResult>> CreateContentHash(PackageContentHash hashedPackage, ValidationPackageDb database)
+        //{
 
-            var existing = await 
-                database.Hashes.FindAsync(
-                    hashedPackage.PackageName,
-                    hashedPackage.PackageMajorVersion,
-                    hashedPackage.PackageMinorVersion,
-                    hashedPackage.PackagePatchVersion
-                );
+        //    var existing = await 
+        //        database.Hashes.FindAsync(
+        //            hashedPackage.PackageName,
+        //            hashedPackage.PackageMajorVersion,
+        //            hashedPackage.PackageMinorVersion,
+        //            hashedPackage.PackagePatchVersion
+        //        );
 
-            if (existing != null)
-            {
-                return TypedResults.Conflict();
-            }
+        //    if (existing != null)
+        //    {
+        //        return TypedResults.Conflict();
+        //    }
 
-            database.Hashes.Add(hashedPackage);
-            await database.SaveChangesAsync();
+        //    database.Hashes.Add(hashedPackage);
+        //    await database.SaveChangesAsync();
 
-            return TypedResults.Ok(hashedPackage);
+        //    return TypedResults.Ok(hashedPackage);
 
-        }
+        //}
     }
 }
