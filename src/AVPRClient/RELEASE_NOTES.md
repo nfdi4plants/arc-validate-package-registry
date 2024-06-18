@@ -1,3 +1,6 @@
+## v0.0.8
+- Use AVPRIndex for all package hash calculations
+
 ## v0.0.7
 - Further TypeExtension improvements and fixes
 

@@ -72,18 +72,10 @@ namespace AVPRClient
         {
             if ( HashFileDirectly)
             {
-                MD5 md5 = MD5.Create();
                 return new AVPRClient.PackageContentHash
                 {
                     PackageName = indexedPackage.Metadata.Name,
-                    Hash = Convert.ToHexString(
-                        md5.ComputeHash(
-                            Encoding.UTF8.GetBytes(
-                                File.ReadAllText(indexedPackage.RepoPath)
-                                    .ReplaceLineEndings("\n")
-                            )
-                        )
-                    ),
+                    Hash = Hash.hashFile(indexedPackage.RepoPath),
                     PackageMajorVersion = indexedPackage.Metadata.MajorVersion,
                     PackageMinorVersion = indexedPackage.Metadata.MinorVersion,
                     PackagePatchVersion = indexedPackage.Metadata.PatchVersion
