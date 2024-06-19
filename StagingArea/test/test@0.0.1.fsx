@@ -11,7 +11,7 @@ Publish: true
 *)
  
 // this file is intended for testing purposes only.
-printfn "If you can read this in your console, you successfully executed test package v1.0.0!" 
+printfn "If you can read this in your console, you successfully executed test package v0.0.1!" 
  
 #r "nuget: ARCExpect, 1.0.1"
 

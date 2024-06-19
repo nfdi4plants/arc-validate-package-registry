@@ -25,6 +25,8 @@ CQCHookEndpoint: https://avpr.nfdi4plants.org
 ---
 *)"""
 
+printfn "If you can read this in your console, you successfully executed test package v5.0.0!" 
+
 #r "nuget: ARCExpect, 3.0.0"
 
 open ARCExpect
