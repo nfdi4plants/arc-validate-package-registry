@@ -26,7 +26,7 @@ namespace AVPRClient
                 MajorVersion = indexedPackage.Metadata.MajorVersion,
                 MinorVersion = indexedPackage.Metadata.MinorVersion,
                 PatchVersion = indexedPackage.Metadata.PatchVersion,
-                PackageContent = File.ReadAllBytes(indexedPackage.RepoPath),
+                PackageContent = BinaryContent.fromFile(indexedPackage.RepoPath),
                 ReleaseDate = releaseDate,
                 Tags =
                     indexedPackage.Metadata.Tags

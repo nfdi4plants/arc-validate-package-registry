@@ -73,20 +73,9 @@ module ValidationPackageMetadata =
         CQCHookEndpoint = "hookendpoint"
     )
 
-module PackageContentHash =
-    open System
-    open System.IO
-    open System.Text
-    open System.Security.Cryptography
+module Hash =
 
-    let expected_hash = 
-        let md5 = MD5.Create()
-        "fixtures/test_validation_package_all_fields.fsx"
-        |> File.ReadAllText
-        |> fun s -> s.ReplaceLineEndings("\n")
-        |> Encoding.UTF8.GetBytes
-        |> md5.ComputeHash
-        |> Convert.ToHexString
+    let expected_hash = "C5BD4262301D27CF667106D9024BD721"
 
     let allFields = AVPRClient.PackageContentHash(
         PackageName = "name",
@@ -95,17 +84,42 @@ module PackageContentHash =
         PackagePatchVersion = 0,
         Hash = expected_hash
     )
-  
+
+module BinaryContent =
+
+    open System.IO
+
+    let expected_content = "(*
+---
+Name: name
+Summary: summary
+Description = description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Publish: true
+Authors:
+  - FullName: test
+    Email: test@test.test
+    Affiliation: testaffiliation
+    AffiliationLink: test.com
+Tags:
+  - Name: test
+    TermSourceREF: REF
+    TermAccessionNumber: TAN
+ReleaseNotes: releasenotes
+CQCHookEndpoint: hookendpoint
+---
+*)
+
+printfn \"yes\""                  .ReplaceLineEndings("\n")
+
+    let expected_binary_content = expected_content |> System.Text.Encoding.UTF8.GetBytes
+
 
 module ValidationPackage =
 
     open System.IO
-
-    let expected_content = 
-
-        "fixtures/test_validation_package_all_fields.fsx"
-        |> File.ReadAllBytes
-
 
     let allFields = AVPRClient.ValidationPackage(
         Name = "name",
@@ -114,7 +128,7 @@ module ValidationPackage =
         MajorVersion = 1,
         MinorVersion = 0,
         PatchVersion = 0,
-        PackageContent = expected_content,
+        PackageContent = BinaryContent.expected_binary_content,
         ReleaseDate = date,
         Authors = [|Author.allFieldsClient|],
         Tags = [|OntologyAnnotation.allFieldsClient|],

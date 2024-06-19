@@ -14,24 +14,26 @@ module ValidationPackageIndex =
         repoPath = "fixtures/test_validation_package_all_fields.fsx",
         fileName = "test_validation_package_all_fields.fsx",
         lastUpdated = ReferenceObjects.date,
-        contentHash = ReferenceObjects.PackageContentHash.expected_hash,
+        contentHash = ReferenceObjects.Hash.expected_hash,
         metadata = ReferenceObjects.ValidationPackageMetadata.allFields
     )
 
     [<Fact>]
-    let ``toValidationpackage with release date`` () =
+    let ``toValidationPackage with release date`` () =
         let actual = test_validation_package_all_fields.toValidationPackage(ReferenceObjects.date)
         Assert.Equivalent(actual, ReferenceObjects.ValidationPackage.allFields)
+
+
 
     [<Fact>]
     let ``toPackageContentHash without direct file hash`` () =
         let actual = test_validation_package_all_fields.toPackageContentHash()
-        Assert.Equivalent(ReferenceObjects.PackageContentHash.allFields, actual)
+        Assert.Equivalent(ReferenceObjects.Hash.allFields, actual)
 
     [<Fact>]
     let ``toPackageContentHash with direct file hash`` () =
         let actual = test_validation_package_all_fields.toPackageContentHash(HashFileDirectly = true)
-        Assert.Equivalent(ReferenceObjects.PackageContentHash.allFields, actual)
+        Assert.Equivalent(ReferenceObjects.Hash.allFields, actual)
 
 module Author =
 

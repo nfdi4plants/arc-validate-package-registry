@@ -1,3 +1,6 @@
+## v0.0.9
+- Use AVPRIndex for all package binary content extractions
+
 ## v0.0.8
 - Use AVPRIndex for all package hash calculations
 
