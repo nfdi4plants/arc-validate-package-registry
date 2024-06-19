@@ -48,6 +48,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{C4DB
 		scripts\update-index.fsx = scripts\update-index.fsx
 	EndProjectSection
 EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AVPRCI", "src\AVPRCI\AVPRCI.fsproj", "{807D2C1D-4EA9-4E01-BD36-45A7B7BA0434}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{72CBB4AF-511D-4A07-B41F-49A5F6F254F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72CBB4AF-511D-4A07-B41F-49A5F6F254F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72CBB4AF-511D-4A07-B41F-49A5F6F254F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{807D2C1D-4EA9-4E01-BD36-45A7B7BA0434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{807D2C1D-4EA9-4E01-BD36-45A7B7BA0434}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{807D2C1D-4EA9-4E01-BD36-45A7B7BA0434}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{807D2C1D-4EA9-4E01-BD36-45A7B7BA0434}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +100,7 @@ Global
 		{5096B1A4-D041-4B04-8C90-47050CDBB7BF} = {8061A76B-1B85-4649-A667-6E7979ABA1AE}
 		{72CBB4AF-511D-4A07-B41F-49A5F6F254F5} = {8061A76B-1B85-4649-A667-6E7979ABA1AE}
 		{C4DBD5F6-4A14-44F4-9E5A-AC6B72AAEB81} = {24F7CF58-94B9-4FB4-8A59-FD329B3C431D}
+		{807D2C1D-4EA9-4E01-BD36-45A7B7BA0434} = {24F7CF58-94B9-4FB4-8A59-FD329B3C431D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D95036E6-C4D5-4E93-8474-BA6F74965635}
