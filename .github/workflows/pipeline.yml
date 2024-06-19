@@ -228,7 +228,7 @@ jobs:
       - name: Run pre-publish checks
         id: ppc
         run: |
-          dotnet run --project .\src\AVPRCI\AVPRCI.fsproj -- --verbose check
+          dotnet run --project ./src/AVPRCI/AVPRCI.fsproj -- --verbose check
       - name: set-output
         id: set-output
         run: |
@@ -253,7 +253,7 @@ jobs:
         with:
           dotnet-version: 8.x.x
       - name: re-generate preview index
-        run: dotnet run --project .\src\AVPRCI\AVPRCI.fsproj -- --verbose gen-index
+        run: dotnet run --project ./src/AVPRCI/AVPRCI.fsproj -- --verbose gen-index
       - name: publish preview index
         uses: "marvinpinto/action-automatic-releases@latest"
         with:

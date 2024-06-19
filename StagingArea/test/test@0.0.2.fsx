@@ -11,4 +11,4 @@ Publish: false
 *)
  
 // this file is intended for testing purposes only.
-printfn "If you can read this in your console, you successfully executed test package v0.0.2!" 
+printfn "If you can read this in your console, you successfully executed test package v0.0.2!!" 
