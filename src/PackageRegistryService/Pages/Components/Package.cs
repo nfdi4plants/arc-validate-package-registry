@@ -33,7 +33,7 @@ namespace PackageRegistryService.Pages.Components
 <hr />
 <section>
   <h4>Install with <a href=""https://github.com/nfdi4plants/arc-validate"">arc-validate</a></h4>
-  <pre><code> arc-validate package install {packageName} --package-version {packageVersion}</code></pre>
+  <pre><code> arc-validate package install {packageName} --version {packageVersion}</code></pre>
   <h4>Include in a <a href=""https://doi.org/10.1111/tpj.16474"">PLANTDataHUB CQC pipeline</a></h4>
   <pre><code class=""language-yaml"">validation_packages:
   - name: {packageName}
