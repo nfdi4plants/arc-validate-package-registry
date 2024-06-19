@@ -1,3 +1,7 @@
+## v0.1.3
+
+Add `BinaryContent` module to unify package content handling across downstream libraries
+
 ## v0.1.2
 
 Add `PackageContentHash` module to unify package hash calculation across downstream libraries

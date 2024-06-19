@@ -14,6 +14,7 @@
     <Compile Include="Utils.fs" />
     <Compile Include="ReferenceObjects.fs" />
     <Compile Include="HashTests.fs" />
+    <Compile Include="BinaryContentTests.fs" />
     <Compile Include="DomainTests.fs" />
     <Compile Include="FrontmatterTests.fs" />
     <Compile Include="MetadataTests.fs" />
@@ -37,10 +38,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AVPRIndex\AVPRIndex.fsproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="fixtures\Hashes\" />
   </ItemGroup>
 
 </Project>

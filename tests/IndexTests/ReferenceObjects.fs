@@ -39,7 +39,80 @@ module Hash =
             let validFullFrontmatter = "7996D96B4690896224B8D1D1FB621FC7"
             let invalidMissingMandatoryFrontmatter = "94C704CFD2538A819CC2C0FFA406A355"
 
+module BinaryContent =
+    open System.IO
+    open System.Text
 
+    module StringInput =
+        
+        let noLineEndings = "This is a test string with no line endings."
+         
+        let windowsLineEndings = "This is a test string with Windows line endings.\r\nanother one"
+
+        let unixLineEndings = "This is a test string with Unix line endings.\nanother one"
+
+        let mixedLineEndings = "This is a test string with mixed line endings.\r\nanother one\nand another one"
+
+
+    module ArrayInput =
+        
+        let noLineEndings = StringInput.noLineEndings |> Encoding.UTF8.GetBytes
+         
+        let windowsLineEndings = StringInput.windowsLineEndings |> Encoding.UTF8.GetBytes
+
+        let unixLineEndings = StringInput.unixLineEndings |> Encoding.UTF8.GetBytes
+
+        let mixedLineEndings = StringInput.mixedLineEndings |> Encoding.UTF8.GetBytes
+
+
+    module Content =
+
+        // note that these hashes represent the input with unified line endings!
+
+        let noLineEndings = StringInput.noLineEndings.ReplaceLineEndings("\n") |> Encoding.UTF8.GetBytes
+        let windowsLineEndings = StringInput.windowsLineEndings.ReplaceLineEndings("\n") |> Encoding.UTF8.GetBytes
+        let unixLineEndings = StringInput.unixLineEndings.ReplaceLineEndings("\n") |> Encoding.UTF8.GetBytes
+        let mixedLineEndings = StringInput.mixedLineEndings.ReplaceLineEndings("\n") |> Encoding.UTF8.GetBytes
+
+        module CommentFrontmatter =
+            
+            let validMandatoryFrontmatter =
+                "fixtures/Frontmatter/Comment/valid@1.0.0.fsx"
+                |> File.ReadAllText
+                |> fun f -> f.ReplaceLineEndings("\n") 
+                |> Encoding.UTF8.GetBytes
+
+            let validFullFrontmatter =
+                "fixtures/Frontmatter/Comment/valid@2.0.0.fsx"
+                |> File.ReadAllText
+                |> fun f -> f.ReplaceLineEndings("\n") 
+                |> Encoding.UTF8.GetBytes
+
+            let invalidMissingMandatoryFrontmatter = 
+                "fixtures/Frontmatter/Comment/invalid@0.0.fsx"
+                |> File.ReadAllText
+                |> fun f -> f.ReplaceLineEndings("\n") 
+                |> Encoding.UTF8.GetBytes
+
+        module BindingFrontmatter =
+            
+            let validMandatoryFrontmatter =
+                "fixtures/Frontmatter/Binding/valid@1.0.0.fsx"
+                |> File.ReadAllText
+                |> fun f -> f.ReplaceLineEndings("\n") 
+                |> Encoding.UTF8.GetBytes
+
+            let validFullFrontmatter =
+                "fixtures/Frontmatter/Binding/valid@2.0.0.fsx"
+                |> File.ReadAllText
+                |> fun f -> f.ReplaceLineEndings("\n") 
+                |> Encoding.UTF8.GetBytes
+
+            let invalidMissingMandatoryFrontmatter = 
+                "fixtures/Frontmatter/Binding/invalid@0.0.fsx"
+                |> File.ReadAllText
+                |> fun f -> f.ReplaceLineEndings("\n") 
+                |> Encoding.UTF8.GetBytes
 
 module Author = 
     
