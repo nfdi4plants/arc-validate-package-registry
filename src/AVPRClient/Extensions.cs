@@ -143,17 +143,19 @@ namespace AVPRClient
         )
         {
             return Domain.ValidationPackageMetadata.create(
-                validationPackage.Name,
-                validationPackage.Summary,
-                validationPackage.Description,
-                validationPackage.MajorVersion,
-                validationPackage.MinorVersion,
-                validationPackage.PatchVersion,
-                Microsoft.FSharp.Core.FSharpOption<bool>.None,
-                validationPackage.Authors.AsIndexType(),
-                validationPackage.Tags.AsIndexType(),
-                validationPackage.ReleaseNotes,
-                validationPackage.CQCHookEndpoint
+                name: validationPackage.Name,
+                summary: validationPackage.Summary,
+                description: validationPackage.Description,
+                majorVersion: validationPackage.MajorVersion,
+                minorVersion: validationPackage.MinorVersion,
+                patchVersion: validationPackage.PatchVersion,
+                PreReleaseVersionSuffix: Microsoft.FSharp.Core.FSharpOption<string>.None,
+                BuildMetadataVersionSuffix: Microsoft.FSharp.Core.FSharpOption<string>.None,
+                Publish: Microsoft.FSharp.Core.FSharpOption<bool>.None,
+                Authors: validationPackage.Authors.AsIndexType(),
+                Tags: validationPackage.Tags.AsIndexType(),
+                ReleaseNotes: validationPackage.ReleaseNotes,
+                CQCHookEndpoint: validationPackage.CQCHookEndpoint
             );
         }
     }
