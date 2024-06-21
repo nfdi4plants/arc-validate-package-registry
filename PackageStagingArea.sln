@@ -9,6 +9,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "StagingAreaTests", "Staging
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "IndexTests", "tests\IndexTests\IndexTests.fsproj", "{FA7524A5-3A92-4E33-8E28-726BA2E615D2}"
 EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AVPRCI", "src\AVPRCI\AVPRCI.fsproj", "{C1929D1B-10BD-4826-B2C5-413369B5FE2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FA7524A5-3A92-4E33-8E28-726BA2E615D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA7524A5-3A92-4E33-8E28-726BA2E615D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA7524A5-3A92-4E33-8E28-726BA2E615D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1929D1B-10BD-4826-B2C5-413369B5FE2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1929D1B-10BD-4826-B2C5-413369B5FE2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1929D1B-10BD-4826-B2C5-413369B5FE2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1929D1B-10BD-4826-B2C5-413369B5FE2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

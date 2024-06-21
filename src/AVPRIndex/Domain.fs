@@ -333,6 +333,8 @@ module Domain =
                 && first.Metadata.MajorVersion = second.Metadata.MajorVersion
                 && first.Metadata.MinorVersion = second.Metadata.MinorVersion
                 && first.Metadata.PatchVersion = second.Metadata.PatchVersion
+                && first.Metadata.PreReleaseVersionSuffix = second.Metadata.PreReleaseVersionSuffix
+                && first.Metadata.BuildMetadataVersionSuffix = second.Metadata.BuildMetadataVersionSuffix
 
             /// returns true when the two packages have the same content hash
             static member contentEquals (first: ValidationPackageIndex) (second: ValidationPackageIndex) =

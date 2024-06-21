@@ -130,6 +130,92 @@ It does it very fast, it does it very swell.
         let actual = ValidationPackageIndex.CommentFrontmatter.validFullFrontmatter |> ValidationPackageIndex.getSemanticVersionString
         Assert.Equal(SemVer.Strings.fixtureFile, actual)
 
+    [<Fact>]
+    let ``identityEquals returns true for identical versions``() =
+        Assert.True(
+            ValidationPackageIndex.identityEquals
+                ValidationPackageIndex.CommentFrontmatter.validMandatoryFrontmatter
+                ValidationPackageIndex.CommentFrontmatter.validMandatoryFrontmatter
+        )
+
+    [<Fact>]
+    let ``identityEquals returns false for non-identical versions``() =
+        Assert.False(
+            ValidationPackageIndex.identityEquals
+                ValidationPackageIndex.CommentFrontmatter.validMandatoryFrontmatter
+                ValidationPackageIndex.CommentFrontmatter.validFullFrontmatter
+        )
+
+    [<Fact>]
+    let ``identityEquals returns false for same version with suffixes``() =
+        let a = ValidationPackageIndex.create(
+            repoPath = "",
+            fileName = "",
+            lastUpdated = testDate,
+            contentHash = "",
+            metadata = ValidationPackageMetadata.create(
+                name = "",
+                majorVersion = 1,
+                minorVersion = 0,
+                patchVersion = 0,
+                summary = "",
+                description = "",
+                PreReleaseVersionSuffix = "some",
+                BuildMetadataVersionSuffix = "suffix"
+            )
+        )
+        let b = ValidationPackageIndex.create(
+            repoPath = "",
+            fileName = "",
+            lastUpdated = testDate,
+            contentHash = "",
+            metadata = ValidationPackageMetadata.create(
+                name = "",
+                majorVersion = 1,
+                minorVersion = 0,
+                patchVersion = 0,
+                summary = "",
+                description = ""
+            )
+        )
+        Assert.False(ValidationPackageIndex.identityEquals a b)
+
+    [<Fact>]
+    let ``identityEquals returns true for identical version with suffixes``() =
+        let a = ValidationPackageIndex.create(
+            repoPath = "",
+            fileName = "",
+            lastUpdated = testDate,
+            contentHash = "",
+            metadata = ValidationPackageMetadata.create(
+                name = "",
+                majorVersion = 1,
+                minorVersion = 0,
+                patchVersion = 0,
+                summary = "",
+                description = "",
+                PreReleaseVersionSuffix = "some",
+                BuildMetadataVersionSuffix = "suffix"
+            )
+        )
+        let b = ValidationPackageIndex.create(
+            repoPath = "",
+            fileName = "",
+            lastUpdated = testDate,
+            contentHash = "",
+            metadata = ValidationPackageMetadata.create(
+                name = "",
+                majorVersion = 1,
+                minorVersion = 0,
+                patchVersion = 0,
+                summary = "",
+                description = "",
+                PreReleaseVersionSuffix = "some",
+                BuildMetadataVersionSuffix = "suffix"
+            )
+        )
+        Assert.True(ValidationPackageIndex.identityEquals a b)
+
 module CommentFrontmatterIO =
 
     open System.IO

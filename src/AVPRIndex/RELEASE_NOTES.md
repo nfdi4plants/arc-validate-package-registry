@@ -1,3 +1,7 @@
+## v0.2.1
+
+Fix `ValidationPackageIndex.IdentityEquals` not respecting semver suffixes
+
 ## v0.2.0
 
 - Add `SemVer` type model for a full semantic version representation including PreRelease and Build metadata with parsing and formatting functions
