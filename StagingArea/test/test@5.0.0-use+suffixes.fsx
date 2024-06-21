@@ -22,7 +22,7 @@ Tags:
   - Name: validation
   - Name: my-package
   - Name: thing
-ReleaseNotes: Use pre-release and build metadata version suffixes
+ReleaseNotes: Use pre-release and build metadata version suffixes 
 CQCHookEndpoint: https://avpr.nfdi4plants.org
 ---
 *)
