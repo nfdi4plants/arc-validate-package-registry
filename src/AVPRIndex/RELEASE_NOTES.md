@@ -2,7 +2,7 @@
 
 - Add `SemVer` type model for a full semantic version representation including PreRelease and Build metadata with parsing and formatting functions
 - Improve functions for getting semantic version (strings) from `ValidationPackageMetadata` and `ValidationPackageIndex` types based on new `SemVer` type
-- - Unify capitalization in Domain create functions
+- Unify capitalization in Domain create functions
 
 ## v0.1.3
 
