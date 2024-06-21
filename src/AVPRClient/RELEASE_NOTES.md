@@ -1,3 +1,6 @@
+## v0.1.1
+- Add `IdentityEquals` extension method for `ValidationPackage`
+
 ## v0.1.0
 - Regen client for full semVer support (AVPRIndex >= 0.2.0)
 

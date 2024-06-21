@@ -13,6 +13,18 @@ namespace AVPRClient
 {
     public static class Extensions
     {
+        public static bool IdentityEquals(
+            this AVPRClient.ValidationPackage package,
+            AVPRClient.ValidationPackage other
+        )
+        {
+            return package.Name == other.Name
+                && package.MajorVersion == other.MajorVersion
+                && package.MinorVersion == other.MinorVersion
+                && package.PatchVersion == other.PatchVersion
+                && package.PreReleaseVersionSuffix == other.PreReleaseVersionSuffix
+                && package.BuildMetadataVersionSuffix == other.BuildMetadataVersionSuffix;
+        }
         public static AVPRClient.ValidationPackage toValidationPackage(
             this AVPRIndex.Domain.ValidationPackageIndex indexedPackage,
             DateTimeOffset releaseDate

@@ -8,6 +8,32 @@ open AVPRClient
 
 open System.Security.Cryptography
 
+module ValidationPackage =
+    
+    [<Fact>]
+    let ``IdentityEquals returns true for the same package without suffixes`` () =
+        Assert.True(
+            ReferenceObjects.ValidationPackage.allFields_cqcHookAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackage.allFields_cqcHookAddition
+            )
+        )
+        
+    [<Fact>]
+    let ``IdentityEquals returns true for the same package with suffixes`` () =
+        Assert.True(
+            ReferenceObjects.ValidationPackage.allFields_semVerAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackage.allFields_semVerAddition
+            )
+        )
+
+    [<Fact>]
+    let ``IdentityEquals returns false for the different packages`` () =
+        Assert.False(
+            ReferenceObjects.ValidationPackage.allFields_cqcHookAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackage.allFields_semVerAddition
+            )
+        )
+
 module ValidationPackageIndex =
 
     let allFields_cqcHookAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
