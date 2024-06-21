@@ -45,6 +45,8 @@ namespace PackageRegistryService.Data
                                 MajorVersion = i.Metadata.MajorVersion,
                                 MinorVersion = i.Metadata.MinorVersion,
                                 PatchVersion = i.Metadata.PatchVersion,
+                                PreReleaseVersionSuffix = i.Metadata.PreReleaseVersionSuffix,
+                                BuildMetadataVersionSuffix= i.Metadata.BuildMetadataVersionSuffix,
                                 PackageContent = Encoding.UTF8.GetBytes(content),
                                 ReleaseDate = new(i.LastUpdated.Year, i.LastUpdated.Month, i.LastUpdated.Day),
                                 Tags = i.Metadata.Tags,
@@ -78,6 +80,8 @@ namespace PackageRegistryService.Data
                                 PackageMajorVersion = i.Metadata.MajorVersion,
                                 PackageMinorVersion = i.Metadata.MinorVersion,
                                 PackagePatchVersion = i.Metadata.PatchVersion,
+                                PackagePreReleaseVersionSuffix = i.Metadata.PreReleaseVersionSuffix,
+                                PackageBuildMetadataVersionSuffix = i.Metadata.BuildMetadataVersionSuffix,
                                 Hash = hash,
                             };
                         });
@@ -94,6 +98,8 @@ namespace PackageRegistryService.Data
                                 PackageMajorVersion = i.Metadata.MajorVersion,
                                 PackageMinorVersion = i.Metadata.MinorVersion,
                                 PackagePatchVersion = i.Metadata.PatchVersion,
+                                PackagePreReleaseVersionSuffix = i.Metadata.PreReleaseVersionSuffix,
+                                PackageBuildMetadataVersionSuffix = i.Metadata.BuildMetadataVersionSuffix,
                                 Downloads = 0
                             };
                         });

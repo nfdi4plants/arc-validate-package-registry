@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PackageRegistryService.Models;
+using static AVPRIndex.Domain;
 
 namespace PackageRegistryService.API.Handlers
 {
@@ -27,24 +28,14 @@ namespace PackageRegistryService.API.Handlers
 
         public static async Task<Results<BadRequest<string>, NotFound<string>, Ok<PackageDownloads>>> GetDownloadsByNameAndVersion(string name, string version, ValidationPackageDb database)
         {
-            var splt = version.Split('.');
-            if (splt.Length != 3)
+            var semVerOpt = SemVer.tryParse(version);
+            if (semVerOpt is null)
             {
-                return TypedResults.BadRequest("version was not a of valid format MAJOR.MINOR.REVISION");
+                return TypedResults.BadRequest($"{version} is not a valid semantic version.");
             }
+            var semVer = semVerOpt.Value;
 
-            int major; int minor; int revision;
-
-            if (
-                !int.TryParse(splt[0], out major)
-                || !int.TryParse(splt[1], out minor)
-                || !int.TryParse(splt[2], out revision)
-            )
-            {
-                return TypedResults.BadRequest("version was not a of valid format MAJOR.MINOR.REVISION");
-            }
-
-            var downloads = await database.Downloads.FindAsync(name, major, minor, revision);
+            var downloads = await database.Downloads.FindAsync(name, semVer.Major, semVer.Minor, semVer.Patch, semVer.PreRelease, semVer.BuildMetadata);
 
             return downloads is null
                 ? TypedResults.NotFound($"No download stats for package '{name}' version '{version}' available.")

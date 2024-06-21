@@ -7,8 +7,7 @@
 
     public class ValidationPackageDb : DbContext
     {
-        public ValidationPackageDb(DbContextOptions<ValidationPackageDb> options)
-            : base(options) { }
+        public ValidationPackageDb(DbContextOptions<ValidationPackageDb> options) : base(options) { }
 
         public DbSet<ValidationPackage> ValidationPackages => Set<ValidationPackage>();
         public DbSet<PackageContentHash> Hashes => Set<PackageContentHash>();
@@ -41,7 +40,7 @@
         }
         public static bool CreatePackageContentHash(ValidationPackage package, ValidationPackageDb database)
         {
-            var result = database.Hashes.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion);
+            var result = database.Hashes.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion && d.PackagePreReleaseVersionSuffix == package.PreReleaseVersionSuffix && d.PackageBuildMetadataVersionSuffix == package.BuildMetadataVersionSuffix);
 
             if (result != null)
             {
@@ -55,6 +54,8 @@
                     PackageMajorVersion = package.MajorVersion,
                     PackageMinorVersion = package.MinorVersion,
                     PackagePatchVersion = package.PatchVersion,
+                    PackagePreReleaseVersionSuffix = package.PreReleaseVersionSuffix,
+                    PackageBuildMetadataVersionSuffix = package.BuildMetadataVersionSuffix,
                     Hash = package.GetPackageContentHash()
                 };
                 database.Hashes.Add(h);
@@ -63,8 +64,8 @@
         }
         public static void IncrementDownloadCount(ValidationPackage package, ValidationPackageDb database)
         {
-            var result = database.Downloads.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion);
-            
+            var result = database.Downloads.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion && d.PackagePreReleaseVersionSuffix == package.PreReleaseVersionSuffix && d.PackageBuildMetadataVersionSuffix == package.BuildMetadataVersionSuffix);
+
             if (result != null)
             {
                 result.Downloads += 1; // increment download count for each package
@@ -77,6 +78,8 @@
                     PackageMajorVersion = package.MajorVersion,
                     PackageMinorVersion = package.MinorVersion,
                     PackagePatchVersion = package.PatchVersion,
+                    PackagePreReleaseVersionSuffix = package.PreReleaseVersionSuffix,
+                    PackageBuildMetadataVersionSuffix = package.BuildMetadataVersionSuffix,
                     Downloads = 1
                 };
                 database.Downloads.Add(d);

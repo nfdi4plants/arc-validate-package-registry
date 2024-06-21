@@ -2,6 +2,8 @@
 using PackageRegistryService.Models;
 using Microsoft.EntityFrameworkCore;
 using PackageRegistryService.Pages.Components;
+using AVPRIndex;
+using static AVPRIndex.Domain;
 
 namespace PackageRegistryService.API.Handlers
 {
@@ -27,7 +29,7 @@ namespace PackageRegistryService.API.Handlers
         public static async Task<Results<Ok<ValidationPackage>, NotFound<string>, Conflict<string>>> GetLatestPackageByName(string name, ValidationPackageDb database)
         {
             var package = await database.ValidationPackages
-                .Where(p => p.Name == name) 
+                .Where(p => p.Name == name && p.BuildMetadataVersionSuffix == "" && p.BuildMetadataVersionSuffix == "") // only serve stable package versions here
                 .OrderByDescending(p => p.MajorVersion)
                 .ThenByDescending(p => p.MinorVersion)
                 .ThenByDescending(p => p.PatchVersion)
@@ -51,24 +53,14 @@ namespace PackageRegistryService.API.Handlers
 
         public static async Task<Results<BadRequest<string>, NotFound<string>, Conflict<string>, Ok<ValidationPackage>>> GetPackageByNameAndVersion(string name, string version, ValidationPackageDb database)
         {
-            var splt = version.Split('.');
-            if (splt.Length != 3)
+            var semVerOpt =  SemVer.tryParse(version);
+            if (semVerOpt is null)
             {
-                return TypedResults.BadRequest("version was not a of valid format MAJOR.MINOR.REVISION");
+                return TypedResults.BadRequest($"{version} is not a valid semantic version.");
             }
+            var semVer = semVerOpt.Value;
 
-            int major; int minor; int revision;
-
-            if (
-                !int.TryParse(splt[0], out major)
-                || !int.TryParse(splt[1], out minor)
-                || !int.TryParse(splt[2], out revision)
-            )
-            {
-                return TypedResults.BadRequest("version was not a of valid format MAJOR.MINOR.REVISION");
-            }
-
-            var package = await database.ValidationPackages.FindAsync(name, major, minor, revision);
+            var package = await database.ValidationPackages.FindAsync(name, semVer.Major, semVer.Minor, semVer.Patch, semVer.PreRelease, semVer.BuildMetadata);
 
             if (package is null)
             {
@@ -88,7 +80,7 @@ namespace PackageRegistryService.API.Handlers
 
         public static async Task<Results<Ok<ValidationPackage>, Conflict, UnauthorizedHttpResult, UnprocessableEntity<string>>> CreatePackage(ValidationPackage package, ValidationPackageDb database)
         {
-            var existing = await database.ValidationPackages.FindAsync(package.Name, package.MajorVersion, package.MinorVersion, package.PatchVersion);
+            var existing = await database.ValidationPackages.FindAsync(package.Name, package.MajorVersion, package.MinorVersion, package.PatchVersion, package.PreReleaseVersionSuffix, package.BuildMetadataVersionSuffix);
             if (existing != null)
             {
                 return TypedResults.Conflict();

@@ -14,7 +14,9 @@ namespace PackageRegistryService.API.Handlers
                     hashedPackage.PackageName, 
                     hashedPackage.PackageMajorVersion,
                     hashedPackage.PackageMinorVersion,
-                    hashedPackage.PackagePatchVersion
+                    hashedPackage.PackagePatchVersion,
+                    hashedPackage.PackagePreReleaseVersionSuffix,
+                    hashedPackage.PackageBuildMetadataVersionSuffix
                 );
 
             var existingPackage = await
@@ -22,7 +24,9 @@ namespace PackageRegistryService.API.Handlers
                     hashedPackage.PackageName,
                     hashedPackage.PackageMajorVersion,
                     hashedPackage.PackageMinorVersion,
-                    hashedPackage.PackagePatchVersion
+                    hashedPackage.PackagePatchVersion,
+                    hashedPackage.PackagePreReleaseVersionSuffix,
+                    hashedPackage.PackageBuildMetadataVersionSuffix
                 );
 
             if (existingHash is null || existingPackage is null)
