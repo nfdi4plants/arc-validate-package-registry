@@ -6,6 +6,32 @@ open AVPRIndex.Domain
 
 let testDate = System.DateTimeOffset.Parse("01/01/2024")
 
+module SemVer =
+    
+    module Strings =
+        
+        let mandatory = "1.0.0"
+        let prerelease = "1.0.0-alpha.1"
+        let buildmetadata = "1.0.0+build.1"
+        let prereleaseAndBuildmetadata = "1.0.0-alpha.1+build.1"
+        let majorZero = "0.1.2"
+
+        let fixtureFile = "2.0.0-alpha.1+build.1"
+
+        let invalidLeadingZero = "01.0.0"
+        let invalidLeadingZeroMinor = "1.01.0"
+        let invalidLeadingZeroPatch = "1.0.01"
+        let invalidLeadingZeroPrerelease = "1.0.0-01"
+
+    module SemVers =
+        
+        let mandatory = SemVer(Major = 1, Minor = 0, Patch = 0)
+        let prerelease = SemVer(Major = 1, Minor = 0, Patch = 0, PreRelease = "alpha.1")
+        let buildmetadata = SemVer(Major = 1, Minor = 0, Patch = 0, BuildMetadata = "build.1")
+        let prereleaseAndBuildmetadata = SemVer(Major = 1, Minor = 0, Patch = 0, PreRelease = "alpha.1",BuildMetadata = "build.1")
+        let majorZero = SemVer(Major = 0, Minor = 1, Patch = 2)
+        let fixtureFile = SemVer(Major = 2, Minor = 0, Patch = 0, PreRelease = "alpha.1", BuildMetadata = "build.1")
+
 module Hash =
     
     module Input =
@@ -30,13 +56,13 @@ module Hash =
         module CommentFrontmatter =
             
             let validMandatoryFrontmatter = "2A29D85A29D908C7DE214D56119DE207"
-            let validFullFrontmatter = "E3742447779570EC372DD5DA9C56846F"
+            let validFullFrontmatter = "E2BE9000A07122842FC805530DDC9FDA"
             let invalidMissingMandatoryFrontmatter = "4331EE804414463D7E6DE9B8B6A3D49C"
 
         module BindingFrontmatter =
             
             let validMandatoryFrontmatter = "FC9558E6681A4114794BA912925FC283"
-            let validFullFrontmatter = "7996D96B4690896224B8D1D1FB621FC7"
+            let validFullFrontmatter = "93B48B7357D19EC9F78A6F578A47CBEC"
             let invalidMissingMandatoryFrontmatter = "94C704CFD2538A819CC2C0FFA406A355"
 
 module BinaryContent =
@@ -154,6 +180,8 @@ module ValidationPackageMetadata =
         MajorVersion = 1,
         MinorVersion = 0,
         PatchVersion = 0,
+        PreReleaseVersionSuffix = "alpha.1",
+        BuildMetadataVersionSuffix = "build.1",
         Publish = true,
         Authors = [|Author.allFields|],
         Tags = [|OntologyAnnotation.allFields|],
@@ -198,6 +226,8 @@ Name: valid
 MajorVersion: 2
 MinorVersion: 0
 PatchVersion: 0
+PreReleaseVersionSuffix: alpha.1
+BuildMetadataVersionSuffix: build.1
 Summary: My package does the thing.
 Description: |
   My package does the thing.
@@ -231,6 +261,8 @@ Name: valid
 MajorVersion: 2
 MinorVersion: 0
 PatchVersion: 0
+PreReleaseVersionSuffix: alpha.1
+BuildMetadataVersionSuffix: build.1
 Summary: My package does the thing.
 Description: |
   My package does the thing.
@@ -343,6 +375,8 @@ Name: valid
 MajorVersion: 2
 MinorVersion: 0
 PatchVersion: 0
+PreReleaseVersionSuffix: alpha.1
+BuildMetadataVersionSuffix: build.1
 Summary: My package does the thing.
 Description: |
   My package does the thing.
@@ -376,6 +410,8 @@ Name: valid
 MajorVersion: 2
 MinorVersion: 0
 PatchVersion: 0
+PreReleaseVersionSuffix: alpha.1
+BuildMetadataVersionSuffix: build.1
 Summary: My package does the thing.
 Description: |
   My package does the thing.
@@ -475,6 +511,8 @@ It does it very fast, it does it very swell.
             MajorVersion = 2,
             MinorVersion = 0,
             PatchVersion = 0,
+            PreReleaseVersionSuffix = "alpha.1",
+            BuildMetadataVersionSuffix = "build.1",
             Summary = "My package does the thing.",
             Publish = true,
             Description = """My package does the thing.

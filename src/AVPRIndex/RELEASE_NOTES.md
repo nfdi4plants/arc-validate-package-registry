@@ -1,3 +1,9 @@
+## v0.2.0
+
+- Add `SemVer` type model for a full semantic version representation including PreRelease and Build metadata with parsing and formatting functions
+- Improve functions for getting semantic version (strings) from `ValidationPackageMetadata` and `ValidationPackageIndex` types based on new `SemVer` type
+- - Unify capitalization in Domain create functions
+
 ## v0.1.3
 
 Add `BinaryContent` module to unify package content handling across downstream libraries

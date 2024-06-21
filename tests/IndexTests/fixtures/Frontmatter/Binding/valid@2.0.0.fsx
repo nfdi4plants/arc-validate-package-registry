@@ -4,6 +4,8 @@ Name: valid
 MajorVersion: 2
 MinorVersion: 0
 PatchVersion: 0
+PreReleaseVersionSuffix: alpha.1
+BuildMetadataVersionSuffix: build.1
 Summary: My package does the thing.
 Description: |
   My package does the thing.

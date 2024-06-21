@@ -11,6 +11,75 @@ module Domain =
 
     let jsonSerializerOptions = JsonSerializerOptions(WriteIndented = true)
 
+    type SemVer() =
+        member val Major = -1 with get,set
+        member val Minor = -1 with get,set
+        member val Patch = -1 with get,set
+        member val PreRelease = "" with get,set
+        member val BuildMetadata = "" with get,set
+
+        override this.GetHashCode() =
+            hash (
+                this.Major, 
+                this.Minor, 
+                this.Patch, 
+                this.PreRelease, 
+                this.BuildMetadata
+            )
+
+        override this.Equals(other) =
+            match other with
+                | :? SemVer as s -> 
+                    (
+                        this.Major, 
+                        this.Minor, 
+                        this.Patch, 
+                        this.PreRelease, 
+                        this.BuildMetadata
+                    ) = (
+                        s.Major, 
+                        s.Minor, 
+                        s.Patch, 
+                        s.PreRelease, 
+                        s.BuildMetadata
+                    )
+                | _ -> false
+
+        static member create (
+            major: int,
+            minor: int,
+            patch: int,
+            ?PreRelease: string,
+            ?BuildMetadata: string
+        ) =
+            let tmp = SemVer(
+                Major = major,
+                Minor = minor,
+                Patch = patch
+            )
+            PreRelease |> Option.iter (fun x -> tmp.PreRelease <- x)
+            BuildMetadata |> Option.iter (fun x -> tmp.BuildMetadata <- x)
+            tmp
+
+        static member tryParse (version: string) =
+            match version |> Globals.SEMVER_REGEX.Match |> fun m -> m.Success, m.Groups with
+            | true, groups ->
+                let major = groups.["major"].Value |> int
+                let minor = groups.["minor"].Value |> int
+                let patch = groups.["patch"].Value |> int
+                let preRelease = groups.["prerelease"].Value
+                let buildMetadata = groups.["buildmetadata"].Value
+                Some(SemVer.create(major, minor, patch, preRelease, buildMetadata))
+            | _ -> None
+
+        static member toString (semVer: SemVer) =
+            match (semVer.PreRelease, semVer.BuildMetadata) with
+            | (pr, bm) when pr <> "" && bm <> "" -> $"{semVer.Major}.{semVer.Minor}.{semVer.Patch}-{pr}+{bm}"
+            | (pr, bm) when pr <> "" && bm = "" -> $"{semVer.Major}.{semVer.Minor}.{semVer.Patch}-{pr}"
+            | (pr, bm) when pr = "" && bm <> "" -> $"{semVer.Major}.{semVer.Minor}.{semVer.Patch}+{bm}"
+            | _ -> $"{semVer.Major}.{semVer.Minor}.{semVer.Patch}"
+
+
     type Author() =
         member val FullName = "" with get,set
         member val Email = "" with get,set
@@ -43,16 +112,16 @@ module Domain =
 
         static member create (
             fullName: string,
-            ?email: string,
-            ?affiliation: string,
-            ?affiliationLink: string
+            ?Email: string,
+            ?Affiliation: string,
+            ?AffiliationLink: string
         ) =
             let tmp = Author(
                 FullName = fullName
             )
-            email |> Option.iter (fun x -> tmp.Email <- x)
-            affiliation |> Option.iter (fun x -> tmp.Affiliation <- x)
-            affiliationLink |> Option.iter (fun x -> tmp.AffiliationLink <- x)
+            Email |> Option.iter (fun x -> tmp.Email <- x)
+            Affiliation |> Option.iter (fun x -> tmp.Affiliation <- x)
+            AffiliationLink |> Option.iter (fun x -> tmp.AffiliationLink <- x)
 
             tmp
 
@@ -85,12 +154,12 @@ module Domain =
 
         static member create (
             name: string,
-            ?termSourceRef: string,
-            ?termAccessionNumber: string
+            ?TermSourceRef: string,
+            ?TermAccessionNumber: string
         ) =
             let tmp = new OntologyAnnotation(Name = name)
-            termSourceRef |> Option.iter (fun x -> tmp.TermSourceREF <- x)
-            termAccessionNumber |> Option.iter (fun x -> tmp.TermAccessionNumber <- x)
+            TermSourceRef |> Option.iter (fun x -> tmp.TermSourceREF <- x)
+            TermAccessionNumber |> Option.iter (fun x -> tmp.TermAccessionNumber <- x)
             tmp
 
     type ValidationPackageMetadata() =
@@ -101,6 +170,8 @@ module Domain =
         member val MajorVersion = -1 with get,set
         member val MinorVersion = -1 with get,set
         member val PatchVersion = -1 with get,set
+        member val PreReleaseVersionSuffix = "" with get,set
+        member val BuildMetadataVersionSuffix = "" with get,set
         // optional fields
         member val Publish = false with get,set
         member val Authors: Author [] = Array.empty<Author> with get,set
@@ -116,6 +187,8 @@ module Domain =
                 this.MajorVersion, 
                 this.MinorVersion, 
                 this.PatchVersion, 
+                this.PreReleaseVersionSuffix,
+                this.BuildMetadataVersionSuffix,
                 this.Publish,
                 this.Authors,
                 this.Tags,
@@ -133,6 +206,8 @@ module Domain =
                     this.MajorVersion, 
                     this.MinorVersion, 
                     this.PatchVersion, 
+                    this.PreReleaseVersionSuffix,
+                    this.BuildMetadataVersionSuffix,
                     this.Publish,
                     this.Authors,
                     this.Tags,
@@ -144,7 +219,9 @@ module Domain =
                     vpm.Description, 
                     vpm.MajorVersion, 
                     vpm.MinorVersion, 
-                    vpm.PatchVersion, 
+                    this.PatchVersion, 
+                    this.PreReleaseVersionSuffix,
+                    this.BuildMetadataVersionSuffix,
                     vpm.Publish,
                     vpm.Authors,
                     vpm.Tags,
@@ -160,6 +237,8 @@ module Domain =
             majorVersion: int, 
             minorVersion: int, 
             patchVersion: int,
+            ?PreReleaseVersionSuffix: string,
+            ?BuildMetadataVersionSuffix: string,
             ?Publish: bool,
             ?Authors: Author [],
             ?Tags: OntologyAnnotation [],
@@ -175,6 +254,8 @@ module Domain =
                 PatchVersion = patchVersion
             )
 
+            PreReleaseVersionSuffix |> Option.iter (fun x -> tmp.PreReleaseVersionSuffix <- x)
+            BuildMetadataVersionSuffix |> Option.iter (fun x -> tmp.BuildMetadataVersionSuffix <- x)
             Publish |> Option.iter (fun x -> tmp.Publish <- x)
             Authors |> Option.iter (fun x -> tmp.Authors <- x)
             Tags |> Option.iter (fun x -> tmp.Tags <- x)
@@ -183,7 +264,33 @@ module Domain =
         
             tmp
         
-        static member getSemanticVersionString(m: ValidationPackageMetadata) = $"{m.MajorVersion}.{m.MinorVersion}.{m.PatchVersion}"
+        static member tryGetSemanticVersion(m: ValidationPackageMetadata) = 
+            SemVer.create(
+                m.MajorVersion,
+                m.MinorVersion,
+                m.PatchVersion,
+                m.PreReleaseVersionSuffix,
+                m.BuildMetadataVersionSuffix
+            )
+            |> SemVer.toString
+            |> SemVer.tryParse // there is no buit-in validation on the constructor/create function, so we'll take a detour via parsing roundtrip using the regex
+
+        static member getSemanticVersion(m: ValidationPackageMetadata) = 
+            m
+            |> ValidationPackageMetadata.tryGetSemanticVersion
+            |> Option.get
+
+        static member tryGetSemanticVersionString(m: ValidationPackageMetadata) = 
+            m
+            |> ValidationPackageMetadata.tryGetSemanticVersion
+            |> Option.map SemVer.toString
+
+        static member getSemanticVersionString(m: ValidationPackageMetadata) = 
+            m
+            |> ValidationPackageMetadata.tryGetSemanticVersion
+            |> Option.map SemVer.toString
+            |> Option.get
+
 
     type ValidationPackageIndex =
         {
@@ -240,7 +347,17 @@ module Domain =
                 printfn $"Indexed Package info:{System.Environment.NewLine}{json}"
                 printfn ""
                 
-            static member getSemanticVersionString(i: ValidationPackageIndex) = $"{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}";
+            static member tryGetSemanticVersion(i: ValidationPackageIndex) = 
+                i.Metadata |> ValidationPackageMetadata.tryGetSemanticVersion
+
+            static member getSemanticVersion(i: ValidationPackageIndex) = 
+                i.Metadata |> ValidationPackageMetadata.getSemanticVersion
+
+            static member tryGetSemanticVersionString(i: ValidationPackageIndex) = 
+                i.Metadata |> ValidationPackageMetadata.tryGetSemanticVersionString
+
+            static member getSemanticVersionString(i: ValidationPackageIndex) = 
+                i.Metadata |> ValidationPackageMetadata.getSemanticVersionString
 
             member this.PrettyPrint() =
                 $" {this.Metadata.Name} @ version {this.Metadata.MajorVersion}.{this.Metadata.MinorVersion}.{this.Metadata.PatchVersion}{System.Environment.NewLine}{_.Metadata.Description}{System.Environment.NewLine}Last Updated: {this.LastUpdated}{System.Environment.NewLine}"

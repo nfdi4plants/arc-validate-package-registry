@@ -29,4 +29,3 @@ type Hash =
         path
         |> File.ReadAllText
         |> Hash.hashString
-
