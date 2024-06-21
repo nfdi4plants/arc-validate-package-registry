@@ -56,11 +56,12 @@ namespace PackageRegistryService.Pages.Handlers
         {
             var packages = await
                 database.ValidationPackages
-                    .Where(p => p.Name == packageName && p.BuildMetadataVersionSuffix == "" && p.BuildMetadataVersionSuffix == "")
+                    .Where(p => p.Name == packageName)
                     .ToArrayAsync();
 
             var latestPackage =
                 packages
+                .Where(p => p.BuildMetadataVersionSuffix == "" && p.BuildMetadataVersionSuffix == "")
                 .OrderByDescending(p => p.MajorVersion)
                 .ThenByDescending(p => p.MinorVersion)
                 .ThenByDescending(p => p.PatchVersion)
