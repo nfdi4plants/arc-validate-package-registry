@@ -25,6 +25,33 @@ namespace AVPRClient
                 && package.PreReleaseVersionSuffix == other.PreReleaseVersionSuffix
                 && package.BuildMetadataVersionSuffix == other.BuildMetadataVersionSuffix;
         }
+
+        public static bool IdentityEquals(
+            this AVPRClient.ValidationPackage package,
+            AVPRIndex.Domain.ValidationPackageIndex indexedPackage
+        )
+        {
+            return package.Name == indexedPackage.Metadata.Name
+                && package.MajorVersion == indexedPackage.Metadata.MajorVersion
+                && package.MinorVersion == indexedPackage.Metadata.MinorVersion
+                && package.PatchVersion == indexedPackage.Metadata.PatchVersion
+                && package.PreReleaseVersionSuffix == indexedPackage.Metadata.PreReleaseVersionSuffix
+                && package.BuildMetadataVersionSuffix == indexedPackage.Metadata.BuildMetadataVersionSuffix;
+        }
+
+        public static bool IdentityEquals(
+            this AVPRIndex.Domain.ValidationPackageIndex indexedPackage,
+            AVPRClient.ValidationPackage package
+        )
+        {
+            return package.Name == indexedPackage.Metadata.Name
+                && package.MajorVersion == indexedPackage.Metadata.MajorVersion
+                && package.MinorVersion == indexedPackage.Metadata.MinorVersion
+                && package.PatchVersion == indexedPackage.Metadata.PatchVersion
+                && package.PreReleaseVersionSuffix == indexedPackage.Metadata.PreReleaseVersionSuffix
+                && package.BuildMetadataVersionSuffix == indexedPackage.Metadata.BuildMetadataVersionSuffix;
+        }
+
         public static AVPRClient.ValidationPackage toValidationPackage(
             this AVPRIndex.Domain.ValidationPackageIndex indexedPackage,
             DateTimeOffset releaseDate

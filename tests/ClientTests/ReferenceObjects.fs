@@ -212,3 +212,39 @@ module ValidationPackage =
         ReleaseNotes = "releasenotes",
         CQCHookEndpoint = "hookendpoint"
     )
+
+module ValidationPackageIndex =
+
+    open System.IO
+
+    let allFields_cqcHookAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
+        repoPath = "",
+        fileName = "",
+        lastUpdated = System.DateTime.Now,
+        contentHash = "",
+        metadata = AVPRIndex.Domain.ValidationPackageMetadata.create(
+            name = "name",
+            majorVersion = 1,
+            minorVersion = 0,
+            patchVersion = 0,
+            summary = "summary",
+            description = "description"
+        )
+    )
+
+    let allFields_semVerAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
+        repoPath = "",
+        fileName = "",
+        lastUpdated = System.DateTime.Now,
+        contentHash = "",
+        metadata = AVPRIndex.Domain.ValidationPackageMetadata.create(
+            name = "name",
+            majorVersion = 1,
+            minorVersion = 0,
+            patchVersion = 0,
+            summary = "summary",
+            description = "description",
+            PreReleaseVersionSuffix = "use",
+            BuildMetadataVersionSuffix = "suffixes"
+        )
+    )

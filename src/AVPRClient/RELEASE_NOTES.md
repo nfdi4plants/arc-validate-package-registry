@@ -1,3 +1,6 @@
+## v0.1.2
+- Add more `IdentityEquals` extension methods to compare between `ValidationPackage` and `ValidationPackageIndex`
+
 ## v0.1.1
 - Add `IdentityEquals` extension method for `ValidationPackage`
 

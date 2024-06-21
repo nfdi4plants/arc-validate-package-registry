@@ -11,7 +11,7 @@ open System.Security.Cryptography
 module ValidationPackage =
     
     [<Fact>]
-    let ``IdentityEquals returns true for the same package without suffixes`` () =
+    let ``IdentityEquals returns true for the same package (no suffixes)`` () =
         Assert.True(
             ReferenceObjects.ValidationPackage.allFields_cqcHookAddition.IdentityEquals(
                 ReferenceObjects.ValidationPackage.allFields_cqcHookAddition
@@ -31,6 +31,30 @@ module ValidationPackage =
         Assert.False(
             ReferenceObjects.ValidationPackage.allFields_cqcHookAddition.IdentityEquals(
                 ReferenceObjects.ValidationPackage.allFields_semVerAddition
+            )
+        )
+
+    [<Fact>]
+    let ``IdentityEquals returns true for indexed package with same version (no suffixes)`` () =
+        Assert.True(
+            ReferenceObjects.ValidationPackage.allFields_cqcHookAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackageIndex.allFields_cqcHookAddition
+            )
+        )
+        
+    [<Fact>]
+    let ``IdentityEquals returns true for indexed package with same version with suffixes`` () =
+        Assert.True(
+            ReferenceObjects.ValidationPackage.allFields_semVerAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackageIndex.allFields_semVerAddition
+            )
+        )
+
+    [<Fact>]
+    let ``IdentityEquals returns false for a different indexed package`` () =
+        Assert.False(
+            ReferenceObjects.ValidationPackage.allFields_cqcHookAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackageIndex.allFields_semVerAddition
             )
         )
 
@@ -82,6 +106,29 @@ module ValidationPackageIndex =
         let actual = allFields_semVerAddition.toPackageContentHash(HashFileDirectly = true)
         Assert.Equivalent(ReferenceObjects.Hash.allFields_semVerAddition, actual)
 
+    [<Fact>]
+    let ``IdentityEquals returns true for package with same version (no suffixes)`` () =
+        Assert.True(
+            ReferenceObjects.ValidationPackageIndex.allFields_cqcHookAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackage.allFields_cqcHookAddition
+            )
+        )
+        
+    [<Fact>]
+    let ``IdentityEquals returns true for package with same version with suffixes`` () =
+        Assert.True(
+            ReferenceObjects.ValidationPackageIndex.allFields_semVerAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackage.allFields_semVerAddition
+            )
+        )
+
+    [<Fact>]
+    let ``IdentityEquals returns false for a different package`` () =
+        Assert.False(
+            ReferenceObjects.ValidationPackageIndex.allFields_cqcHookAddition.IdentityEquals(
+                ReferenceObjects.ValidationPackage.allFields_semVerAddition
+            )
+        )
 module Author =
 
     open System.Collections
