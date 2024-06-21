@@ -10,30 +10,51 @@ open System.Security.Cryptography
 
 module ValidationPackageIndex =
 
-    let test_validation_package_all_fields = AVPRIndex.Domain.ValidationPackageIndex.create(
-        repoPath = "fixtures/test_validation_package_all_fields.fsx",
-        fileName = "test_validation_package_all_fields.fsx",
+    let allFields_cqcHookAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
+        repoPath = "fixtures/allFields_cqcHookAddition.fsx",
+        fileName = "allFields_cqcHookAddition.fsx",
         lastUpdated = ReferenceObjects.date,
-        contentHash = ReferenceObjects.Hash.expected_hash,
-        metadata = ReferenceObjects.ValidationPackageMetadata.allFields
+        contentHash = ReferenceObjects.Hash.expected_hash_cqcHookAddition,
+        metadata = ReferenceObjects.ValidationPackageMetadata.allFields_cqcHookAddition
     )
 
     [<Fact>]
-    let ``toValidationPackage with release date`` () =
-        let actual = test_validation_package_all_fields.toValidationPackage(ReferenceObjects.date)
-        Assert.Equivalent(actual, ReferenceObjects.ValidationPackage.allFields)
-
-
+    let ``CQCHook Addition - toValidationPackage with release date`` () =
+        let actual = allFields_cqcHookAddition.toValidationPackage(ReferenceObjects.date)
+        Assert.Equivalent(actual, ReferenceObjects.ValidationPackage.allFields_cqcHookAddition)
 
     [<Fact>]
-    let ``toPackageContentHash without direct file hash`` () =
-        let actual = test_validation_package_all_fields.toPackageContentHash()
-        Assert.Equivalent(ReferenceObjects.Hash.allFields, actual)
+    let ``CQCHook Addition - toPackageContentHash without direct file hash`` () =
+        let actual = allFields_cqcHookAddition.toPackageContentHash()
+        Assert.Equivalent(ReferenceObjects.Hash.allFields_cqcHookAddition, actual)
 
     [<Fact>]
-    let ``toPackageContentHash with direct file hash`` () =
-        let actual = test_validation_package_all_fields.toPackageContentHash(HashFileDirectly = true)
-        Assert.Equivalent(ReferenceObjects.Hash.allFields, actual)
+    let ``CQCHook Addition - toPackageContentHash with direct file hash`` () =
+        let actual = allFields_cqcHookAddition.toPackageContentHash(HashFileDirectly = true)
+        Assert.Equivalent(ReferenceObjects.Hash.allFields_cqcHookAddition, actual)
+
+    let allFields_semVerAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
+        repoPath = "fixtures/allFields_semVerAddition.fsx",
+        fileName = "allFields_semVerAddition.fsx",
+        lastUpdated = ReferenceObjects.date,
+        contentHash = ReferenceObjects.Hash.expected_hash_semVerAddition,
+        metadata = ReferenceObjects.ValidationPackageMetadata.allFields_semVerAddition
+    )
+
+    [<Fact>]
+    let ``SemVer Addition - toValidationPackage with release date`` () =
+        let actual = allFields_semVerAddition.toValidationPackage(ReferenceObjects.date)
+        Assert.Equivalent(actual, ReferenceObjects.ValidationPackage.allFields_semVerAddition)
+
+    [<Fact>]
+    let ``SemVer Addition - toPackageContentHash without direct file hash`` () =
+        let actual = allFields_semVerAddition.toPackageContentHash()
+        Assert.Equivalent(ReferenceObjects.Hash.allFields_semVerAddition, actual)
+
+    [<Fact>]
+    let ``SemVer Addition - toPackageContentHash with direct file hash`` () =
+        let actual = allFields_semVerAddition.toPackageContentHash(HashFileDirectly = true)
+        Assert.Equivalent(ReferenceObjects.Hash.allFields_semVerAddition, actual)
 
 module Author =
 

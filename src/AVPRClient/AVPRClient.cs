@@ -1071,6 +1071,18 @@ namespace AVPRClient
         public int PatchVersion { get; set; }
 
         /// <summary>
+        /// SemVer prerelease version of the validationpackage.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("PreReleaseVersionSuffix", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PreReleaseVersionSuffix { get; set; }
+
+        /// <summary>
+        /// SemVer buildmetadata of the validationpackage.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("BuildMetadataVersionSuffix", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string BuildMetadataVersionSuffix { get; set; }
+
+        /// <summary>
         /// base64 encoded binary content of the validation package.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("PackageContent", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -1156,6 +1168,18 @@ namespace AVPRClient
         public int PackagePatchVersion { get; set; }
 
         /// <summary>
+        /// SemVer prerelease version of the validationpackage.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("PackagePreReleaseVersionSuffix", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PackagePreReleaseVersionSuffix { get; set; }
+
+        /// <summary>
+        /// SemVer buildmetadata of the validationpackage.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("PackageBuildMetadataVersionSuffix", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PackageBuildMetadataVersionSuffix { get; set; }
+
+        /// <summary>
         /// MD5 hash hex string of the package content.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("Hash", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -1189,6 +1213,18 @@ namespace AVPRClient
         /// </summary>
         [Newtonsoft.Json.JsonProperty("PackagePatchVersion", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int PackagePatchVersion { get; set; }
+
+        /// <summary>
+        /// SemVer prerelease version of the validationpackage.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("PackagePreReleaseVersionSuffix", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PackagePreReleaseVersionSuffix { get; set; }
+
+        /// <summary>
+        /// SemVer buildmetadata of the validationpackage.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("PackageBuildMetadataVersionSuffix", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PackageBuildMetadataVersionSuffix { get; set; }
 
         /// <summary>
         /// Number of downloads for the package.

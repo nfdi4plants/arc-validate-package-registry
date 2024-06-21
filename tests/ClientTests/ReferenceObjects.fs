@@ -59,7 +59,7 @@ module ValidationPackageMetadata =
         PatchVersion = 0
     )
 
-    let allFields = ValidationPackageMetadata(
+    let allFields_cqcHookAddition = ValidationPackageMetadata(
         Name = "name",
         Summary = "summary" ,
         Description = "description" ,
@@ -73,23 +73,53 @@ module ValidationPackageMetadata =
         CQCHookEndpoint = "hookendpoint"
     )
 
+    let allFields_semVerAddition = ValidationPackageMetadata(
+        Name = "name",
+        Summary = "summary" ,
+        Description = "description" ,
+        MajorVersion = 1,
+        MinorVersion = 0,
+        PatchVersion = 0,
+        PreReleaseVersionSuffix = "use",
+        BuildMetadataVersionSuffix = "suffixes",
+        Publish = true,
+        Authors = [|Author.allFieldsIndex|],
+        Tags = [|OntologyAnnotation.allFieldsIndex|],
+        ReleaseNotes = "releasenotes",
+        CQCHookEndpoint = "hookendpoint"
+    )
+
 module Hash =
 
-    let expected_hash = "C5BD4262301D27CF667106D9024BD721"
+    let expected_hash_cqcHookAddition = "C5BD4262301D27CF667106D9024BD721"
 
-    let allFields = AVPRClient.PackageContentHash(
+    let allFields_cqcHookAddition = AVPRClient.PackageContentHash(
         PackageName = "name",
         PackageMajorVersion = 1,
         PackageMinorVersion = 0,
         PackagePatchVersion = 0,
-        Hash = expected_hash
+        PackagePreReleaseVersionSuffix = "",
+        PackageBuildMetadataVersionSuffix = "",
+        Hash = expected_hash_cqcHookAddition
+    )
+
+    let expected_hash_semVerAddition = "2A546201341641AAB21FB49DADD06676"
+
+    let allFields_semVerAddition = AVPRClient.PackageContentHash(
+        PackageName = "name",
+        PackageMajorVersion = 1,
+        PackageMinorVersion = 0,
+        PackagePatchVersion = 0,
+        PackagePreReleaseVersionSuffix = "use",
+        PackageBuildMetadataVersionSuffix = "suffixes",
+        Hash = expected_hash_semVerAddition
     )
 
 module BinaryContent =
 
     open System.IO
 
-    let expected_content = "(*
+    let expected_content_cqcHookAddition = "(*
 ---
 Name: name
 Summary: summary
@@ -112,23 +142,70 @@ CQCHookEndpoint: hookendpoint
 ---
 *)
 
-printfn \"yes\""                  .ReplaceLineEndings("\n")
+printfn \"yes\""                                    .ReplaceLineEndings("\n")
 
-    let expected_binary_content = expected_content |> System.Text.Encoding.UTF8.GetBytes
+    let expected_binary_content_cqcHookAddition = expected_content_cqcHookAddition |> System.Text.Encoding.UTF8.GetBytes
 
+    let expected_content_semVerAddition = "(*
+---
+Name: name
+Summary: summary
+Description = description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+PreRelease: use
+BuildMetadata: suffixes
+Publish: true
+Authors:
+  - FullName: test
+    Email: test@test.test
+    Affiliation: testaffiliation
+    AffiliationLink: test.com
+Tags:
+  - Name: test
+    TermSourceREF: REF
+    TermAccessionNumber: TAN
+ReleaseNotes: releasenotes
+CQCHookEndpoint: hookendpoint
+---
+*)
+
+printfn \"yes\""                                    .ReplaceLineEndings("\n")
+
+    let expected_binary_content_semVerAddition = expected_content_semVerAddition |> System.Text.Encoding.UTF8.GetBytes
 
 module ValidationPackage =
 
     open System.IO
 
-    let allFields = AVPRClient.ValidationPackage(
+    let allFields_cqcHookAddition = AVPRClient.ValidationPackage(
         Name = "name",
         Summary = "summary" ,
         Description = "description" ,
         MajorVersion = 1,
         MinorVersion = 0,
         PatchVersion = 0,
-        PackageContent = BinaryContent.expected_binary_content,
+        PreReleaseVersionSuffix = "",
+        BuildMetadataVersionSuffix = "",
+        PackageContent = BinaryContent.expected_binary_content_cqcHookAddition,
+        ReleaseDate = date,
+        Authors = [|Author.allFieldsClient|],
+        Tags = [|OntologyAnnotation.allFieldsClient|],
+        ReleaseNotes = "releasenotes",
+        CQCHookEndpoint = "hookendpoint"
+    )
+
+    let allFields_semVerAddition = AVPRClient.ValidationPackage(
+        Name = "name",
+        Summary = "summary" ,
+        Description = "description" ,
+        MajorVersion = 1,
+        MinorVersion = 0,
+        PatchVersion = 0,
+        PreReleaseVersionSuffix = "use",
+        BuildMetadataVersionSuffix = "suffixes",
+        PackageContent = BinaryContent.expected_binary_content_semVerAddition,
         ReleaseDate = date,
         Authors = [|Author.allFieldsClient|],
         Tags = [|OntologyAnnotation.allFieldsClient|],

@@ -26,6 +26,8 @@ namespace AVPRClient
                 MajorVersion = indexedPackage.Metadata.MajorVersion,
                 MinorVersion = indexedPackage.Metadata.MinorVersion,
                 PatchVersion = indexedPackage.Metadata.PatchVersion,
+                PreReleaseVersionSuffix = indexedPackage.Metadata.PreReleaseVersionSuffix,
+                BuildMetadataVersionSuffix = indexedPackage.Metadata.BuildMetadataVersionSuffix,
                 PackageContent = BinaryContent.fromFile(indexedPackage.RepoPath),
                 ReleaseDate = releaseDate,
                 Tags =
@@ -78,7 +80,9 @@ namespace AVPRClient
                     Hash = Hash.hashFile(indexedPackage.RepoPath),
                     PackageMajorVersion = indexedPackage.Metadata.MajorVersion,
                     PackageMinorVersion = indexedPackage.Metadata.MinorVersion,
-                    PackagePatchVersion = indexedPackage.Metadata.PatchVersion
+                    PackagePatchVersion = indexedPackage.Metadata.PatchVersion,
+                    PackagePreReleaseVersionSuffix = indexedPackage.Metadata.PreReleaseVersionSuffix,
+                    PackageBuildMetadataVersionSuffix = indexedPackage.Metadata.BuildMetadataVersionSuffix
                 };
             }
             else
@@ -89,7 +93,9 @@ namespace AVPRClient
                     Hash = indexedPackage.ContentHash,
                     PackageMajorVersion = indexedPackage.Metadata.MajorVersion,
                     PackageMinorVersion = indexedPackage.Metadata.MinorVersion,
-                    PackagePatchVersion = indexedPackage.Metadata.PatchVersion
+                    PackagePatchVersion = indexedPackage.Metadata.PatchVersion,
+                    PackagePreReleaseVersionSuffix = indexedPackage.Metadata.PreReleaseVersionSuffix,
+                    PackageBuildMetadataVersionSuffix = indexedPackage.Metadata.BuildMetadataVersionSuffix
                 };
             }
         }
@@ -149,8 +155,8 @@ namespace AVPRClient
                 majorVersion: validationPackage.MajorVersion,
                 minorVersion: validationPackage.MinorVersion,
                 patchVersion: validationPackage.PatchVersion,
-                PreReleaseVersionSuffix: Microsoft.FSharp.Core.FSharpOption<string>.None,
-                BuildMetadataVersionSuffix: Microsoft.FSharp.Core.FSharpOption<string>.None,
+                PreReleaseVersionSuffix: validationPackage.PreReleaseVersionSuffix,
+                BuildMetadataVersionSuffix: validationPackage.BuildMetadataVersionSuffix,
                 Publish: Microsoft.FSharp.Core.FSharpOption<bool>.None,
                 Authors: validationPackage.Authors.AsIndexType(),
                 Tags: validationPackage.Tags.AsIndexType(),

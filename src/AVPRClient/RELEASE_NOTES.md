@@ -1,3 +1,6 @@
+## v0.1.0
+- Regen client for full semVer support (AVPRIndex >= 0.2.0)
+
 ## v0.0.9
 - Use AVPRIndex for all package binary content extractions
 
