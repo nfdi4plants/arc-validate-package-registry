@@ -137,24 +137,14 @@ type PublishAPI =
             all_indexed_packages
             |> Array.filter (fun i -> i.Metadata.Publish)
             |> Array.filter (fun i -> 
-                Array.exists (fun (p: AVPRClient.ValidationPackage) -> 
-                    p.Name = i.Metadata.Name 
-                    && p.MajorVersion = i.Metadata.MajorVersion
-                    && p.MinorVersion = i.Metadata.MinorVersion
-                    && p.PatchVersion = i.Metadata.PatchVersion
-                ) published_packages
+                Array.exists (fun (p: AVPRClient.ValidationPackage) -> p.IdentityEquals(i)) published_packages
             )
 
         let pending_indexed_packages =
             all_indexed_packages
             |> Array.filter (fun i -> i.Metadata.Publish)
             |> Array.filter (fun i -> 
-                not <| Array.exists (fun (p: AVPRClient.ValidationPackage) -> 
-                    p.Name = i.Metadata.Name 
-                    && p.MajorVersion = i.Metadata.MajorVersion
-                    && p.MinorVersion = i.Metadata.MinorVersion
-                    && p.PatchVersion = i.Metadata.PatchVersion
-                ) published_packages
+                not <| Array.exists (fun (p: AVPRClient.ValidationPackage) -> p.IdentityEquals(i)) published_packages
             )
         
         if verbose then
@@ -172,7 +162,7 @@ type PublishAPI =
             with e ->
                 if isDryRun then
                     printfn $"[E]: {e.Message}"
-                    printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Package content hash does not match the published package"
+                    printfn $"[{i.Metadata.Name}@{ValidationPackageIndex.getSemanticVersionString i}]: Package content hash does not match the published package"
                     printfn $"  Make sure that the package file has not been modified after publication! ({i.RepoPath})"
                 else
                     failwith $"[{i.RepoPath}]: Package content hash does not match the published package"
@@ -187,7 +177,7 @@ type PublishAPI =
             printfn ""
             
             pending_indexed_packages
-            |> Array.iter (fun i -> printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]")
+            |> Array.iter (fun i -> printfn $"[{i.Metadata.Name}@{ValidationPackageIndex.getSemanticVersionString i}]")
             
             if verbose then 
                 printfn ""
@@ -206,7 +196,7 @@ type PublishAPI =
             |> Array.iter (fun i ->
                 let p = i.toValidationPackage()
                 try
-                    printfn $"[{i.Metadata.Name}@{i.Metadata.MajorVersion}.{i.Metadata.MinorVersion}.{i.Metadata.PatchVersion}]: Publishing package..."
+                    printfn $"[{i.Metadata.Name}@{ValidationPackageIndex.getSemanticVersionString i}]: Publishing package..."
                     p
                     |> client.CreatePackageAsync
                     |> Async.AwaitTask
