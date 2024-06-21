@@ -4,6 +4,7 @@ using PackageRegistryService.Models;
 using PackageRegistryService.Pages.Components;
 using System.Text;
 using System.Xml.Linq;
+using static AVPRIndex.Domain;
 
 namespace PackageRegistryService.Pages.Handlers
 {
@@ -11,25 +12,15 @@ namespace PackageRegistryService.Pages.Handlers
     {
         public static async Task<Results<ContentHttpResult, NotFound, BadRequest<string>>> Render(string packageName, string version, ValidationPackageDb database)
         {
-            var splt = version.Split('.');
-            if (splt.Length != 3)
+            var semVerOpt = SemVer.tryParse(version);
+            if (semVerOpt is null)
             {
-                return TypedResults.BadRequest("version was not a of valid format MAJOR.MINOR.REVISION");
+                return TypedResults.BadRequest($"{version} is not a valid semantic version.");
             }
+            var semVer = semVerOpt.Value;
 
-            int major; int minor; int revision;
-
-            if (
-                !int.TryParse(splt[0], out major)
-                || !int.TryParse(splt[1], out minor)
-                || !int.TryParse(splt[2], out revision)
-            )
-            {
-                return TypedResults.BadRequest("version was not a of valid format MAJOR.MINOR.REVISION");
-            }
-
-            var package = await database.ValidationPackages.FindAsync(packageName, major, minor, revision);
-            var downloads = await database.Downloads.FindAsync(packageName, major, minor, revision);
+            var package = await database.ValidationPackages.FindAsync(packageName, semVer.Major, semVer.Minor, semVer.Patch, semVer.PreRelease, semVer.BuildMetadata);
+            var downloads = await database.Downloads.FindAsync(packageName, semVer.Major, semVer.Minor, semVer.Patch, semVer.PreRelease, semVer.BuildMetadata);
 
             if (package == null)
             {
@@ -65,7 +56,7 @@ namespace PackageRegistryService.Pages.Handlers
         {
             var packages = await
                 database.ValidationPackages
-                    .Where(p => p.Name == packageName)
+                    .Where(p => p.Name == packageName && p.BuildMetadataVersionSuffix == "" && p.BuildMetadataVersionSuffix == "")
                     .ToArrayAsync();
 
             var latestPackage =
@@ -80,7 +71,7 @@ namespace PackageRegistryService.Pages.Handlers
                 return TypedResults.NotFound();
             }
 
-            var downloads = await database.Downloads.FindAsync(latestPackage.Name, latestPackage.MajorVersion, latestPackage.MinorVersion, latestPackage.PatchVersion);
+            var downloads = await database.Downloads.FindAsync(latestPackage.Name, latestPackage.MajorVersion, latestPackage.MinorVersion, latestPackage.PatchVersion, latestPackage.PreReleaseVersionSuffix, latestPackage.BuildMetadataVersionSuffix);
 
             var page = Layout.Render(
                 activeNavbarItem: "",

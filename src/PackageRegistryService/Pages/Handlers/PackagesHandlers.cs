@@ -35,6 +35,7 @@ namespace PackageRegistryService.Pages.Handlers
 
                             var latestPackage =
                                 group
+                                    .Where(p => p.BuildMetadataVersionSuffix == "" && p.BuildMetadataVersionSuffix == "")
                                     .OrderByDescending(p => p.MajorVersion)
                                     .ThenByDescending(p => p.MinorVersion)
                                     .ThenByDescending(p => p.PatchVersion)

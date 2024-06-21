@@ -25,7 +25,7 @@ namespace PackageRegistryService.Pages.Components
 <tr>
 <th scope=""col"">Name</th>
 <th scope=""col"">Summary</th>
-<th scope=""col"">Latest version</th>
+<th scope=""col"">Latest stable version</th>
 <th scope=""col"">Release date</th>
 <th scope=""col"">Tags</th>
 <th scope=""col"">Total Downloads</th>
