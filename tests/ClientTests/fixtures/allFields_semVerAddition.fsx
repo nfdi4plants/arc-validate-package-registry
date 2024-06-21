@@ -6,8 +6,8 @@ Description = description
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
-PreRelease: use
-BuildMetadata: suffixes
+PreReleaseVersionSuffix: use
+BuildMetadataVersionSuffix: suffixes
 Publish: true
 Authors:
   - FullName: test

@@ -41,5 +41,5 @@ type Assert with
     static member FileNameValid(path:string) =
         let fileName = Path.GetFileName(path)
         let folderName = Path.GetDirectoryName(path) |> Path.GetFileName
-        let pattern = sprintf @"^%s@\d+\.\d+\.\d+\.fsx$" folderName
+        let pattern = sprintf @"^%s@%s.fsx$" folderName AVPRIndex.Globals.SEMVER_REGEX_PATTERN[1.. (AVPRIndex.Globals.SEMVER_REGEX_PATTERN.Length - 2)] // first and last characters of that regex are start/end signifiers
         Assert.Matches(pattern, fileName)

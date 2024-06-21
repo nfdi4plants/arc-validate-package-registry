@@ -103,7 +103,7 @@ module Hash =
         Hash = expected_hash_cqcHookAddition
     )
 
-    let expected_hash_semVerAddition = "2A546201341641AAB21FB49DADD06676"
+    let expected_hash_semVerAddition = "E3D3C259C4B3F54783283735B20F8C23"
 
     let allFields_semVerAddition = AVPRClient.PackageContentHash(
         PackageName = "name",
@@ -154,8 +154,8 @@ Description = description
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
-PreRelease: use
-BuildMetadata: suffixes
+PreReleaseVersionSuffix: use
+BuildMetadataVersionSuffix: suffixes
 Publish: true
 Authors:
   - FullName: test
