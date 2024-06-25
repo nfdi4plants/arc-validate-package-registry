@@ -28,7 +28,7 @@
 
         public static bool ValidatePackageContent(ValidationPackage package, ValidationPackageDb database)
         {
-            var hash = database.Hashes.SingleOrDefault(h => h.PackageName == package.Name && h.PackageMajorVersion == package.MajorVersion && h.PackageMinorVersion == package.MinorVersion && h.PackagePatchVersion == package.PatchVersion);
+            var hash = database.Hashes.SingleOrDefault(h => h.PackageName == package.Name && h.PackageMajorVersion == package.MajorVersion && h.PackageMinorVersion == package.MinorVersion && h.PackagePatchVersion == package.PatchVersion && h.PackagePreReleaseVersionSuffix == package.PreReleaseVersionSuffix && h.PackageBuildMetadataVersionSuffix == package.BuildMetadataVersionSuffix);
             
             if (hash == null)
             {
