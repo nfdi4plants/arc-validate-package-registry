@@ -81,7 +81,7 @@ namespace PackageRegistryService.Models
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<AVPRIndex.Domain.OntologyAnnotation> Tags { get; set; } = Array.Empty<AVPRIndex.Domain.OntologyAnnotation>();
+        public ICollection<AVPRIndex.Domain.OntologyAnnotation> Tags { get; set; } = Array.Empty<AVPRIndex.Domain.OntologyAnnotation>().ToList();
 
         /// <summary>
         /// 
@@ -96,7 +96,7 @@ namespace PackageRegistryService.Models
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<AVPRIndex.Domain.Author> Authors { get; set; } = Array.Empty<AVPRIndex.Domain.Author>();// https://www.learnentityframeworkcore.com/relationships#navigation-properties
+        public ICollection<AVPRIndex.Domain.Author> Authors { get; set; } = Array.Empty<AVPRIndex.Domain.Author>().ToList();// https://www.learnentityframeworkcore.com/relationships#navigation-properties
 
         /// <summary>
         /// 
