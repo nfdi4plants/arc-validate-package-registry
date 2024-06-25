@@ -81,22 +81,22 @@ namespace PackageRegistryService.Models
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<AVPRIndex.Domain.OntologyAnnotation>? Tags { get; set; }
+        public ICollection<AVPRIndex.Domain.OntologyAnnotation> Tags { get; set; } = Array.Empty<AVPRIndex.Domain.OntologyAnnotation>();
 
         /// <summary>
         /// 
         /// </summary>
-        public string? ReleaseNotes { get; set; }
+        public string ReleaseNotes { get; set; } = "";
 
         /// <summary>
         /// 
         /// </summary>
-        public string? CQCHookEndpoint { get; set; }
+        public string CQCHookEndpoint { get; set; } = "";
 
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<AVPRIndex.Domain.Author>? Authors { get; set; } // https://www.learnentityframeworkcore.com/relationships#navigation-properties
+        public ICollection<AVPRIndex.Domain.Author> Authors { get; set; } = Array.Empty<AVPRIndex.Domain.Author>();// https://www.learnentityframeworkcore.com/relationships#navigation-properties
 
         /// <summary>
         /// 
