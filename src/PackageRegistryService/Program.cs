@@ -13,6 +13,9 @@ using NSwag.Generation.Processors;
 using PackageRegistryService.API.Endpoints;
 using PackageRegistryService.Data;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
+
 
 // ------------------------- ApplicationBuilder -------------------------
 // in this section, we will add the necessary code to configure the application builder,
@@ -40,6 +43,7 @@ builder.Services.AddDbContext<ValidationPackageDb>(opt =>
     )
 );
 
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders =
@@ -47,6 +51,10 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 builder.Services.Configure<JsonOptions>(options => options.SerializerOptions.PropertyNamingPolicy = null);
+
+builder.Services.AddHealthChecks()
+    //.AddCheck<DatabaseHealthCheck>("Database");
+    .AddNpgSql(builder.Configuration.GetConnectionString("PostgressConnectionString"));
 
 // ------------------------- WebApplication -------------------------
 // in this section, we will add the necessary code to configure the WebApplication,
@@ -82,6 +90,12 @@ if (!app.Environment.IsProduction())
     app.UseHttpsRedirection();
 
 }
+
+app.MapHealthChecks("/_health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+    //.RequireHost(); // use host of status page here to limit this endpoint
 
 // Configure the HTTP request pipeline.
 
