@@ -35,6 +35,7 @@ Read more at [avpr.nfdi4plants.org/about](https://avpr.nfdi4plants.org/about)
     - [Triggering a image release](#triggering-a-image-release)
     - [OpenAPI endpoint documentation via Swagger UI](#openapi-endpoint-documentation-via-swagger-ui)
   - [Testing](#testing)
+  - [Release packages to production](#release-packages-to-production)
 
 # General
 
@@ -347,5 +348,21 @@ There are 2 solutions that contain test projects:
 - `PackageStagingArea.sln` contains the tests and sanity checks for all packages in the staging area.
 
 Run the tests with `dotnet test` in the respective test project folders or on the respective solution.
+
+[🔼 Back to top](#table-of-contents)
+
+## Release packages to production
+
+Automated package releases are currently only performed to the preview index.
+
+If you are an authorized user with an API key, packages can be pushed to prod with the `AVPRCI` CLI tool in this repo:
+
+in the repo root, run:
+
+```shell
+dotnet run --project .\src\AVPRCI\AVPRCI.fsproj -- publish --api-key yourKeyHere --dry-run
+```
+
+to see what would be published, and remove the `--dry-run` flag to actually publish the packages.
 
 [🔼 Back to top](#table-of-contents)
