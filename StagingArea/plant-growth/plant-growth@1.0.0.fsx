@@ -8,11 +8,9 @@ Description: |
         Critical fields:
         - organism (OBI:0100026)
         - growth day length (DPBO:0000041)
-        - light intensity exposure (PECO:0007224)
-        - humidity day (DPBO:0000005)
+        - light intensity exposure (PECO:0007224)        
         - temperature day (DPBO:0000007)
-        - temperature night (DPBO:0000008)
-        - watering exposure (PECO:0007383)
+        - temperature night (DPBO:0000008)       
 
         Non critical fields:
         - genotype (EFO:0000513)
@@ -20,15 +18,17 @@ Description: |
         - Reference Time Point (NCIT:C82576)
         - growth plot design (DPBO:0000001)
         - plant growth medium exposure (PECO:0007147)
+        - humidity day (DPBO:0000005)
         - humidity night (DPBO:0000006)
         - plant nutrient exposure (PECO:0007241)
         - abiotic plant exposure (PECO:0007191)
         - biotic plant exposure (PECO:0007357)
+        - watering exposure (PECO:0007383)
 
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
-Publish: false
+Publish: true
 Authors:
   - FullName: Heinrich Lukas Weil
     Email: weil@nfdi4plants.org
