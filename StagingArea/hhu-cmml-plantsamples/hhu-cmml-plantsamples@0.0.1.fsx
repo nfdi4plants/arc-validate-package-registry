@@ -7,11 +7,19 @@ Description: |
   This is validates against "Swate template study sheet for plant samples" 
   https://str.nfdi4plants.org/template/226689ec-4be3-4143-b775-f8856c8ed6a5
   The following metadata is required (may not be empty):
-  - Parameter [sample submission date]
-  - Characteristic [organism]
-  - Characteristic [biological replicate]
+    - Input [Source Name]
+    - Parameter [sample submission date]
+    - Characteristic [organism] OBI:0100026
   The following metadata is recommended:
-  - Characteristic [organism part]
+    - Characteristic [biological replicate] DPBO:0000042
+    - Characteristic [organism part] EFO:0000635
+    - Characteristic [plant age] DPBO:0000033
+    - Characteristic [genotype] EFO:0000513
+    - Parameter [normalisation factor]
+    - Parameter [dry weight]
+    - Parameter [fresh weight]
+    - Characteristic [resuspension volume]
+    - Characteristic [resuspension solution]
 MajorVersion: 0
 MinorVersion: 0
 PatchVersion: 1
@@ -55,21 +63,39 @@ let studyFiles =
     with
         | _ -> seq{Map.empty}
 
-let containsFilledOutColumn (term : CvTerm) (tokenColumns : IParam list list) =
+// Check whether a building block with ontology column header contains values
+let containsFilledOutColumnCVT (cvt : CvTerm) (tokenColumns : IParam list list) =
     let column = 
         tokenColumns 
         |> Seq.tryFind (fun column ->
-            Param.getValueAsTerm column.Head = term
+            Param.getValueAsTerm column.Head = cvt
         )
     match column with
-    | Some (h :: []) -> Expecto.Tests.failtestNoStackf $"{term.Name} column only contains header"            
+    | Some (h :: []) -> Expecto.Tests.failtestNoStackf $"{cvt.Name} column only contains header"            
     | Some (h :: vals) -> 
         vals
         |> List.iteri (fun i token ->
             if (Param.getValueAsTerm token).Name = "" then
-                Expecto.Tests.failtestNoStackf $"column {term.Name} contains empty value at index {i}"                  
+                Expecto.Tests.failtestNoStackf $"column {cvt.Name} contains empty value at index {i}"                  
         )
-    | _ -> Expecto.Tests.failtestNoStackf $"table contains no {term.Name} header" 
+    | _ -> Expecto.Tests.failtestNoStackf $"table contains no {cvt.Name} header"
+
+// Check whether a building block without ontology column header (i.e. only name) contains values
+let containsFilledOutColumnName (name : string) (tokenColumns : IParam list list) =
+    let column = 
+        tokenColumns 
+        |> Seq.tryFind (fun column ->
+            (Param.getValueAsTerm column.Head).Name = name
+        )
+    match column with
+    | Some (h :: []) -> Expecto.Tests.failtestNoStackf $"{name} column only contains header"            
+    | Some (h :: vals) -> 
+        vals
+        |> List.iteri (fun i token ->
+            if (Param.getValueAsTerm token).Name = "" then
+                Expecto.Tests.failtestNoStackf $"column {name} contains empty value at index {i}"                  
+        )
+    | _ -> Expecto.Tests.failtestNoStackf $"table contains no {name} header" 
 
 
 let anyStudySheets = 
@@ -81,10 +107,19 @@ let cases =
     testList "cases" [  // naming is difficult here
 
         for table in anyStudySheets do
-                ARCExpect.validationCase (TestID.Name $"{table.Key}: organism") {
-                    table.Value
-                    |> containsFilledOutColumn (CvTerm.create("OBI:0100026","organism","OBI"))
-                }
+            ARCExpect.validationCase (TestID.Name $"{table.Key}: Source Name") {
+                table.Value
+                |> containsFilledOutColumnName "Source Name"
+            }
+            ARCExpect.validationCase (TestID.Name $"{table.Key}: organism") {
+                table.Value
+                |> containsFilledOutColumnCVT (CvTerm.create("OBI:0100026","organism","OBI"))
+            }
+            ARCExpect.validationCase (TestID.Name $"{table.Key}: sample submission date") {
+                table.Value
+                |> containsFilledOutColumnName "sample submission date"
+            }
+
     ]
 
 let nonCriticalCases = 
@@ -93,9 +128,41 @@ let nonCriticalCases =
         if anyStudySheets |> Seq.isEmpty |> not then
             for table in anyStudySheets do
                
+                ARCExpect.validationCase (TestID.Name $"{table.Key}: biological replicate") {
+                    table.Value
+                    |> containsFilledOutColumnCVT (CvTerm.create("DPBO:0000042","biological replicate","DPBO"))
+                }
                 ARCExpect.validationCase (TestID.Name $"{table.Key}: organism part") {
                     table.Value
-                    |> containsFilledOutColumn (CvTerm.create("EFO:0000635","organism part","EFO"))
+                    |> containsFilledOutColumnCVT (CvTerm.create("EFO:0000635","organism part","EFO"))
+                }
+                ARCExpect.validationCase (TestID.Name $"{table.Key}: plant age") {
+                    table.Value
+                    |> containsFilledOutColumnCVT (CvTerm.create("DPBO:0000033","plant age","DPBO"))
+                }
+                ARCExpect.validationCase (TestID.Name $"{table.Key}: genotype") {
+                    table.Value
+                    |> containsFilledOutColumnCVT (CvTerm.create("EFO:0000513","genotype","EFO"))
+                }
+                ARCExpect.validationCase (TestID.Name $"{table.Key}: normalisation factor") {
+                    table.Value
+                    |> containsFilledOutColumnName "normalisation factor"
+                }
+                ARCExpect.validationCase (TestID.Name $"{table.Key}: dry weight") {
+                    table.Value
+                    |> containsFilledOutColumnName "dry weight"
+                }
+                ARCExpect.validationCase (TestID.Name $"{table.Key}: fresh weight") {
+                    table.Value
+                    |> containsFilledOutColumnName "fresh weight"
+                }
+                ARCExpect.validationCase (TestID.Name $"{table.Key}: resuspension volume") {
+                    table.Value
+                    |> containsFilledOutColumnName "resuspension volume"
+                }
+                ARCExpect.validationCase (TestID.Name $"{table.Key}: resuspension solution") {
+                    table.Value
+                    |> containsFilledOutColumnName "resuspension solution"
                 }
     ]
 
