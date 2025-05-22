@@ -40,10 +40,10 @@ open System.Text
 open FSharpAux
 
 // Input:
-// let arcDir = Directory.GetCurrentDirectory()
+let arcDir = Directory.GetCurrentDirectory()
 
 // TEST
-let arcDir = @"/Users/dominikbrilhaus/Downloads/cmml-sample-validate"
+// let arcDir = @"/Users/dominikbrilhaus/Downloads/cmml-sample-validate"
 
 // Values:
 let absoluteDirectoryPaths = FileSystem.parseARCFileSystem arcDir
