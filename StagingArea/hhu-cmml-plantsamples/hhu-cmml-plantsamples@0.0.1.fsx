@@ -23,7 +23,7 @@ Description: |
 MajorVersion: 0
 MinorVersion: 0
 PatchVersion: 1
-Publish: false
+Publish: true
 Authors:
   - FullName: Dominik Brilhaus
     Affiliation: CEPLAS
