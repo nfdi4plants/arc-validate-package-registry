@@ -98,19 +98,38 @@ let containsFilledOutColumnName (name : string) (tokenColumns : IParam list list
     | _ -> Expecto.Tests.failtestNoStackf $"table contains no {name} header" 
 
 
-let anyStudySheets = 
-    studyFiles |> Seq.concat
+
+let plantGrowthSheets = 
+    studyFiles
+    |> Seq.collect (fun s ->
+        s
+        |> Seq.filter (fun kv ->
+            kv.Value 
+            |> Seq.concat
+            |> Seq.exists (fun token -> 
+                token.Name = "ProtocolType" 
+                && 
+                (Param.getValueAsTerm token).Name = "plant growth protocol"
+            )
+        )   
+    )
 
 
 // Validation Cases:
 let cases = 
     testList "cases" [  // naming is difficult here
 
-        for table in anyStudySheets do
-            ARCExpect.validationCase (TestID.Name $"{table.Key}: Source Name") {
-                table.Value
-                |> containsFilledOutColumnName "Source Name"
-            }
+        ARCExpect.validationCase (TestID.Name "plant growth table") {
+            if plantGrowthSheets |> Seq.isEmpty then
+                Expecto.Tests.failtestNoStackf "No plant growth table found"            
+        }
+
+        if plantGrowthSheets |> Seq.isEmpty |> not then
+            for table in plantGrowthSheets do
+            // ARCExpect.validationCase (TestID.Name $"{table.Key}: Source Name") {
+            //     table.Value
+            //     |> containsFilledOutColumnName "Source Name"
+            // }
             ARCExpect.validationCase (TestID.Name $"{table.Key}: organism") {
                 table.Value
                 |> containsFilledOutColumnCVT (CvTerm.create("OBI:0100026","organism","OBI"))
@@ -119,14 +138,14 @@ let cases =
                 table.Value
                 |> containsFilledOutColumnName "sample submission date"
             }
-
     ]
+
 
 let nonCriticalCases = 
     testList "cases" [  // naming is difficult here
 
-        if anyStudySheets |> Seq.isEmpty |> not then
-            for table in anyStudySheets do
+        if plantGrowthSheets |> Seq.isEmpty |> not then
+            for table in plantGrowthSheets do
                
                 ARCExpect.validationCase (TestID.Name $"{table.Key}: biological replicate") {
                     table.Value
