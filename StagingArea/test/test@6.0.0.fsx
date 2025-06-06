@@ -45,11 +45,18 @@ open System.Collections.Generic
 test_package
 |> Execute.ValidationPipeline(
     basePath = System.Environment.CurrentDirectory,
-    Payload = Dictionary<string,obj>(
-        KeyValuePair("some", "payload")
-        KeyValuePair("some", Dictionary<string,obj>("inner", "yes"))
-        KeyValuePair("some", 42)
-    )
+    Payload = Dictionary<string,obj>([
+        KeyValuePair("some", box "payload")
+        KeyValuePair(
+            "inner", 
+            box (
+                Dictionary<string,obj>([
+                    KeyValuePair("inner?", box "yes")
+                ])
+            )
+        )
+        KeyValuePair("integer", box 42)
+    ])
 )
 
 printfn "If you can read this in your console, you successfully executed test package v6.0.0!" 
