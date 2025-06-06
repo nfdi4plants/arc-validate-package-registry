@@ -20,7 +20,7 @@ Tags:
   - Name: validation
   - Name: my-package
   - Name: thing
-ReleaseNotes: Use ARCExpect v3
+ReleaseNotes: Use ARCExpect v5 with payload in json output
 CQCHookEndpoint: https://aaas.nfdi4plants.org/
 ---
 *)"""
