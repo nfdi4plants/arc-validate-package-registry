@@ -1,6 +1,6 @@
 ## v0.3.0
 
-Remove preview package support
+Remove preview package support 
 
 ## v0.2.1
 
