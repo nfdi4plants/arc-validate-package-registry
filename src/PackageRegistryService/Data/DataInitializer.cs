@@ -20,21 +20,16 @@ namespace PackageRegistryService.Data
         {
             if (!context.ValidationPackages.Any())
             {
-                var index = AVPRRepo.getPreviewIndex();
+                var staged_packages = AVPRRepo.getStagedPackages(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
 
                 context.SaveChanges();
 
                 var validationPackages =
-                    index
+                    staged_packages
                         .Select((i) =>
                         {
-                            var path = 
-                                Path.Combine(
-                                    Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
-                                    $"StagingArea/{i.Metadata.Name}/{i.FileName}"
-                                );
                             var content = 
-                                File.ReadAllText(path)
+                                File.ReadAllText(i.RepoPath)
                                 .ReplaceLineEndings("\n");
 
                             return new ValidationPackage
@@ -59,16 +54,10 @@ namespace PackageRegistryService.Data
                 context.AddRange(validationPackages);
 
                 var hashes =
-                    index
+                    staged_packages
                         .Select((i) =>
                         {
-                            var path =
-                                Path.Combine(
-                                    Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
-                                    $"StagingArea/{i.Metadata.Name}/{i.FileName}"
-                                );
-
-                            var hash = AVPRIndex.Hash.hashFile(path);
+                            var hash = AVPRIndex.Hash.hashFile(i.RepoPath);
 
                             if (hash != i.ContentHash)
                             {
@@ -89,7 +78,7 @@ namespace PackageRegistryService.Data
                 context.AddRange(hashes);
 
                 var downloads =
-                     index
+                     staged_packages
                         .Select((i) =>
                         {
                             return new PackageDownloads

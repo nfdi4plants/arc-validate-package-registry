@@ -27,16 +27,3 @@ type AVPRRepo =
                 lastUpdated = Utils.truncateDateTime DateTimeOffset.Now // take local time with offset if file will be changed with this commit
             )
         )
-
-    static member getPreviewIndex() = 
-        try
-            http {
-                GET "https://github.com/nfdi4plants/arc-validate-package-registry/releases/download/preview-index/avpr-preview-index.json"
-            }
-            |> Request.send
-            |> Response.deserializeJson<ValidationPackageIndex[]>
-        with e as exn ->
-            printfn $"Failed to fetch current preview index: {exn.Message}"
-            [||]
-
-

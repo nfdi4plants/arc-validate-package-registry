@@ -45,6 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="..\..\StagingArea\test\test%40999.999.999.fsx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AVPRIndex\AVPRIndex.fsproj" />
   </ItemGroup>
 </Project>
