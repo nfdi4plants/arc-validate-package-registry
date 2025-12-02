@@ -1,3 +1,7 @@
+## v0.3.0
+
+Remove preview package support
+
 ## v0.2.1
 
 Fix `ValidationPackageIndex.IdentityEquals` not respecting semver suffixes
