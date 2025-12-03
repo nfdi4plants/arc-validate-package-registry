@@ -32,12 +32,6 @@ namespace PackageRegistryService.Data
                                 File.ReadAllText(i.RepoPath)
                                 .ReplaceLineEndings("\n");
 
-                            var lang = 
-                                i.RepoPath.EndsWith(".fsx") ? "FSharp" 
-                                : i.RepoPath.EndsWith(".py") ? "Python" 
-                                : "Unknown";
-                                
-
                             return new ValidationPackage
                             {
                                 Name = i.Metadata.Name,
@@ -54,7 +48,7 @@ namespace PackageRegistryService.Data
                                 ReleaseNotes = i.Metadata.ReleaseNotes,
                                 Authors = i.Metadata.Authors,
                                 CQCHookEndpoint = i.Metadata.CQCHookEndpoint,
-                                ProgrammingLanguage = lang
+                                ProgrammingLanguage = i.Metadata.ProgrammingLanguage
                             };
                         });
 

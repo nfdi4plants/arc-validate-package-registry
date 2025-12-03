@@ -19,11 +19,25 @@ type AVPRRepo =
                 (RepoRoot |> Option.map (fun p -> Path.Combine(p, STAGING_AREA_RELATIVE_PATH))) 
                 STAGING_AREA_RELATIVE_PATH
 
-        Directory.GetFiles(path, "*.fsx", SearchOption.AllDirectories)
-        |> Array.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
-        |> Array.map (fun p -> 
-            ValidationPackageIndex.create(
-                repoPath = p.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
-                lastUpdated = Utils.truncateDateTime DateTimeOffset.Now // take local time with offset if file will be changed with this commit
+        let fs =
+            Directory.GetFiles(path, "*.fsx", SearchOption.AllDirectories)
+            |> Array.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
+            |> Array.map (fun p -> 
+                ValidationPackageIndex.create(
+                    repoPath = p.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
+                    lastUpdated = Utils.truncateDateTime DateTimeOffset.Now // take local time with offset if file will be changed with this commit
+                )
             )
-        )
+
+        let py =
+            Directory.GetFiles(path, "*.py", SearchOption.AllDirectories)
+            |> Array.map (fun x -> x.Replace('\\',Path.DirectorySeparatorChar).Replace('/',Path.DirectorySeparatorChar))
+            |> Array.map (fun p -> 
+                ValidationPackageIndex.create(
+                    repoPath = p.Replace(Path.DirectorySeparatorChar, '/'), // use front slash always here, otherwise the backslash will be escaped with another backslah on windows when writing the json
+                    lastUpdated = Utils.truncateDateTime DateTimeOffset.Now // take local time with offset if file will be changed with this commit
+                )
+
+            )
+
+        Array.concat [fs; py]
