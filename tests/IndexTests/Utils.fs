@@ -31,6 +31,7 @@ type Assert with
         Assert.True(m.MinorVersion >= 0)
         Assert.NotNull(m.PatchVersion)
         Assert.True(m.PatchVersion >= 0)
+        Assert.NotNull(m.ProgrammingLanguage)
 
     static member MetadataEqual(expected: ValidationPackageMetadata, actual: ValidationPackageMetadata) =
         Assert.Equal(expected.Name, actual.Name)
