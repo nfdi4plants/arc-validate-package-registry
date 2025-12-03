@@ -14,6 +14,7 @@ namespace PackageRegistryService.Pages.Components
             string packageReleaseNotes,
             string packageContent,
             DateOnly packageReleaseDate,
+            string packageProgrammingLanguage,
             string[] packageTags,
             Author[] packageAuthors,
             string versionTable,
@@ -23,6 +24,7 @@ namespace PackageRegistryService.Pages.Components
             return $@"<section>
   <hgroup>
     <h1>Validation Package <mark>{packageName}</mark></h1>
+    <p>{PackageLanguage.Render(packageProgrammingLanguage)}</p>
     <p>{PackageTag.RenderAllLinksInline(packageTags)}</p>
     <p><strong>v{packageVersion}</strong> released on {packageReleaseDate}</p>
     <p>by {PackageAuthor.RenderAllLinksInline(packageAuthors.Select(a => a.FullName).ToArray())}</p>

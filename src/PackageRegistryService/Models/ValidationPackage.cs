@@ -101,6 +101,11 @@ namespace PackageRegistryService.Models
         /// <summary>
         /// 
         /// </summary>
+        public string ProgrammingLanguage { get; set; } = "";
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <returns>A string containing the semantic version of the validation package</returns>
         public string GetSemanticVersionString()
         {
