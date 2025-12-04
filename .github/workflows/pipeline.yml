@@ -208,6 +208,7 @@ jobs:
     with:
       solution: ./PackageStagingArea.sln
       configuration: Release
+      install-uv: true
       windows: true
       ubuntu: false
       macos: false
