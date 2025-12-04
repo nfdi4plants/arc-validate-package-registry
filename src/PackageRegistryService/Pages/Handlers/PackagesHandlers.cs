@@ -44,6 +44,7 @@ namespace PackageRegistryService.Pages.Handlers
                             return
                             new PackageSummary(
                                 Name: group.Key,
+                                Language: latestPackage.ProgrammingLanguage,
                                 Tags: (latestPackage.Tags ?? []).Select(t => t.Name).ToArray(),
                                 Summary: latestPackage.Summary,
                                 ReleaseDate: latestPackage.ReleaseDate,

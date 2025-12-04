@@ -194,7 +194,7 @@ namespace AVPRClient
                 majorVersion: validationPackage.MajorVersion,
                 minorVersion: validationPackage.MinorVersion,
                 patchVersion: validationPackage.PatchVersion,
-                programmingLanguage: "", // to-do: fix when migrating production db
+                programmingLanguage: validationPackage.ProgrammingLanguage,
                 PreReleaseVersionSuffix: validationPackage.PreReleaseVersionSuffix,
                 BuildMetadataVersionSuffix: validationPackage.BuildMetadataVersionSuffix,
                 Publish: Microsoft.FSharp.Core.FSharpOption<bool>.None,

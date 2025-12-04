@@ -82,7 +82,12 @@ StagingArea
 │   ├── some-package@1.0.0.fsx
 │   ├── some-package@2.0.0.fsx
 │   └── some-package@2.1.0.fsx
-│ 
+│
+├── some-python-package
+│   ├── some-python-package@1.0.0.py
+│   ├── some-python-package@2.0.0.py
+│   └── some-python-package@2.1.0.py
+│
 └── some-other-package
     ├── some-other-package@1.0.0.fsx
     ├── some-other-package@2.0.0.fsx
@@ -91,7 +96,16 @@ StagingArea
 
 ## Allowed validation package file formats
 
-As all reference implementations are written in F#/.NET, the only currently allowed file format for validation packages is `.fsx` (F# script files). This can and will be expanded in the future.
+Validation packages must be **self-contained, single-file scripts**.
+
+The following programming languages can be used to create validation packages:
+
+- `F# (.fsx)`
+  - software package management in F# scripts MUST use `#r nuget ...` directives to reference any external dependencies.
+  - F# scripts are executed via `dotnet fsi`.
+- `Python (.py)`
+  - software package management in Python scripts MUST use [uv inline script dependencies](https://docs.astral.sh/uv/guides/scripts/#declaring-script-dependencies) to reference any external dependencies.
+  - Python scripts are executed via `uv run`.
 
 ## Automated package testing
 
@@ -132,7 +146,9 @@ Packages SHOULD be versioned according to the [semantic versioning](https://semv
 
 # Package metadata
 
-## YAML frontmatter
+## FSharp
+
+### YAML frontmatter
 
 Package metadata is extracted from **yml frontmatter** at the start of the `.fsx` file, indicated by a multiline comment (`(* ... *)`)containing the frontmatter fenced by `---` at its start and end:
   
@@ -144,7 +160,7 @@ Package metadata is extracted from **yml frontmatter** at the start of the `.fsx
 *)
 ```
 
-## Frontmatter bindings
+### Frontmatter bindings
 
 You can additionally bind YAML frontmatter as a string inside your package. **This is recommended** because you can now re-use the metadata in your package code.
 
@@ -171,6 +187,40 @@ cases
 |> Execute.ValidationPipeline(
     metadata = metadata // use metadata to determine output paths and names instead of doing it manually
 )
+```
+
+## Python
+
+### YAML frontmatter
+
+Package metadata is extracted from **yml frontmatter** at the start of the `.py` file, guarded by triple quotes (`"""`) containing the frontmatter fenced by `---` at its start and end:
+  
+```python
+"""
+---
+<yaml frontmatter here>
+---
+"""
+```
+
+### Frontmatter bindings
+
+You can additionally bind YAML frontmatter as a string inside your package. **This is recommended** because you can now re-use the metadata in your package code.
+
+This binding must be placed at the start of the file to the name `PACKAGE_METADATA` _exactly_ like this:
+
+```python
+PACKAGE_METADATA = """
+---
+<yaml frontmatter here>
+---
+"""
+```
+
+further down in your package code, you can now extract and use this metadata. This for example prevents you from having to repeat the package name in your package code.
+
+```python
+metadata = extract_yaml(PACKAGE_METADATA) #extract yaml object from string
 ```
 
 ## Mandatory fields

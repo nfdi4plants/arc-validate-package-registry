@@ -21,6 +21,25 @@ namespace PackageRegistryService.Pages.Components
             return $@"Language: <code style='{style}'>{name}</code>";
 
         }
+        public static string RenderTagOnly(string language)
+        {
+            var style = language.ToLower() switch
+            {
+                "fsharp" => "background-color:purple; color: white",
+                "python" => "background-color:blue; color: white",
+                _ => "background-color:red; color: white",
+            };
+
+            var name = language.ToLower() switch
+            {
+                "fsharp" => "F#",
+                "python" => "Python",
+                _ => "Unknown",
+            };
+
+            return $@"<code style='{style}'>{name}</code>";
+
+        }
     }
 }
 

@@ -1,3 +1,7 @@
+## v0.4.0
+
+- Add support for python package frontmatter
+
 ## v0.3.0
 
 Remove preview package support 
