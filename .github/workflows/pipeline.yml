@@ -217,8 +217,7 @@ jobs:
     needs: test-staging-area
     runs-on: ubuntu-latest
     outputs: 
-      trigger-update-preview-index: ${{ steps.set-output.outputs.trigger-update-preview-index }}
-      trigger-publish-pending-packages: ${{ steps.set-output.outputs.trigger-publish-pending-packages }}
+        trigger-publish-pending-packages: ${{ steps.set-output.outputs.trigger-publish-pending-packages }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up .NET
@@ -232,34 +231,9 @@ jobs:
       - name: set-output
         id: set-output
         run: |
-          echo "trigger-update-preview-index=$UPDATE_PREVIEW_INDEX"
-          echo "trigger-update-preview-index=$UPDATE_PREVIEW_INDEX" >> $GITHUB_OUTPUT
           echo "trigger-publish-pending-packages=$PUBLISH_PENDING_PACKAGES"
           echo "trigger-publish-pending-packages=$PUBLISH_PENDING_PACKAGES" >> $GITHUB_OUTPUT
       - name: list triggered jobs
         run: |
           echo "this should trigger the following jobs:"
-          echo "trigger-update-preview-index: ${{steps.set-output.outputs.trigger-update-preview-index}}"
           echo "trigger-publish-pending-packages: ${{steps.set-output.outputs.trigger-publish-pending-packages}}"
-
-  update-preview-index:
-    needs: staging-area-pre-publish-checks
-    runs-on: ubuntu-latest
-    if: needs.staging-area-pre-publish-checks.outputs.trigger-update-preview-index == 'true' && github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.x.x
-      - name: re-generate preview index
-        run: dotnet run --project ./src/AVPRCI/AVPRCI.fsproj -- --verbose gen-index
-      - name: publish preview index
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "preview-index"
-          prerelease: false
-          title: "Latest preview index release"
-          files: |
-            avpr-preview-index.json

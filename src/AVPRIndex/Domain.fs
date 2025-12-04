@@ -172,6 +172,7 @@ module Domain =
         member val PatchVersion = -1 with get,set
         member val PreReleaseVersionSuffix = "" with get,set
         member val BuildMetadataVersionSuffix = "" with get,set
+        member val ProgrammingLanguage = "" with get,set
         // optional fields
         member val Publish = false with get,set
         member val Authors: Author [] = Array.empty<Author> with get,set
@@ -189,6 +190,7 @@ module Domain =
                 this.PatchVersion, 
                 this.PreReleaseVersionSuffix,
                 this.BuildMetadataVersionSuffix,
+                this.ProgrammingLanguage,
                 this.Publish,
                 this.Authors,
                 this.Tags,
@@ -208,6 +210,7 @@ module Domain =
                     this.PatchVersion, 
                     this.PreReleaseVersionSuffix,
                     this.BuildMetadataVersionSuffix,
+                    this.ProgrammingLanguage,
                     this.Publish,
                     this.Authors,
                     this.Tags,
@@ -219,9 +222,10 @@ module Domain =
                     vpm.Description, 
                     vpm.MajorVersion, 
                     vpm.MinorVersion, 
-                    this.PatchVersion, 
-                    this.PreReleaseVersionSuffix,
-                    this.BuildMetadataVersionSuffix,
+                    vpm.PatchVersion, 
+                    vpm.PreReleaseVersionSuffix,
+                    vpm.BuildMetadataVersionSuffix,
+                    vpm.ProgrammingLanguage,
                     vpm.Publish,
                     vpm.Authors,
                     vpm.Tags,
@@ -237,6 +241,7 @@ module Domain =
             majorVersion: int, 
             minorVersion: int, 
             patchVersion: int,
+            programmingLanguage: string,
             ?PreReleaseVersionSuffix: string,
             ?BuildMetadataVersionSuffix: string,
             ?Publish: bool,
@@ -251,7 +256,8 @@ module Domain =
                 Description = description,
                 MajorVersion = majorVersion,
                 MinorVersion = minorVersion,
-                PatchVersion = patchVersion
+                PatchVersion = patchVersion,
+                ProgrammingLanguage = programmingLanguage
             )
 
             PreReleaseVersionSuffix |> Option.iter (fun x -> tmp.PreReleaseVersionSuffix <- x)

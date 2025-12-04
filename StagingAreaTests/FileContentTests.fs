@@ -10,16 +10,35 @@ open AVPRIndex
 module FileContent =
 
     [<Fact>]
-    let ``All files have frontmatter`` () =
+    let ``All fsharp files have frontmatter`` () =
         Assert.All(
-            ReferenceObjects.all_staged_packages_paths,
-            File.ReadAllText >> (fun x -> x.ReplaceLineEndings("\n")) >> Assert.ContainsFrontmatter
+            ReferenceObjects.all_staged_fsharp_packages_paths,
+            File.ReadAllText >> (fun x -> x.ReplaceLineEndings("\n")) >> Assert.ContainsFSharpFrontmatter
         )
 
     [<Fact>]
-    let ``All files have valid metadata`` () =
+    let ``All fsharp files have valid metadata`` () =
         Assert.All(
-            ReferenceObjects.all_staged_packages_paths,
+            ReferenceObjects.all_staged_fsharp_packages_paths,
+            (fun p -> 
+                p
+                |> ValidationPackageMetadata.extractFromScript
+                |> Assert.MetadataValid
+            )
+        )
+
+
+    [<Fact>]
+    let ``All python files have frontmatter`` () =
+        Assert.All(
+            ReferenceObjects.all_staged_python_packages_paths,
+            File.ReadAllText >> (fun x -> x.ReplaceLineEndings("\n")) >> Assert.ContainsPythonFrontmatter
+        )
+
+    [<Fact>]
+    let ``All python files have valid metadata`` () =
+        Assert.All(
+            ReferenceObjects.all_staged_python_packages_paths,
             (fun p -> 
                 p
                 |> ValidationPackageMetadata.extractFromScript

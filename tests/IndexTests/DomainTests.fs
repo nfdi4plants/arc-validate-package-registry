@@ -144,7 +144,8 @@ module ValidationPackageMetadata =
             description = "description" ,
             majorVersion = 1,
             minorVersion = 0,
-            patchVersion = 0
+            patchVersion = 0,
+            programmingLanguage = "FSharp"
         )
         Assert.Equivalent(ValidationPackageMetadata.mandatoryFields, actual)
 
@@ -157,6 +158,7 @@ module ValidationPackageMetadata =
             majorVersion = 1,
             minorVersion = 0,
             patchVersion = 0,
+            programmingLanguage = "FSharp",
             PreReleaseVersionSuffix = "alpha.1",
             BuildMetadataVersionSuffix = "build.1",
             Publish = true,

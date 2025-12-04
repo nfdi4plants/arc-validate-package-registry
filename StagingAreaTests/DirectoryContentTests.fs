@@ -21,9 +21,15 @@ module DirectoryContent =
         |> Assert.NotEmpty
 
     [<Fact>]
-    let ``Only contains fsx files`` () =
+    let ``Contains py files`` () =
         ReferenceObjects.all_files_in_staging_area 
-        |> Array.filter (fun p -> not (p.EndsWith(".fsx")))
+        |> Array.filter (fun p -> (p.EndsWith(".py")))
+        |> Assert.NotEmpty
+
+    [<Fact>]
+    let ``Only contains fsx or py files`` () =
+        ReferenceObjects.all_files_in_staging_area 
+        |> Array.filter (fun p -> not ((p.EndsWith(".fsx") || (p.EndsWith(".py") ))))
         |> Assert.Empty
 
     [<Fact>]

@@ -45,7 +45,6 @@ This repo runs an [extensive CI/CD pipeline](.github/workflows/pipeline.yml) on 
 
 - tests and pre-publish checks for every package in the [staging area](#validation-package-staging-area).
 - a release pipeline for validation packages:
-  - publishing WIP packages to the `avpr-preview-index` on this repo's [preview-index](https://github.com/nfdi4plants/arc-validate-package-registry/releases/tag/preview-index) release
   - publishing stable packages to the production instance of the web API at [avpr.nfdi4plants.org](https://avpr.nfdi4plants.org)
 - tests and release pipelines for the `AVPRIndex` and `AVPRClient` libraries, as well as a docker container for the `PackageRegistryService` web API.
 
@@ -58,7 +57,6 @@ tsa("<b>Test staging area</b><br>test all packages in the staging area")
 sapc("<b>Staging area pre-publish checks</b><br>hash verification, prevent double publication etc")
 nr("<b>Release (nuget)</b><br>any of [AVPRIndex, AVPRClient]")
 dr("<b>Release (docker image)</b><br>API")
-upi("<b>Update preview index</b><br>update the github release index json file")
 ppp("<b>Publish pending packages</b><br>Publish packages to production DB")
 
 setup --when relevant project<br>  files change--> batp
@@ -66,7 +64,6 @@ setup --changes in the<br> staging area--> tsa
 batp --when tests pass and<br> release notes change--> nr
 batp --when tests pass--> dr
 tsa --when tests pass--> sapc
-sapc --when checks pass--> upi
 sapc --when checks pass<br> and any new packages<br> are pending--> ppp
 ```
 
@@ -98,21 +95,13 @@ As all reference implementations are written in F#/.NET, the only currently allo
 
 ## Automated package testing
 
-Any change to a package in the staging area triggers the tests located at [/StagingAreaTests](./StagingAreaTests), which are run on every package. (see also [CI/CD pipeline](#cicd-pipeline)). publishing packages to the preview index or the production registry is only possible if all tests pass.
+Any change to a package in the staging area triggers the tests located at [/StagingAreaTests](./StagingAreaTests), which are run on every package. (see also [CI/CD pipeline](#cicd-pipeline)). publishing packages to the production registry is only possible if all tests pass.
 
 ## Package publication workflow
 
 In principle, packages can be published via 2 channels:
 
-- **The preview index:**
-  
-  The pipeline includes a `Update preview index` CI step that extracts metadata from the [yml frontmatter](#package-metadata) of every `.fsx` file in the staging area and (if tests and sanity checks pass) adds it to the `avpr-preview-index.json` on this repo's [preview-index](https://github.com/nfdi4plants/arc-validate-package-registry/releases/tag/preview-index) release.
-
-  This process is done automatically for ervery package mewrged into main, and needs no manual intervention.
-
-- **The production registry:**
-
-  Packages set to `publish: true` in their yml frontmatter will be published to the production registry database if they pass all tests and pre-publish checks. 
+Packages committed to the staging area will be published to the production registry database (https://avpr.nfdi4plants.org) if they pass all tests and pre-publish checks. 
 
 ## Package publication tutorial
 
@@ -122,7 +111,7 @@ Suppose you want to develop version 1.0.0 of a package called `my-package`.
 
 1. fork this repo
 2. Add a new blank `my-package@1.0.0.fsx` file to the [staging area](./StagingArea/) in the folder `my-package`.
-3. Develop the package, using a work-in-process pull request to use this repository's CI to perform automated integrity tests on it. If you want to pre-release the package to the preview index, request a review for a merge into the `main` branch at any time.
+3. Develop the package, using a work-in-process pull request to use this repository's CI to perform automated integrity tests on it. 
 4. Once the package is ready for production use, add `publish: true` to the [yml frontmatter](#package-metadata) of the package file. This will trigger the CI to build and push the package to the registry once the PR is reviewed and merged.
 5. Once a package is published, it cannot be unpublished or changed. To update a package, create a new script with the same name and a higher version number.
 
@@ -298,7 +287,7 @@ Tags can be any string with an optional ontology annotation from a controlled vo
 
 Prerequisites:
 
-- .NET 8 SDK
+- .NET 10 SDK
 - Docker
 - Docker Compose
 
@@ -330,6 +319,15 @@ To run the `PackageRegistryService` locally, ideally use VisualStudio and run th
 
 In other IDEs, you can run the `PackageRegistryService` project directly or adjust the stack, but you will need to either set up a local postgres database and configure the connection string in `appsettings.json` accordingly or fine-tune the existing docker-compose file..
 
+## Making changes to the data model
+
+Changes in e.g. ValidationPackage metadata need to be reflected at several points in the code:
+- PackageRegistryService/Models/ValidationPackage.cs: the main database model
+- AVPRIndex/Domain.fs: the client-side model, the respective type here would be `ValidationPackageMetadata`
+- EntityFramework migration files in PackageRegistryService/Migrations: these are auto-generated via the `dotnet ef migrations add <MigrationName>` command after making changes to the data model in PackageRegistryService/Models, but might need manual adjustment (e.g. when a field is renamed rather than added/removed)
+- Database seeding code in PackageRegistryService/Data/DataInitializer.cs: when adding new fields, make sure to update the seeding code accordingly.
+- do not forget to trigger [client lib auto generation](./src/AVPRClient/README.md)
+
 ### Triggering a image release
 
 Currently, any change in `src/PackageRegistryService` will trigger a release to the production registry. This is done by the CI/CD pipeline, which builds and pushes a docker image to the registry on every relevant commit to the `main` branch.
@@ -353,7 +351,7 @@ Run the tests with `dotnet test` in the respective test project folders or on th
 
 ## Release packages to production
 
-Automated package releases are currently only performed to the preview index.
+For now, this is a manual process.
 
 If you are an authorized user with an API key, packages can be pushed to prod with the `AVPRCI` CLI tool in this repo:
 
