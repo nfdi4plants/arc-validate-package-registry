@@ -54,7 +54,7 @@ namespace PackageRegistryService.Pages.Components
   </details>
   <hr />
   <details>
-    <summary role=""button"" class=""primary"">Browse code (v{packageVersion}) {PackageLanguage.Render(packageProgrammingLanguage)}</summary>
+    <summary role=""button"" class=""primary"">Browse code for v{packageVersion} ({packageProgrammingLanguage.ToLower()})</summary>
       <pre><code class=""language-{packageProgrammingLanguage.ToLower()}"">{System.Security.SecurityElement.Escape(packageContent)}</code></pre>
   </details>
   <hr />
