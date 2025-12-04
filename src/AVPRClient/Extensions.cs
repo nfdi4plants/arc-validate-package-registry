@@ -23,7 +23,8 @@ namespace AVPRClient
                 && package.MinorVersion == other.MinorVersion
                 && package.PatchVersion == other.PatchVersion
                 && package.PreReleaseVersionSuffix == other.PreReleaseVersionSuffix
-                && package.BuildMetadataVersionSuffix == other.BuildMetadataVersionSuffix;
+                && package.BuildMetadataVersionSuffix == other.BuildMetadataVersionSuffix
+                && package.ProgrammingLanguage == other.ProgrammingLanguage;
         }
 
         public static bool IdentityEquals(
@@ -36,7 +37,8 @@ namespace AVPRClient
                 && package.MinorVersion == indexedPackage.Metadata.MinorVersion
                 && package.PatchVersion == indexedPackage.Metadata.PatchVersion
                 && package.PreReleaseVersionSuffix == indexedPackage.Metadata.PreReleaseVersionSuffix
-                && package.BuildMetadataVersionSuffix == indexedPackage.Metadata.BuildMetadataVersionSuffix;
+                && package.BuildMetadataVersionSuffix == indexedPackage.Metadata.BuildMetadataVersionSuffix
+                && package.ProgrammingLanguage == indexedPackage.Metadata.ProgrammingLanguage;
         }
 
         public static bool IdentityEquals(
@@ -49,7 +51,8 @@ namespace AVPRClient
                 && package.MinorVersion == indexedPackage.Metadata.MinorVersion
                 && package.PatchVersion == indexedPackage.Metadata.PatchVersion
                 && package.PreReleaseVersionSuffix == indexedPackage.Metadata.PreReleaseVersionSuffix
-                && package.BuildMetadataVersionSuffix == indexedPackage.Metadata.BuildMetadataVersionSuffix;
+                && package.BuildMetadataVersionSuffix == indexedPackage.Metadata.BuildMetadataVersionSuffix
+                && package.ProgrammingLanguage == indexedPackage.Metadata.ProgrammingLanguage;
         }
 
         public static AVPRClient.ValidationPackage toValidationPackage(
@@ -67,6 +70,7 @@ namespace AVPRClient
                 PatchVersion = indexedPackage.Metadata.PatchVersion,
                 PreReleaseVersionSuffix = indexedPackage.Metadata.PreReleaseVersionSuffix,
                 BuildMetadataVersionSuffix = indexedPackage.Metadata.BuildMetadataVersionSuffix,
+                ProgrammingLanguage = indexedPackage.Metadata.ProgrammingLanguage,
                 PackageContent = BinaryContent.fromFile(indexedPackage.RepoPath),
                 ReleaseDate = releaseDate,
                 Tags =
