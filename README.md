@@ -287,7 +287,7 @@ Tags can be any string with an optional ontology annotation from a controlled vo
 
 Prerequisites:
 
-- .NET 8 SDK
+- .NET 10 SDK
 - Docker
 - Docker Compose
 
@@ -318,6 +318,15 @@ To run the `PackageRegistryService` locally, ideally use VisualStudio and run th
 - an `adminer` instance for database management (will maybe be replaced by pgAdmin in the future)
 
 In other IDEs, you can run the `PackageRegistryService` project directly or adjust the stack, but you will need to either set up a local postgres database and configure the connection string in `appsettings.json` accordingly or fine-tune the existing docker-compose file..
+
+## Making changes to the data model
+
+Changes in e.g. ValidationPackage metadata need to be reflected at several points in the code:
+- PackageRegistryService/Models/ValidationPackage.cs: the main database model
+- AVPRIndex/Domain.fs: the client-side model, the respective type here would be `ValidationPackageMetadata`
+- EntityFramework migration files in PackageRegistryService/Migrations: these are auto-generated via the `dotnet ef migrations add <MigrationName>` command after making changes to the data model in PackageRegistryService/Models, but might need manual adjustment (e.g. when a field is renamed rather than added/removed)
+- Database seeding code in PackageRegistryService/Data/DataInitializer.cs: when adding new fields, make sure to update the seeding code accordingly.
+- do not forget to trigger [client lib auto generation](./src/AVPRClient/README.md)
 
 ### Triggering a image release
 

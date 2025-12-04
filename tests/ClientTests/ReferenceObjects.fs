@@ -228,7 +228,8 @@ module ValidationPackageIndex =
             minorVersion = 0,
             patchVersion = 0,
             summary = "summary",
-            description = "description"
+            description = "description",
+            programmingLanguage = ""
         )
     )
 
@@ -245,6 +246,7 @@ module ValidationPackageIndex =
             summary = "summary",
             description = "description",
             PreReleaseVersionSuffix = "use",
-            BuildMetadataVersionSuffix = "suffixes"
+            BuildMetadataVersionSuffix = "suffixes",
+            programmingLanguage = ""
         )
     )
