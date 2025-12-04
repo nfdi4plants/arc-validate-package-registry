@@ -265,6 +265,7 @@ doSomeValidation ()
 | Authors | author[] | the authors of the package. For more information about mandatory and optional fields in this object, see [Objects > Author](#author) |
 | Tags | string[] | a list of tags with optional ontology annotations that describe the package. For more information about mandatory and optional fields in this object, see [Objects > Tag](#tag)  |
 | ReleaseNotes | string[] | a list of release notes for the package indicating changes from previous versions |
+| CQCHookEndpoint | string | an optional URL to a CQC Hook endpoint that can be used for continuous quality control (CQC) integration. If provided, this endpoint will be called with validation results after each package execution. |
 
 <details>
 <summary>Example: all fields</summary>
@@ -299,7 +300,8 @@ Tags:
 ReleaseNotes: |
   - initial release
     - does the thing
-    - does it well"
+    - does it well
+CQCHookEndpoint: https://some-url.xd
 ---
 *)
 let doSomeValidation () = ()
