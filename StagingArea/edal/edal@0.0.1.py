@@ -147,6 +147,18 @@ def check_contacts(contacts):
     
     return True
 
-create_badge(validate_arc())
+# TODO: lazy
+valid = True
+try:
+    valid = validate_arc()
+except Exception:
+    valid = False
+    # TODO fake 1 failed test
+    print("No ARC found!")
+    add_test_case("Error", "Given input directory is not an ARC.")
+
+create_badge(valid)
 create_report()
 create_summary()
+
+exit(0)
