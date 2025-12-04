@@ -223,7 +223,9 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.x.x
+          dotnet-version: 10.x.x
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
       - name: Run pre-publish checks
         id: ppc
         run: |
