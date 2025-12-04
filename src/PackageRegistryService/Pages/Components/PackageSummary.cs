@@ -2,12 +2,13 @@
 
 namespace PackageRegistryService.Pages.Components
 {
-    public record PackageSummary(string Name, string Summary, string [] Tags, string LatestVersion, DateOnly ReleaseDate, int TotalDownloads)
+    public record PackageSummary(string Name, string Summary, string Language, string [] Tags, string LatestVersion, DateOnly ReleaseDate, int TotalDownloads)
     {
         public static string Render(PackageSummary summary)
         {
             return $@"<tr>
 <th scope=""row""><a href=""/package/{summary.Name}"">{summary.Name}</a></th>
+<td>{PackageLanguage.RenderTagOnly(summary.Language)}</td>
 <td>{PackageDescription.RenderSmall(summary.Summary)}</td>
 <td><a href=""/package/{summary.Name}/{summary.LatestVersion}"">{summary.LatestVersion}</a></td>
 <td>{summary.ReleaseDate}</td>
@@ -24,6 +25,7 @@ namespace PackageRegistryService.Pages.Components
 <thead>
 <tr>
 <th scope=""col"">Name</th>
+<th scope=""col"">Language</th>
 <th scope=""col"">Summary</th>
 <th scope=""col"">Latest stable version</th>
 <th scope=""col"">Release date</th>
