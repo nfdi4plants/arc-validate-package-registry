@@ -43,11 +43,13 @@ namespace PackageRegistryService.Pages.Components
         {
             var testPackages =
                 summaries
-                .Where(p => p.Name.Contains("test"));
-            
+                .Where(p => p.Name.Contains("test"))
+                .OrderByDescending(p => p.TotalDownloads);
+
             var prodPackages =
                 summaries
-                .Where(p => !p.Name.Contains("test"));
+                .Where(p => !p.Name.Contains("test"))
+                .OrderByDescending(p => p.TotalDownloads);
 
             var testContent = PackageSummary.RenderTable("Test Packages", "These packages are used primarily to internally test validation pipelines.", testPackages);
             var prodContent = PackageSummary.RenderTable("Available Validation Packages", "These packages are intended to be used in ARC validation pipelines.", prodPackages);
