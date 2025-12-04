@@ -25,6 +25,10 @@ on:
         type: boolean
         description: "wether to run on macos"
         default: true
+      install-uv:
+        type: boolean
+        description: "wether to install uv"
+        default: false
 
 jobs:
   determine-strategy:
@@ -48,6 +52,9 @@ jobs:
     strategy:
       matrix: ${{fromJson(needs.determine-strategy.outputs.matrix)}}
     steps:
+    - name: Install uv
+      if: ${{ inputs.install-uv }}
+      uses: astral-sh/setup-uv@v7
     - name: Checkout
       uses: actions/checkout@v4
     - name: Set up .NET
