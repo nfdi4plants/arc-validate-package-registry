@@ -1,5 +1,5 @@
 ## v0.2.0
-- Regen client for `ProgrammingLanguage` field
+- Regen client for `ProgrammingLanguage` field 
 
 ## v0.1.2
 - Add more `IdentityEquals` extension methods to compare between `ValidationPackage` and `ValidationPackageIndex`
