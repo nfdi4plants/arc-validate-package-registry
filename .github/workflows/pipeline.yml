@@ -212,31 +212,3 @@ jobs:
       windows: true
       ubuntu: false
       macos: false
-
-  staging-area-pre-publish-checks:
-    name: "Staging area pre-publish checks"
-    needs: test-staging-area
-    runs-on: ubuntu-latest
-    outputs: 
-        trigger-publish-pending-packages: ${{ steps.set-output.outputs.trigger-publish-pending-packages }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.x.x
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-      - name: Run pre-publish checks
-        id: ppc
-        run: |
-          dotnet run --project ./src/AVPRCI/AVPRCI.fsproj -- --verbose check
-      - name: set-output
-        id: set-output
-        run: |
-          echo "trigger-publish-pending-packages=$PUBLISH_PENDING_PACKAGES"
-          echo "trigger-publish-pending-packages=$PUBLISH_PENDING_PACKAGES" >> $GITHUB_OUTPUT
-      - name: list triggered jobs
-        run: |
-          echo "this should trigger the following jobs:"
-          echo "trigger-publish-pending-packages: ${{steps.set-output.outputs.trigger-publish-pending-packages}}"
