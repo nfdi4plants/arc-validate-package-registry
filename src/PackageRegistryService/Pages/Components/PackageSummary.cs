@@ -17,9 +17,10 @@ namespace PackageRegistryService.Pages.Components
 </tr>";
         }
 
-        public static string RenderList(IEnumerable<PackageSummary> summaries)
+        public static string RenderTable(string headerText, string DescriptionText, IEnumerable<PackageSummary> summaries)
         {
-            var content = @$"<h1>All available validation packages</h1><br>
+            return @$"<h1>{headerText}</h1><br>
+<p>{DescriptionText}</p>
 <div class=""overflow-auto"">
 <table class=""striped"">
 <thead>
@@ -36,7 +37,24 @@ namespace PackageRegistryService.Pages.Components
 {string.Join(System.Environment.NewLine, summaries.Select(PackageSummary.Render))}
 </table>
 </div>";
-            return content;
+        }
+
+        public static string RenderList(IEnumerable<PackageSummary> summaries)
+        {
+            var testPackages =
+                summaries
+                .Where(p => p.Name.Contains("test"))
+                .OrderByDescending(p => p.TotalDownloads);
+
+            var prodPackages =
+                summaries
+                .Where(p => !p.Name.Contains("test"))
+                .OrderByDescending(p => p.TotalDownloads);
+
+            var testContent = PackageSummary.RenderTable("Test Packages", "These packages are used primarily to internally test validation pipelines.", testPackages);
+            var prodContent = PackageSummary.RenderTable("Available Validation Packages", "These packages are intended to be used in ARC validation pipelines.", prodPackages);
+
+            return prodContent + "<br><br>" + testContent;
         }
     }
 }
