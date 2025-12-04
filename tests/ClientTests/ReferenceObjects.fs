@@ -56,7 +56,8 @@ module ValidationPackageMetadata =
         Description = "description" ,
         MajorVersion = 1,
         MinorVersion = 0,
-        PatchVersion = 0
+        PatchVersion = 0,
+        ProgrammingLanguage = "FSharp"
     )
 
     let allFields_cqcHookAddition = ValidationPackageMetadata(
@@ -66,6 +67,7 @@ module ValidationPackageMetadata =
         MajorVersion = 1,
         MinorVersion = 0,
         PatchVersion = 0,
+        ProgrammingLanguage = "FSharp",
         Publish = true,
         Authors = [|Author.allFieldsIndex|],
         Tags = [|OntologyAnnotation.allFieldsIndex|],
@@ -80,6 +82,7 @@ module ValidationPackageMetadata =
         MajorVersion = 1,
         MinorVersion = 0,
         PatchVersion = 0,
+        ProgrammingLanguage = "FSharp",
         PreReleaseVersionSuffix = "use",
         BuildMetadataVersionSuffix = "suffixes",
         Publish = true,
@@ -188,6 +191,7 @@ module ValidationPackage =
         PatchVersion = 0,
         PreReleaseVersionSuffix = "",
         BuildMetadataVersionSuffix = "",
+        ProgrammingLanguage= "FSharp",
         PackageContent = BinaryContent.expected_binary_content_cqcHookAddition,
         ReleaseDate = date,
         Authors = [|Author.allFieldsClient|],
@@ -205,6 +209,7 @@ module ValidationPackage =
         PatchVersion = 0,
         PreReleaseVersionSuffix = "use",
         BuildMetadataVersionSuffix = "suffixes",
+        ProgrammingLanguage= "FSharp",
         PackageContent = BinaryContent.expected_binary_content_semVerAddition,
         ReleaseDate = date,
         Authors = [|Author.allFieldsClient|],
@@ -229,7 +234,7 @@ module ValidationPackageIndex =
             patchVersion = 0,
             summary = "summary",
             description = "description",
-            programmingLanguage = ""
+            programmingLanguage = "FSharp"
         )
     )
 
@@ -247,6 +252,6 @@ module ValidationPackageIndex =
             description = "description",
             PreReleaseVersionSuffix = "use",
             BuildMetadataVersionSuffix = "suffixes",
-            programmingLanguage = ""
+            programmingLanguage = "FSharp"
         )
     )

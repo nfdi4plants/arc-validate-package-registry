@@ -1,5 +1,5 @@
 ## v0.2.1
-- fix : Correct `ProgrammingLanguage` field mapping in `ValidationPackage` type extension
+- fix : Correct `ProgrammingLanguage` field mapping in `ValidationPackage` type extension.
 
 ## v0.2.0
 - Regen client for `ProgrammingLanguage` field 
