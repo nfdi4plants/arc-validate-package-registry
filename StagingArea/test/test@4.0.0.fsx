@@ -25,7 +25,7 @@ ReleaseNotes: "use in-package metadata"
 *)"""
 
 #r "nuget: ARCExpect, 1.0.1"
-#r "nuget: AVPRIndex"
+#r "nuget: AVPRIndex, 0.3.0"
 
 open AVPRIndex.Domain
 open AVPRIndex.Frontmatter
