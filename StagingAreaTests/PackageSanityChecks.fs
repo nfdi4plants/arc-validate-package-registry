@@ -34,21 +34,21 @@ module Metadata =
 module ValidationScripts =
     
     [<Fact>]
-    let ``single fsharp package runs`` () = Assert.FSharpScriptRuns [||] "fixtures/Frontmatter/Binding/valid@2.0.0.fsx"
+    let ``single fsharp package runs`` () = Assert.FSharpScriptRuns [|"-i"; "."; "-o"; "."|] "fixtures/Frontmatter/Binding/valid@2.0.0.fsx"
 
     [<Fact>]
     let ``All fsharp packages run`` () =
         Assert.All(
             ReferenceObjects.all_staged_fsharp_packages_paths,
-            Assert.FSharpScriptRuns [||]
+            Assert.FSharpScriptRuns [|"-i"; "."; "-o"; "."|]
         )
     
     [<Fact>]
-    let ``single python package runs`` () = Assert.PythonScriptRuns [||] "fixtures/Frontmatter/Binding/valid@2.0.0.py"
+    let ``single python package runs`` () = Assert.PythonScriptRuns [|"-i"; "."; "-o"; "."|] "fixtures/Frontmatter/Binding/valid@2.0.0.py"
 
     [<Fact>]
     let ``All python packages run`` () =
         Assert.All(
             ReferenceObjects.all_staged_python_packages_paths,
-            Assert.PythonScriptRuns [||]
+            Assert.PythonScriptRuns [|"-i"; "."; "-o"; "."|]
         )
