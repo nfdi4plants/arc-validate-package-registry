@@ -454,16 +454,6 @@ type Validate.ParamCollection with
             |> Expecto.Tests.failtestNoStackf "%s"
 
 
-cdTokens[1 ..]
-|> Validate.ParamCollection.AllTermsSatisfyPredicate (
-    Param.getValueAsString
-    >> fun v -> cdRegex.Match(v).Success
-)
-
-cdTokens[1 ..] |> List.map Param.getValueAsString
-cdTokens
-
-
 // Validation Cases:
 let studyCases =
     testList STDMSO.``Study Metadata``.STUDY.key.Name [
@@ -483,8 +473,7 @@ let studyCases =
 
         // Study has collection date with valid values in process graph. Values are valid when they match the collection date Regex above
         ARCExpect.validationCase (TestID.Name "collection date values are valid") {
-            cdTokens
-            |> List.skip 1
+            cdTokens[1 ..]
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> fun v -> cdRegex.Match(v).Success
@@ -499,8 +488,7 @@ let studyCases =
 
         // Study has geographic location (country and/or sea) with valid values in process graph. Values are valid when they match one of the given values above
         ARCExpect.validationCase (TestID.Name "geographic location (country and/or sea) values are valid") {
-            glcaosTokens
-            |> List.skip 1
+            glcaosTokens[1 ..]
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> fun v -> Array.contains v glcaosValues
@@ -515,8 +503,7 @@ let studyCases =
 
         // Study has geographic location (latitude) with valid values in process graph. Values are valid when they match the geographic location Regex for longitude and latitude above
         ARCExpect.validationCase (TestID.Name "geographic location (latitude) values are valid") {
-            gllaTokens
-            |> List.skip 1
+            gllaTokens[1 ..]
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> fun v -> gllRegex.Match(v).Success
@@ -531,8 +518,7 @@ let studyCases =
 
         // Study has geographic location (longitude) with valid values in process graph. Values are valid when they match the geographic location Regex for longitude and latitude above
         ARCExpect.validationCase (TestID.Name "geographic location (longitude) values are valid") {
-            glloTokens
-            |> List.skip 1
+            glloTokens[1 ..]
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> fun v -> gllRegex.Match(v).Success
@@ -547,8 +533,7 @@ let studyCases =
 
         // Study has plant growth medium with not-empty values in process graph
         ARCExpect.validationCase (TestID.Name "plant growth medium values are not empty") {
-            pgmTokens
-            |> List.skip 1
+            pgmTokens[1 ..]
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> System.String.IsNullOrEmpty
@@ -564,8 +549,7 @@ let studyCases =
 
         // Study has isolation and growth condition with not-empty values in process graph
         ARCExpect.validationCase (TestID.Name "isolation and growth condition values are not empty") {
-            iagcTokens
-            |> List.skip 1
+            iagcTokens[1 ..]
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> System.String.IsNullOrEmpty
