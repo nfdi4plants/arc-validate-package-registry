@@ -3,12 +3,18 @@ let [<Literal>]PACKAGE_METADATA = """(*
 Name: drone-field-imaging
 Summary: Validates if the ARC contains the necessary metadata to describe drone fly-over image capture.
 Description: |
-
         Critical fields:
-
-
-        Non critical fields:
-
+            - "Date and Time"
+            - "Longitude"
+            - "Latitude"
+            - "Absolute Altitude"
+            - "Relative Altitude"
+        
+        Non-critical fields:
+            - "Altitude Reference"
+            - "Drone Manufacturer"
+            - "Drone Model"
+            - "Zoom Factor"
 MajorVersion: 0
 MinorVersion: 1
 PatchVersion: 0
