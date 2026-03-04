@@ -37,6 +37,7 @@ import anybadge, argparse, json
 from arctrl import ARC
 from junit_xml import TestSuite, TestCase
 from pathlib import Path
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -54,6 +55,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 Path(args.output).mkdir(parents=True, exist_ok=True)
+os.makedirs(f"{args.output}/.arc-validate-results/edal@0.0.3", exist_ok=True)
 
 report_file: str = f"{args.output}/.arc-validate-results/edal@0.0.3/validation_report.xml"
 summary_file: str = f"{args.output}/.arc-validate-results/edal@0.0.3/validation_summary.json"
@@ -77,7 +79,7 @@ summary_data = {
     },
     "ValidationPackage": {
         "Name": "edal",
-        "Version": "0.0.1",
+        "Version": "0.0.3",
         "Summary": "ARC Validation for e!DAL data repository",
         "Description": "See summary :)"
     }
