@@ -49,16 +49,16 @@ let arcDir = Directory.GetCurrentDirectory()
 // Values:
 let absoluteDirectoryPaths = FileSystem.parseARCFileSystem arcDir
 
-let studyFiles = 
+let assayFiles = 
     try 
         absoluteDirectoryPaths
-        |> Study.parseProcessGraphColumnsFromTokens arcDir
+        |> Assay.parseProcessGraphColumnsFromTokens arcDir
     with
         | _ -> seq{Map.empty}
 
 
 let droneSheets = 
-    studyFiles
+    assayFiles
     |> Seq.collect (fun s ->
         s
         |> Seq.filter (fun kv ->
