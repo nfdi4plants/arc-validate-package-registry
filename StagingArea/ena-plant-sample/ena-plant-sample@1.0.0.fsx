@@ -1,9 +1,9 @@
 let [<Literal>]PACKAGE_METADATA = """(*
 ---
-Name: ena
-Summary: Validates if the ARC contains the necessary metadata to be publishable via ENA.
+Name: ena-plant-sample
+Summary: Validates if the ARC contains the necessary metadata to be publishable via ENA as a plant sample.
 Description: |
-  Validates if the ARC contains the necessary metadata to be publishable via ENA.
+  Validates if the ARC contains the necessary metadata to be publishable via ENA as a plant sample.
   The following metadata is required:
   - Study has plant developmental stage, collection date, geographic location (country and/or sea), geographic location (latitude), geographical location (longitude), plant growth medium, and isolation and growth condition in correct format
 MajorVersion: 1
@@ -17,7 +17,7 @@ Tags:
   - Name: ARC
   - Name: data publication
   - Name: validation
-  - Name: ena
+  - Name: ena-plant-sample
 ReleaseNotes: |
   - Initial commit
 ---
