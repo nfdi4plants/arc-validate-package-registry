@@ -70,12 +70,16 @@ let urlResolves (url: string) =
 // Input:
 
 // let arcDir = Directory.GetCurrentDirectory()
+
+////////////////////////
+// TODO: Workaround for local test while waiting for dependency fixes
 let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
 // let arcDir = home + "/datahub-dataplant/SARD1-2_CBP60g-1"
 let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
 // let arcDir = home + "/datahub-dataplant/hordeum_erectifolium_genome_and_drought/"
+////////////////////////
 
-let arc = ARC.load arcDir
+let arc = ARC.load arcDir   
 
 // Values:
 
@@ -123,12 +127,59 @@ let criticalCases =
 
     ////////////////////////////////////
     ////// ARC Investigation
-    ////////////////////////////////////
+    ////////////////////////////////////        
 
-    // ARC investigation contains identifier
-    // ARC investigation contains title
-    // ARC investigation contains description
-    // ARC investigation contains contact
+    // TestCase Critical: Investigation contains title
+
+    testCase $"Investigation {arc.Identifier} contains title" <| fun _ ->
+        // Investigation title exists
+        if arc.Title.IsNone then
+            failwith $"Investigation {arc.Identifier} contains no title"
+        // Investigation title is longer than 3 characters
+        if arc.Title.Value.Length < 4 then
+            failwith $"Investigation {arc.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{arc.Title.Value}\""       
+
+    // TestCase Critical: Investigation contains description
+
+    testCase $"Investigation {arc.Identifier} contains description" <| fun _ ->
+        // Investigation description exists
+        if arc.Description.IsNone then
+            failwith $"Investigation {arc.Identifier} contains no description"
+        // Investigation description is longer than 30 characters
+        if arc.Description.Value.Length < 31 then
+            failwith $"Investigation {arc.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{arc.Description.Value}\""
+
+    // TestCase Critical: Investigation contains contact
+
+    testCase $"Investigation {arc.Identifier} contains contact" <| fun _ ->
+        if arc.Contacts.Count = 0 then
+            failwith $"Investigation {arc.Identifier} contains no contact"
+    
+    // TestCase Critical: Investigation contacts contain first name, last name, email, affiliation, ORCID
+
+    if arc.Contacts.Count = 0 then // TODO: Do I need this?
+        for c in arc.Contacts do
+
+            testCase $"Contact contains first name" <| fun _ ->
+                if c.FirstName.IsNone then
+                    failwith $"Contact contains no first name"
+
+            testCase $"Contact contains last name" <| fun _ ->
+                if c.LastName.IsNone then
+                    failwith $"Contact contains no last name"
+
+            testCase $"Contact contains email" <| fun _ ->
+                if c.EMail.IsNone then
+                    failwith $"Contact contains no email"
+            
+            testCase $"Contact contains affiliation" <| fun _ ->
+                if c.Affiliation.IsNone then
+                    failwith $"Contact contains no affiliation"
+            
+            testCase $"Contact contains ORCID" <| fun _ ->
+                if c.ORCID.IsNone then
+                    failwith $"Contact contains no ORCID"
+
 
     ////////////////////////////////////
     ////// ARC Study + Assay
@@ -177,8 +228,6 @@ let criticalCases =
                     failwith $"Table {t.Name} contains no rows"
 
     
-
-    
     //// assay must annotate data entities
         // data entity should resolve
             // 1. annotation resolves local file
@@ -213,7 +262,7 @@ let criticalCases =
                     
 
     ]
-       
+    
 
 let nonCriticalCases =
     testList "nonCriticalCases" [
@@ -306,6 +355,8 @@ let nonCriticalCases =
 
 
 
+// TODO: fix dependencies ARCtrl, ARCtrl.QueryModel, ARCExpect, ARCTokenization
+
 // // Execution:
 // Setup.ValidationPackage(
 //     metadata = Setup.Metadata(PACKAGE_METADATA),
@@ -317,27 +368,8 @@ let nonCriticalCases =
 // )
 
 
+// run tests
+
 runTestsWithCLIArgs [] [||] criticalCases
 runTestsWithCLIArgs [] [||] nonCriticalCases
 
-
-
-
-
-
-arc.ArcTables.TableNames
-arc.Identifier
-
-let a = arc.GetAssay("RNASeq")
-
-let d = a.Data[0]
-
-d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
-
-
-let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
-    let fullPath = Path.Combine(arcDir, p)
-
-    if File.Exists fullPath |> not then
-        failwith $"Data path {filePath} does not resolve to existing local file and was not identified as URL"             
-    
