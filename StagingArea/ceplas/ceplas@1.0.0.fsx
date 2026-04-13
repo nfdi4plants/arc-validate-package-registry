@@ -72,8 +72,8 @@ let urlResolves (url: string) =
 // let arcDir = Directory.GetCurrentDirectory()
 let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
 // let arcDir = home + "/datahub-dataplant/SARD1-2_CBP60g-1"
-// let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
-let arcDir = home + "/datahub-dataplant/hordeum_erectifolium_genome_and_drought/"
+let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
+// let arcDir = home + "/datahub-dataplant/hordeum_erectifolium_genome_and_drought/"
 
 let arc = ARC.load arcDir
 
@@ -317,14 +317,16 @@ let nonCriticalCases =
 // )
 
 
-
-
- 
-
 runTestsWithCLIArgs [] [||] criticalCases
+runTestsWithCLIArgs [] [||] nonCriticalCases
 
 
-arc.AssayIdentifiers
+
+
+
+
+arc.ArcTables.TableNames
+arc.Identifier
 
 let a = arc.GetAssay("RNASeq")
 
