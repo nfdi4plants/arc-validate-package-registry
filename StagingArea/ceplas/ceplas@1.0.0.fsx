@@ -27,6 +27,7 @@ ReleaseNotes: |
 // #r "nuget: ARCExpect, 2.0.0"
 #r "nuget: ARCtrl.QueryModel, 3.0.0-alpha.2"
 #r "nuget: Expecto"
+#r "nuget: Fable.SimpleHttp"
 
 // open ControlledVocabulary
 open ARCtrl
@@ -36,8 +37,33 @@ open Expecto
 // open ARCTokenization
 // open ARCTokenization.StructuralOntology
 open System.IO
+open Fable.SimpleHttp
 open System.Text
 // open FSharpAux
+
+let pathIsUrl (p: string) =
+    p.StartsWith("http:") || p.StartsWith("https:")
+
+type URLStatus =
+    | Malformed
+    | Resolves
+    | Fails
+
+let urlResolves (url: string) =
+
+    async {
+        try
+            let! (statusCode, responseText) = Http.get url
+
+            match statusCode with
+            | 200 -> return Resolves
+            | _ -> return Fails
+
+        with
+            | _ -> return Malformed
+    }
+    |> Async.RunSynchronously
+
 
 // Input:
 let arcDir = Directory.GetCurrentDirectory()
@@ -133,7 +159,6 @@ let criticalCases =
                 if t.RowCount = 0 then
                     failwith $"Table {t.Name} contains no rows"
 
-
     //// every study and assay must contain top-level metadata
 
     for s in arc.Studies do
@@ -168,6 +193,35 @@ let criticalCases =
             // 1. annotation resolves local file
             // 2. if not local (./dataset), resolves URL
         // data entity should be annotated with at least one of Characteristic, Parameter, Factor
+
+    testCase "ARC contains annotated data entities" <| fun _ ->
+        if arc.ArcTables.Data.Count = 0 then
+            failwith "ARC contains no annotated data entities"
+
+    // for d in arc.ArcTables.Data do
+    //     testCase "Data path resolves to local file or URL" <| fun _ ->
+    
+    for a in arc.Assays do
+        for d in a.Data do
+            testCase "Data path resolves to local file or URL" <| fun _ ->
+
+                if pathIsUrl d.FilePath then
+                    match urlResolves d.FilePath with
+                    | Resolves -> ()
+                    | Fails -> failwith $"Url {d.FilePath} in assay {a.Identifier} could not be resolved"
+                    | Malformed -> failwith $"Url {d.FilePath} in assay {a.Identifier} is malformed"
+
+                else
+
+                    let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
+                    let fullPath = Path.Combine(arcDir, p)
+
+                    if File.Exists fullPath |> not then
+                        failwith $"Data path {d.FilePath} does not resolve to existing local file and was not identified as URL"
+
+                  
+                    
+
 
     ]
        
