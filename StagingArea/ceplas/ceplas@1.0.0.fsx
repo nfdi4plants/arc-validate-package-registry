@@ -1,7 +1,7 @@
 let [<Literal>]PACKAGE_METADATA = """(*
 ---
 Name: ceplas-experimental
-Summary: Validates if the ARC contains the necessary metadata to meet the CEPLAS quality criteria.
+Summary: Validates whether the ARC contains the minimal metadata to meet the CEPLAS quality criteria for a typical experimental ARC.
 Description: ""
 MajorVersion: 1
 MinorVersion: 0
@@ -10,14 +10,15 @@ Publish: true
 Authors:
   - FullName: Dominik Brilhaus
     Email: brilhaus@hhu.de
-    Affiliation: HHU Düsseldorf
-    AffiliationLink: http://ceplas.eu
+    Affiliation: CEPLAS
+    AffiliationLink: https://ceplas.eu
   - FullName: Heinrich Lukas Weil
     Email: weil@nfdi4plants.org
     Affiliation: RPTU Kaiserslautern
     AffiliationLink: http://rptu.de/startseite
 Tags:
   - Name: ceplas
+  - Name: experimental
   - Name: quality-arc
 ReleaseNotes: |
   - initial release
@@ -81,9 +82,11 @@ let arc = ARC.load arcDir
 let criticalCases =     
     testList "criticalCases" [
     
+    ////////////////////////////////////
     ////// ARC root
+    ////////////////////////////////////
 
-    // ARC contains README
+    // TestCase Critical: ARC contains README
 
     testCase "ARC contains README" <| fun _ ->
         
@@ -100,9 +103,9 @@ let criticalCases =
         if not containsReadme then
             failwithf "ARC does not contain README in any of the given paths: %O" readmeNames
 
-    // ARC contains any LICENSE
+    // TestCase Critical: ARC contains any LICENSE file
 
-    testCase "ARC contains LICENSE" <| fun _ ->
+    testCase "ARC contains any LICENSE file" <| fun _ ->
         
         let licenseNames = ["LICENSE.md"; "license.md"; "LICENSE.txt"; "license.txt"; "License.md"; "license"; "LICENSE";
                             "LICENCE.md"; "licence.md"; "LICENCE.txt"; "licence.txt"; "Licence.md"; "licence"; "LICENCE"]
@@ -116,32 +119,39 @@ let criticalCases =
             )
 
         if not containsLicense then
-            failwithf "ARC does not contain LICENSE in any of the given paths: %O" licenseNames
+            failwithf "ARC does not contain LICENSE file in any of the given paths: %O" licenseNames
 
-
+    ////////////////////////////////////
     ////// ARC Investigation
+    ////////////////////////////////////
 
     // ARC investigation contains identifier
     // ARC investigation contains title
     // ARC investigation contains description
     // ARC investigation contains contact
 
-    // ARC contains at least one study or one assay
+    ////////////////////////////////////
+    ////// ARC Study + Assay
+    ////////////////////////////////////    
+    
+    // TestCase Critical: ARC contains at least one study or one assay
 
     testCase "ARC contains at least one study or one assay" <| fun _ ->
 
         if arc.StudyCount + arc.AssayCount = 0 then
             failwith "ARC does not contain any study or assay"
 
-    //// every study and every assay must contain at least one annotation table
+    // TestCase Critical: every study and every assay must contain at least one annotation table with more than 2 columns and 0 rows
 
+    //// Studies
     for s in arc.Studies do
-        // ARC study contains annotation table
+        
+        // Study contains annotation table
         testCase $"Study {s.Identifier} contains annotation table" <| fun _ ->
-            // study should contain annotation table
             if s.TableCount = 0 then
                 failwith $"Study {s.Identifier} contains no annotation table"
         
+        // Study contains annotation table with more than 2 columns and 0 rows
         for t in s.Tables do
             testCase $"Table {t.Name} of study {s.Identifier} contains basic information" <| fun _ ->
                 
@@ -149,14 +159,15 @@ let criticalCases =
                     failwith $"Table {t.Name} contains less than 2 columns"
                 if t.RowCount = 0 then
                     failwith $"Table {t.Name} contains no rows"
-        
-    for a in arc.Studies do
-        // ARC assay contains annotation table
+    
+    //// Assays
+    for a in arc.Assays do
+        // Assay contains annotation table
         testCase $"Assay {a.Identifier} contains annotation table" <| fun _ ->
-            // assay should contain annotation table
             if a.TableCount = 0 then
                 failwith $"Assay {a.Identifier} contains no annotation table"
 
+        // Assay contains annotation table with more than 2 columns and 0 rows
         for t in a.Tables do
             testCase $"Table {t.Name} of assay {a.Identifier} contains basic information" <| fun _ ->
                 
@@ -165,34 +176,8 @@ let criticalCases =
                 if t.RowCount = 0 then
                     failwith $"Table {t.Name} contains no rows"
 
-    //// every study and assay must contain top-level metadata
+    
 
-    for s in arc.Studies do
-        // ARC study contains title
-        testCase $"Study {s.Identifier} contains title" <| fun _ ->
-            // study title should exist
-            if s.Title.IsNone then
-                failwith $"Study {s.Identifier} contains no title"
-            // study title should be longer than 4 characters
-            if s.Title.Value.Length < 4 then
-                failwith $"Study {s.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{s.Title.Value}\""
-
-        // ARC study contains title
-
-
-        // ARC assay contains identifier
-        // ARC assay contains title   
-
-
-    for a in arc.Assays do
-        // ARC assay measurement type
-        testCase $"Assay {a.Identifier} contains top-level metadata measurement type" <| fun _ ->
-            if a.MeasurementType.IsNone then
-                failwith $"Assay {a.Identifier} contains no top-level metadata measurement type"
-
-
-        // ARC assay technology type
-        // ARC assay technology  platform
     
     //// assay must annotate data entities
         // data entity should resolve
@@ -231,12 +216,42 @@ let criticalCases =
        
 
 let nonCriticalCases =
-    testList "" [
+    testList "nonCriticalCases" [
 
     // process graph: I/O connections (sample-sample-material-data)
     // ARC should not have non-connected annotation tables
     
-    // every data entity should be derived from a Source or Sample 
+    // every data entity should be derived from a Source or Sample
+
+
+    ////////////////////////////////////
+    ////// ARC Study + Assay
+    ////////////////////////////////////
+    
+    // TestCase Non-Critical: every study and assay contains top-level metadata
+
+    //// Studies
+    
+    // Study contains useful title
+    for s in arc.Studies do
+        testCase $"Study {s.Identifier} contains title" <| fun _ ->
+            // study title should exist
+            if s.Title.IsNone then
+                failwith $"Study {s.Identifier} contains no title"
+            // study title should be longer than 4 characters
+            if s.Title.Value.Length < 4 then
+                failwith $"Study {s.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{s.Title.Value}\""
+    
+    // Assay contains useful title
+
+    for a in arc.Assays do
+        // ARC assay measurement type
+        testCase $"Assay {a.Identifier} contains top-level metadata measurement type" <| fun _ ->
+            if a.MeasurementType.IsNone then
+                failwith $"Assay {a.Identifier} contains no top-level metadata measurement type"
+
+    // ARC assay technology type
+    // ARC assay technology  platform
 
 
 
