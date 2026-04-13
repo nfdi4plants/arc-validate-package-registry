@@ -104,18 +104,34 @@ let criticalCases =
     //// every study and every assay must contain at least one annotation table
 
     for s in arc.Studies do
-        // ARC study contains title
+        // ARC study contains annotation table
         testCase $"Study {s.Identifier} contains annotation table" <| fun _ ->
             // study should contain annotation table
             if s.TableCount = 0 then
                 failwith $"Study {s.Identifier} contains no annotation table"
-    
+        
+        for t in s.Tables do
+            testCase $"Table {t.Name} of study {s.Identifier} contains basic information" <| fun _ ->
+                
+                if t.ColumnCount < 2 then
+                    failwith $"Table {t.Name} contains less than 2 columns"
+                if t.RowCount = 0 then
+                    failwith $"Table {t.Name} contains no rows"
+        
     for a in arc.Studies do
-        // ARC assay contains title
+        // ARC assay contains annotation table
         testCase $"Assay {a.Identifier} contains annotation table" <| fun _ ->
             // assay should contain annotation table
             if a.TableCount = 0 then
                 failwith $"Assay {a.Identifier} contains no annotation table"
+
+        for t in a.Tables do
+            testCase $"Table {t.Name} of assay {a.Identifier} contains basic information" <| fun _ ->
+                
+                if t.ColumnCount < 2 then
+                    failwith $"Table {t.Name} contains less than 2 columns"
+                if t.RowCount = 0 then
+                    failwith $"Table {t.Name} contains no rows"
 
 
     //// every study and assay must contain top-level metadata
@@ -152,10 +168,6 @@ let criticalCases =
             // 1. annotation resolves local file
             // 2. if not local (./dataset), resolves URL
         // data entity should be annotated with at least one of Characteristic, Parameter, Factor
-    
-
-
-
 
     ]
        
