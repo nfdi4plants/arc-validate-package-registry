@@ -38,23 +38,16 @@ ReleaseNotes: |
 *)"""
 
 #r "nuget: ARCExpect.Core, 7.0.0-alpha"
-#r "nuget: ARCtrl, 3.0.0"
-#r "nuget: ARCtrl.QueryModel, 3.0.0-alpha.2"
-#r "nuget: Expecto"
+#r "nuget: ARCtrl.QueryModel, 3.0.0-alpha.3"
 #r "nuget: Fable.SimpleHttp"
 
-// open ControlledVocabulary
 open ARCtrl
 open ARCtrl.QueryModel
 open Expecto
 open ARCExpect
-// open ARCTokenization
-// open ARCTokenization.StructuralOntology
 open System.IO
 open Fable.SimpleHttp
 open System.Text
-// open FSharpAux
-
 
 let pathIsUrl (p: string) =
     p.StartsWith("http:") || p.StartsWith("https:")
@@ -104,7 +97,7 @@ let urlResolves (url: string) =
 
 // Input:
 
-let arcDir = Directory.GetCurrentDirectory()
+// let arcDir = Directory.GetCurrentDirectory()
 
 ////////////////////////
 
@@ -114,9 +107,42 @@ let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
 
 let arc = ARC.load arcDir   
 
-
+arc.MakeDataFilesAbsolute()
 arc.DataContextMapping()
 
+
+
+// Collection of all tables in the ARC together with a set of their I/O nodes
+// This is used to check whether each table contains at least one overlapping I/O with any other table
+// Allows duplicate table names (i.e. between multiple studies / assays)
+
+let tableNodes = 
+
+    let tableNodeGetter (collectionID : string ) (tables : ArcTables) = 
+        tables
+        |> Seq.map (fun t ->
+            $"{t.Name} in {collectionID}", 
+            set [
+                yield! t.InputNames
+                yield! t.OutputNames
+                ]
+        )
+
+    let assayTables = 
+        arc.Assays
+        |> Seq.collect (fun a -> tableNodeGetter $"Assay {a.Identifier}" a)
+    let studyTables = 
+        arc.Studies
+        |> Seq.collect (fun s -> tableNodeGetter $"Study {s.Identifier}" s)
+    let runTables = 
+        arc.Runs
+        |> Seq.collect (fun r -> tableNodeGetter $"Run {r.Identifier}" r)
+    
+    Seq.concat [
+        assayTables
+        studyTables
+        runTables
+        ]
 
 
 // Values:
@@ -269,7 +295,6 @@ let criticalCases =
         // data entity should resolve
             // 1. annotation resolves local file
             // 2. if not local (./dataset), resolves URL
-        // TODO: data entity should be annotated with at least one of Characteristic, Parameter, Factor
 
     testCase "ARC contains annotated data entities" <| fun _ ->
         if arc.ArcTables.Data.Count = 0 then
@@ -307,17 +332,38 @@ let criticalCases =
 
 let nonCriticalCases =
     testList "nonCriticalCases" [
-
-    // process graph: I/O connections (sample-sample-material-data)
-    // ARC should not have non-connected annotation tables
-
-
-    testCase "ARC contains annotated data entities" <| fun _ ->
-        if arc.ArcTables.Data.Count = 0 then
-            failwith "ARC contains no annotated data entities"  
     
+    // TestCase Non-Critical: ARC annotation tables are connected
+    for name, nodes in tableNodes do    
+        
+        testCase $"ARC annotation tables are connected"  <| fun _ ->
+
+            let tableConnection = tableNodes |> Seq.exists (fun (n, nds) ->
+                    if n <> name then
+                        Set.intersect nodes nds
+                        |> Seq.length
+                        |> (<>) 0
+                    else
+                        false
+                )
+            
+            if not tableConnection then
+                failwith $"Annotation table {name} is not connected to any other annotation table"
+
+    for d in arc.ArcTables.Data do
+
+    // TestCase Non-Critical: Every data entity should be derived from a Source or Sample
+
+        testCase $"Data entity {d.Name} derives from a Source or Sample"  <| fun _ ->
+            if d.FirstSamples.IsEmpty && d.Sources.Count = 0 then
+                failwith $"Data entity {d.Name} does not derive from a Source or Sample"
     
-    // every data entity should be derived from a Source or Sample
+    // TestCase Non-Critical: Data entity should be annotated with at least one of Characteristic, Parameter, Factor    
+        
+        testCase $"Data entity {d.Name} contains at least one of Characteristic, Parameter, Factor"  <| fun _ ->
+            if d.PreviousValues.IsEmpty then
+                failwith $"Data entity {d.Name} is not associated with any annotation value"
+
 
 
     ////////////////////////////////////
@@ -395,7 +441,7 @@ let nonCriticalCases =
                 failwith $"Assay {a.Identifier} contains no top-level metadata technology platform"
 
 
-    // every annotation table should contain Input, Output, ProtocolUri
+    // TODO: every annotation table should contain Input, Output, ProtocolUri
 
 
     ]
@@ -418,34 +464,5 @@ Setup.ValidationPackage(
 //// run tests locally
 
 runTestsWithCLIArgs [] [||] criticalCases
-runTestsWithCLIArgs [] [||] nonCriticalCases
+runTestsWithCLIArgs [] [||] nonCriticalCases   
 
-
-for i in arc.ArcTables do
-    printf "%s" i.Name
-
-    let currentIOs = set [i.InputNames, i.OutputNames]
-
-    currentIOs
-    |> Seq.iter (fun x -> printf "%s" x.ToString)
-
-    
-Set.difference
-
-
-
-
-nonCriticalCases
-
-//// TODO
-/// - simple read out testCases for description
-
-
-
-// let a = arc.Assays[0]
-
-// let d = a.Data[0]
-
-// let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
-
-// p
