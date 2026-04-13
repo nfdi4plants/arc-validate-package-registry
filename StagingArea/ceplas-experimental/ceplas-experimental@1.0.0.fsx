@@ -207,7 +207,10 @@ let criticalCases =
 
     for c in arc.Contacts |> Seq.distinctBy (fun c -> (c.FirstName, c.LastName)) do
 
-        let fullName = $"{c.FirstName} {c.LastName}"
+        let fname = Option.defaultValue "" c.FirstName
+        let lname = Option.defaultValue "" c.LastName
+
+        let fullName = $"{fname} {lname}"
 
         testCase $"Contact {fullName} contains first name" <| fun _ ->
             if c.FirstName.IsNone then
@@ -325,8 +328,10 @@ let nonCriticalCases =
     testList "nonCriticalCases" [
 
     for c in arc.Contacts |> Seq.distinctBy (fun c -> (c.FirstName, c.LastName)) do
+        let fname = Option.defaultValue "" c.FirstName
+        let lname = Option.defaultValue "" c.LastName
 
-        let fullName = $"{c.FirstName} {c.LastName}"
+        let fullName = $"{fname} {lname}"
     
     // Non-critical: every contact should have a valid email
 
@@ -336,11 +341,12 @@ let nonCriticalCases =
             | Some email when emailIsValid email -> ()
             | Some email -> failwith $"{email} is not a valid email"
         
+    // Non-critical: every contact should have an affiliation
+        
         testCase $"Contact {fullName} contains affiliation" <| fun _ ->
             if c.Affiliation.IsNone then
                 failwith $"Contact contains no affiliation"
     
-    // Non-critical: every contact should have an affiliation
     // Non-critical: every contact should have an ORCID
     
         testCase $"Contact {fullName} contains ORCID" <| fun _ ->
