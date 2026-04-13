@@ -38,7 +38,7 @@ ReleaseNotes: |
 *)"""
 
 #r "nuget: ARCExpect.Core, 7.0.0-alpha"
-#r "nuget: ARCtrl.QueryModel, 3.0.0-alpha.3"
+#r "nuget: ARCtrl.QueryModel, 3.0.0-alpha.4"
 #r "nuget: Fable.SimpleHttp"
 
 open ARCtrl
@@ -492,7 +492,6 @@ let nonCriticalCases =
 
 
     ]
-
 
 // Execution:
 Setup.ValidationPackage(
