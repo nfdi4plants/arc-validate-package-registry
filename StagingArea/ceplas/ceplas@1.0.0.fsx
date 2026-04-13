@@ -80,6 +80,28 @@ let urlResolves (url: string) =
     |> Async.RunSynchronously
 
 
+
+// // Identify loodr tables / determine table connections
+// // based on at least one intersecting Input/Output reference
+// let isPreviousProcessOf (processA: ArcTable) (processB: ArcTable) : bool =    
+//     match processB.TryGetInputColumn() with
+//         | Some _ -> 
+//             match processA.TryGetOutputColumn() with 
+//             | Some _ -> 
+//                 Set.intersect (set processA.OutputNames) (set processB.InputNames)
+//                     |> Seq.length
+//                     |> fun x -> x > 0
+//             | None -> 
+//                 printfn "%s" $"INFO: No Output column found in {processA.Name}"
+//                 false
+//         | None -> 
+//             printfn "%s" $"INFO: No Input column found in {processB.Name}"
+//             false
+
+
+
+
+
 // Input:
 
 let arcDir = Directory.GetCurrentDirectory()
@@ -91,6 +113,12 @@ let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
 ////////////////////////
 
 let arc = ARC.load arcDir   
+
+
+arc.DataContextMapping()
+
+
+
 
 // Values:
 
@@ -256,7 +284,9 @@ let criticalCases =
 
             let filePath = if d.FilePath = "" then d.Name else d.FilePath 
 
-            testCase $"Data path {filePath} of assay {a.Identifier} resolves to local file or URL" <| fun _ ->
+            testCase $"Data path {filePath} of assay {a.Identifier} resolves to local file or folder or a URL" <| fun _ ->
+
+                // Check whether path (i.e. Output [Data]) resolves to URL
 
                 if pathIsUrl filePath then
                     match urlResolves filePath with
@@ -265,16 +295,14 @@ let criticalCases =
                     | Malformed -> failwith $"Url {filePath} in assay {a.Identifier} is malformed"
 
                 else
-                    ()
 
-                // TODO fix abs / rel file path
+                // Check whether path (i.e. Output [Data]) resolves to local file / folder
 
-                    // let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
-                    // let fullPath = Path.Combine(arcDir, p)
+                    let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
+                    let fullPath = Path.Combine(arcDir, p)
 
-                    // if File.Exists fullPath |> not then
-                    //     failwith $"Data path {filePath} does not resolve to existing local file and was not identified as URL"             
-                    
+                    if (File.Exists fullPath || Directory.Exists fullPath) |> not then
+                            failwith $"Data path {filePath} does not resolve to existing local file or folder and was not identified as URL"
 
     ]
     
@@ -284,6 +312,12 @@ let nonCriticalCases =
 
     // process graph: I/O connections (sample-sample-material-data)
     // ARC should not have non-connected annotation tables
+
+
+    testCase "ARC contains annotated data entities" <| fun _ ->
+        if arc.ArcTables.Data.Count = 0 then
+            failwith "ARC contains no annotated data entities"  
+    
     
     // every data entity should be derived from a Source or Sample
 
@@ -369,9 +403,6 @@ let nonCriticalCases =
     ]
 
 
-
-// TODO: fix dependencies ARCtrl, ARCtrl.QueryModel, ARCExpect, ARCTokenization
-
 // Execution:
 Setup.ValidationPackage(
     metadata = Setup.Metadata(
@@ -388,8 +419,21 @@ Setup.ValidationPackage(
 
 //// run tests locally
 
-// runTestsWithCLIArgs [] [||] criticalCases
-// runTestsWithCLIArgs [] [||] nonCriticalCases
+runTestsWithCLIArgs [] [||] criticalCases
+runTestsWithCLIArgs [] [||] nonCriticalCases
+
+
+for i in arc.ArcTables do
+    printf "%s" i.Name
+
+    let currentIOs = set [i.InputNames, i.OutputNames]
+
+    currentIOs
+    |> Seq.iter (fun x -> printf "%s" x.ToString)
+
+    
+Set.difference
+
 
 
 
@@ -397,3 +441,15 @@ nonCriticalCases
 
 //// TODO
 /// - simple read out testCases for description
+/// 
+/// 
+/// 
+
+
+// let a = arc.Assays[0]
+
+// let d = a.Data[0]
+
+// let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
+
+// p
