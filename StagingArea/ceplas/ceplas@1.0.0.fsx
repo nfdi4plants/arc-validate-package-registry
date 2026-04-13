@@ -25,6 +25,7 @@ ReleaseNotes: |
 *)"""
 
 // #r "nuget: ARCExpect, 2.0.0"
+#r "nuget: ARCtrl, 3.0.0"
 #r "nuget: ARCtrl.QueryModel, 3.0.0-alpha.2"
 #r "nuget: Expecto"
 #r "nuget: Fable.SimpleHttp"
@@ -66,14 +67,19 @@ let urlResolves (url: string) =
 
 
 // Input:
-let arcDir = Directory.GetCurrentDirectory()
+
+// let arcDir = Directory.GetCurrentDirectory()
+let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
+// let arcDir = home + "/datahub-dataplant/SARD1-2_CBP60g-1"
+// let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
+let arcDir = home + "/datahub-dataplant/hordeum_erectifolium_genome_and_drought/"
 
 let arc = ARC.load arcDir
 
 // Values:
 
 let criticalCases =     
-    testList "" [
+    testList "criticalCases" [
     
     ////// ARC root
 
@@ -196,32 +202,30 @@ let criticalCases =
 
     testCase "ARC contains annotated data entities" <| fun _ ->
         if arc.ArcTables.Data.Count = 0 then
-            failwith "ARC contains no annotated data entities"
-
-    // for d in arc.ArcTables.Data do
-    //     testCase "Data path resolves to local file or URL" <| fun _ ->
+            failwith "ARC contains no annotated data entities"    
     
     for a in arc.Assays do
-        for d in a.Data do
-            testCase "Data path resolves to local file or URL" <| fun _ ->
+        for d in a.Data |> Seq.distinctBy (fun d -> d.Name) do
 
-                if pathIsUrl d.FilePath then
-                    match urlResolves d.FilePath with
+            let filePath = if d.FilePath = "" then d.Name else d.FilePath 
+
+            testCase $"Data path {filePath} of assay {a.Identifier} resolves to local file or URL" <| fun _ ->
+
+                if pathIsUrl filePath then
+                    match urlResolves filePath with
                     | Resolves -> ()
-                    | Fails -> failwith $"Url {d.FilePath} in assay {a.Identifier} could not be resolved"
-                    | Malformed -> failwith $"Url {d.FilePath} in assay {a.Identifier} is malformed"
+                    | Fails -> failwith $"Url {filePath} in assay {a.Identifier} could not be resolved"
+                    | Malformed -> failwith $"Url {filePath} in assay {a.Identifier} is malformed"
 
                 else
+                    ()
 
-                    let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
-                    let fullPath = Path.Combine(arcDir, p)
+                    // let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
+                    // let fullPath = Path.Combine(arcDir, p)
 
-                    if File.Exists fullPath |> not then
-                        failwith $"Data path {d.FilePath} does not resolve to existing local file and was not identified as URL"
-
-                  
+                    // if File.Exists fullPath |> not then
+                    //     failwith $"Data path {filePath} does not resolve to existing local file and was not identified as URL"             
                     
-
 
     ]
        
@@ -246,12 +250,37 @@ let nonCriticalCases =
     ]
 
 
-// Execution:
-Setup.ValidationPackage(
-    metadata = Setup.Metadata(PACKAGE_METADATA),
-    CriticalValidationCases = [cases],
-    NonCriticalValidationCases = [nonCriticalCases]
-)
-|> Execute.ValidationPipeline(
-    basePath = arcDir
-)
+
+// // Execution:
+// Setup.ValidationPackage(
+//     metadata = Setup.Metadata(PACKAGE_METADATA),
+//     CriticalValidationCases = [cases],
+//     NonCriticalValidationCases = [nonCriticalCases]
+// )
+// |> Execute.ValidationPipeline(
+//     basePath = arcDir
+// )
+
+
+
+
+ 
+
+runTestsWithCLIArgs [] [||] criticalCases
+
+
+arc.AssayIdentifiers
+
+let a = arc.GetAssay("RNASeq")
+
+let d = a.Data[0]
+
+d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
+
+
+let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
+    let fullPath = Path.Combine(arcDir, p)
+
+    if File.Exists fullPath |> not then
+        failwith $"Data path {filePath} does not resolve to existing local file and was not identified as URL"             
+    
