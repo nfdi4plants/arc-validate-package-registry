@@ -80,12 +80,8 @@ let emailIsValid (email: string) =
 
 // Input:
 
-// let arcDir = Directory.GetCurrentDirectory()
+let arcDir = Directory.GetCurrentDirectory()
 
-////////////////////////
-
-let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
-let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
 ////////////////////////
 
 let arc = ARC.load arcDir   
