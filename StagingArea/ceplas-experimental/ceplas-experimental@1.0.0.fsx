@@ -200,9 +200,6 @@ let criticalCases =
     // TestCase Critical: Investigation contacts contain first name, last name, email, affiliation, ORCID
 
 
-
-
-
     for c in arc.Contacts |> Seq.distinctBy (fun c -> (c.FirstName, c.LastName)) do
 
         let fullName = $"{c.FirstName} {c.LastName}"
