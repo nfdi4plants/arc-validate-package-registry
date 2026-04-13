@@ -73,6 +73,11 @@ let urlResolves (url: string) =
     |> Async.RunSynchronously
 
 
+let emailIsValid (email: string) =
+    let pattern = @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
+    System.Text.RegularExpressions.Regex.IsMatch(email, pattern)
+
+
 // Input:
 
 // let arcDir = Directory.GetCurrentDirectory()
@@ -212,17 +217,22 @@ let criticalCases =
             if c.LastName.IsNone then
                 failwith $"Contact contains no last name"
 
-        testCase $"Contact {fullName} contains email" <| fun _ ->
-            if c.EMail.IsNone then
-                failwith $"Contact contains no email"
-        
-        testCase $"Contact {fullName} contains affiliation" <| fun _ ->
-            if c.Affiliation.IsNone then
-                failwith $"Contact contains no affiliation"
-        
-        testCase $"Contact {fullName} contains ORCID" <| fun _ ->
-            if c.ORCID.IsNone then
-                failwith $"Contact contains no ORCID"
+    // At least one person must have email and affiliation
+    
+    testCase $"At least one person must have email and affiliation" <| fun _ ->
+    
+        if arc.Contacts |> Seq.exists (fun c ->
+
+            c.EMail.IsSome
+            &&
+            emailIsValid c.EMail.Value
+            &&
+            c.Affiliation.IsSome
+            )
+            |> not
+        then
+            failwith $"No contact contains email nor affiliation"
+
 
 
     ////////////////////////////////////
@@ -313,7 +323,57 @@ let criticalCases =
 
 let nonCriticalCases =
     testList "nonCriticalCases" [
+
+    for c in arc.Contacts |> Seq.distinctBy (fun c -> (c.FirstName, c.LastName)) do
+
+        let fullName = $"{c.FirstName} {c.LastName}"
     
+    // Non-critical: every contact should have a valid email
+
+        testCase $"Contact {fullName} contains email" <| fun _ ->
+            match c.EMail with
+            | None -> failwith $"Contact contains no email"
+            | Some email when emailIsValid email -> ()
+            | Some email -> failwith $"{email} is not a valid email"
+        
+        testCase $"Contact {fullName} contains affiliation" <| fun _ ->
+            if c.Affiliation.IsNone then
+                failwith $"Contact contains no affiliation"
+    
+    // Non-critical: every contact should have an affiliation
+    // Non-critical: every contact should have an ORCID
+    
+        testCase $"Contact {fullName} contains ORCID" <| fun _ ->
+            if c.ORCID.IsNone then
+                failwith $"Contact contains no ORCID"    
+    
+    // Non-critical: At least one person should have role 'researcher'
+
+    testCase $"At least one person should have role 'researcher'" <| fun _ ->
+        if arc.Contacts |> Seq.exists (fun c ->
+            c.Roles |> Seq.exists (fun oa -> 
+                oa.NameText = "researcher"    
+            )
+        )
+            |> not
+        then
+            failwith $"No contact has role 'researcher'"
+
+    // Non-critical: At least one person should have role "principal investigator"
+    
+    testCase $"At least one person should have role 'principal investigator'" <| fun _ ->
+    
+        if arc.Contacts |> Seq.exists (fun c ->
+            c.Roles |> Seq.exists (fun oa -> 
+                oa.NameText = "principal investigator"            
+            )
+        )
+            |> not
+        then
+            failwith $"No contact has role 'principal investigator'"
+    
+    /////////////////////////////////////////////////////////////////
+
     // TestCase Non-Critical: ARC annotation tables are connected
     for name, nodes in tableNodes do    
         
