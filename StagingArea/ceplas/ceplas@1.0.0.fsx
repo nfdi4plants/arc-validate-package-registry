@@ -107,7 +107,7 @@ let urlResolves (url: string) =
 let arcDir = Directory.GetCurrentDirectory()
 
 ////////////////////////
-// TODO: Workaround for local test while waiting for dependency fixes
+
 let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
 let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
 ////////////////////////
@@ -116,7 +116,6 @@ let arc = ARC.load arcDir
 
 
 arc.DataContextMapping()
-
 
 
 
@@ -195,29 +194,28 @@ let criticalCases =
             failwith $"Investigation {arc.Identifier} contains no contact"
     
     // TestCase Critical: Investigation contacts contain first name, last name, email, affiliation, ORCID
+        
+    for c in arc.Contacts do
 
-    if arc.Contacts.Count = 0 then // TODO: Do I need this?
-        for c in arc.Contacts do
+        testCase $"Contact contains first name" <| fun _ ->
+            if c.FirstName.IsNone then
+                failwith $"Contact contains no first name"
 
-            testCase $"Contact contains first name" <| fun _ ->
-                if c.FirstName.IsNone then
-                    failwith $"Contact contains no first name"
+        testCase $"Contact contains last name" <| fun _ ->
+            if c.LastName.IsNone then
+                failwith $"Contact contains no last name"
 
-            testCase $"Contact contains last name" <| fun _ ->
-                if c.LastName.IsNone then
-                    failwith $"Contact contains no last name"
-
-            testCase $"Contact contains email" <| fun _ ->
-                if c.EMail.IsNone then
-                    failwith $"Contact contains no email"
-            
-            testCase $"Contact contains affiliation" <| fun _ ->
-                if c.Affiliation.IsNone then
-                    failwith $"Contact contains no affiliation"
-            
-            testCase $"Contact contains ORCID" <| fun _ ->
-                if c.ORCID.IsNone then
-                    failwith $"Contact contains no ORCID"
+        testCase $"Contact contains email" <| fun _ ->
+            if c.EMail.IsNone then
+                failwith $"Contact contains no email"
+        
+        testCase $"Contact contains affiliation" <| fun _ ->
+            if c.Affiliation.IsNone then
+                failwith $"Contact contains no affiliation"
+        
+        testCase $"Contact contains ORCID" <| fun _ ->
+            if c.ORCID.IsNone then
+                failwith $"Contact contains no ORCID"
 
 
     ////////////////////////////////////
@@ -441,9 +439,7 @@ nonCriticalCases
 
 //// TODO
 /// - simple read out testCases for description
-/// 
-/// 
-/// 
+
 
 
 // let a = arc.Assays[0]
