@@ -2,7 +2,19 @@ let [<Literal>]PACKAGE_METADATA = """(*
 ---
 Name: ceplas-experimental
 Summary: Validates whether the ARC contains the minimal metadata to meet the CEPLAS quality criteria for a typical experimental ARC.
-Description: ""
+Description: |
+    ## Critical
+        - ARC contains README
+        - ARC contains any LICENSE file
+        - Investigation contains title
+        - Investigation contains description
+        - Investigation contains contact
+        - Investigation contacts contain first name, last name, email, affiliation, ORCID
+        - ARC contains at least one study or one assay
+        - Every study and assay must contain at least one annotation table
+        - ARC contains annotated "raw" data (e.g. raw dataset file or URL)
+    ## Non-Critical
+        - Every study and assay contains top-level metadata
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
@@ -74,10 +86,8 @@ let arcDir = Directory.GetCurrentDirectory()
 
 ////////////////////////
 // TODO: Workaround for local test while waiting for dependency fixes
-// let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
-// let arcDir = home + "/datahub-dataplant/SARD1-2_CBP60g-1"
-// let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
-// let arcDir = home + "/datahub-dataplant/hordeum_erectifolium_genome_and_drought/"
+let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
+let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
 ////////////////////////
 
 let arc = ARC.load arcDir   
@@ -193,7 +203,7 @@ let criticalCases =
         if arc.StudyCount + arc.AssayCount = 0 then
             failwith "ARC does not contain any study or assay"
 
-    // TestCase Critical: every study and every assay must contain at least one annotation table with more than 2 columns and 0 rows
+    // TestCase Critical: Every study and assay must contain at least one annotation table
 
     //// Studies
     for s in arc.Studies do
@@ -227,18 +237,20 @@ let criticalCases =
                     failwith $"Table {t.Name} contains less than 2 columns"
                 if t.RowCount = 0 then
                     failwith $"Table {t.Name} contains no rows"
-
     
-    //// assay must annotate data entities
+    // TestCase Critical: ARC contains annotated "raw" data (e.g. raw dataset file or URL)
+        
         // data entity should resolve
             // 1. annotation resolves local file
             // 2. if not local (./dataset), resolves URL
-        // data entity should be annotated with at least one of Characteristic, Parameter, Factor
+        // TODO: data entity should be annotated with at least one of Characteristic, Parameter, Factor
 
     testCase "ARC contains annotated data entities" <| fun _ ->
         if arc.ArcTables.Data.Count = 0 then
-            failwith "ARC contains no annotated data entities"    
+            failwith "ARC contains no annotated data entities"
     
+    // Reminder: this is for an "experimental ARC", hence only checking for data entities in assays
+
     for a in arc.Assays do
         for d in a.Data |> Seq.distinctBy (fun d -> d.Name) do
 
@@ -254,6 +266,8 @@ let criticalCases =
 
                 else
                     ()
+
+                // TODO fix abs / rel file path
 
                     // let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
                     // let fullPath = Path.Combine(arcDir, p)
@@ -278,7 +292,7 @@ let nonCriticalCases =
     ////// ARC Study + Assay
     ////////////////////////////////////
     
-    // TestCase Non-Critical: every study and assay contains top-level metadata
+    // TestCase Non-Critical: Every study and assay contains top-level metadata
 
     //// Studies
     
@@ -377,3 +391,9 @@ Setup.ValidationPackage(
 // runTestsWithCLIArgs [] [||] criticalCases
 // runTestsWithCLIArgs [] [||] nonCriticalCases
 
+
+
+nonCriticalCases
+
+//// TODO
+/// - simple read out testCases for description
