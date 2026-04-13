@@ -73,28 +73,6 @@ let urlResolves (url: string) =
     |> Async.RunSynchronously
 
 
-
-// // Identify loodr tables / determine table connections
-// // based on at least one intersecting Input/Output reference
-// let isPreviousProcessOf (processA: ArcTable) (processB: ArcTable) : bool =    
-//     match processB.TryGetInputColumn() with
-//         | Some _ -> 
-//             match processA.TryGetOutputColumn() with 
-//             | Some _ -> 
-//                 Set.intersect (set processA.OutputNames) (set processB.InputNames)
-//                     |> Seq.length
-//                     |> fun x -> x > 0
-//             | None -> 
-//                 printfn "%s" $"INFO: No Output column found in {processA.Name}"
-//                 false
-//         | None -> 
-//             printfn "%s" $"INFO: No Input column found in {processB.Name}"
-//             false
-
-
-
-
-
 // Input:
 
 // let arcDir = Directory.GetCurrentDirectory()
@@ -220,26 +198,32 @@ let criticalCases =
             failwith $"Investigation {arc.Identifier} contains no contact"
     
     // TestCase Critical: Investigation contacts contain first name, last name, email, affiliation, ORCID
-        
-    for c in arc.Contacts do
 
-        testCase $"Contact contains first name" <| fun _ ->
+
+
+
+
+    for c in arc.Contacts |> Seq.distinctBy (fun c -> (c.FirstName, c.LastName)) do
+
+        let fullName = $"{c.FirstName} {c.LastName}"
+
+        testCase $"Contact {fullName} contains first name" <| fun _ ->
             if c.FirstName.IsNone then
                 failwith $"Contact contains no first name"
 
-        testCase $"Contact contains last name" <| fun _ ->
+        testCase $"Contact {fullName} contains last name" <| fun _ ->
             if c.LastName.IsNone then
                 failwith $"Contact contains no last name"
 
-        testCase $"Contact contains email" <| fun _ ->
+        testCase $"Contact {fullName} contains email" <| fun _ ->
             if c.EMail.IsNone then
                 failwith $"Contact contains no email"
         
-        testCase $"Contact contains affiliation" <| fun _ ->
+        testCase $"Contact {fullName} contains affiliation" <| fun _ ->
             if c.Affiliation.IsNone then
                 failwith $"Contact contains no affiliation"
         
-        testCase $"Contact contains ORCID" <| fun _ ->
+        testCase $"Contact {fullName} contains ORCID" <| fun _ ->
             if c.ORCID.IsNone then
                 failwith $"Contact contains no ORCID"
 
