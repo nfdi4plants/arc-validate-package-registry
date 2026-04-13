@@ -232,34 +232,74 @@ let nonCriticalCases =
 
     //// Studies
     
-    // Study contains useful title
     for s in arc.Studies do
+        // Study contains useful title
         testCase $"Study {s.Identifier} contains title" <| fun _ ->
-            // study title should exist
+            // Study title exists
             if s.Title.IsNone then
                 failwith $"Study {s.Identifier} contains no title"
-            // study title should be longer than 4 characters
+            // Study title is longer than 3 characters
             if s.Title.Value.Length < 4 then
                 failwith $"Study {s.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{s.Title.Value}\""
-    
-    // Assay contains useful title
+        
+        // Study contains useful description
+        testCase $"Study {s.Identifier} contains description" <| fun _ ->
+            // Study description exists
+            if s.Description.IsNone then
+                failwith $"Study {s.Identifier} contains no description"
+            // Study description is longer than 30 characters
+            if s.Description.Value.Length < 31 then
+                failwith $"Study {s.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{s.Description.Value}\""
+
+        // Study contains contacts
+        testCase $"Study {s.Identifier} contains contacts" <| fun _ ->
+            if s.Contacts.Count < 1 then
+                failwith $"Study {s.Identifier} contains no contacts"
+
+    //// Assays
 
     for a in arc.Assays do
-        // ARC assay measurement type
+
+        // Assay contains useful title
+        testCase $"Assay {a.Identifier} contains title" <| fun _ ->
+            // Assay title exists
+            if a.Title.IsNone then
+                failwith $"Assay {a.Identifier} contains no title"
+            // Assay title is longer than 4 characters
+            if a.Title.Value.Length < 4 then
+                failwith $"Assay {a.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{a.Title.Value}\""
+        
+        // Assay contains useful description
+        testCase $"Assay {a.Identifier} contains description" <| fun _ ->
+            // Assay description exists
+            if a.Description.IsNone then
+                failwith $"Assay {a.Identifier} contains no description"
+            // Assay description is longer than 30 characters
+            if a.Description.Value.Length < 31 then
+                failwith $"Assay {a.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{a.Description.Value}\""
+
+        // Assay contains performers
+        testCase $"Study {a.Identifier} contains contacts" <| fun _ ->
+            if a.Performers.Count < 1 then
+                failwith $"Study {a.Identifier} contains no performers"
+
+        // Assay contains measurement type
         testCase $"Assay {a.Identifier} contains top-level metadata measurement type" <| fun _ ->
             if a.MeasurementType.IsNone then
                 failwith $"Assay {a.Identifier} contains no top-level metadata measurement type"
+        
+        // Assay contains technology type
+        testCase $"Assay {a.Identifier} contains top-level metadata technology type" <| fun _ ->
+            if a.TechnologyType.IsNone then
+                failwith $"Assay {a.Identifier} contains no top-level metadata technology type"
+        
+        // Assay contains technology platform
+        testCase $"Assay {a.Identifier} contains top-level metadata technology platform" <| fun _ ->
+            if a.TechnologyPlatform.IsNone then
+                failwith $"Assay {a.Identifier} contains no top-level metadata technology platform"
 
-    // ARC assay technology type
-    // ARC assay technology  platform
 
-
-
-
-    // ARC assay contains description
-    // ARC assay contains contact
-
-    // should contain ProtocolUri
+    // every annotation table should contain Input, Output, ProtocolUri
 
 
     ]
