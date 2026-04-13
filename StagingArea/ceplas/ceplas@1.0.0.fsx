@@ -25,7 +25,7 @@ ReleaseNotes: |
 ---
 *)"""
 
-// #r "nuget: ARCExpect, 2.0.0"
+#r "nuget: ARCExpect.Core, 7.0.0-alpha"
 #r "nuget: ARCtrl, 3.0.0"
 #r "nuget: ARCtrl.QueryModel, 3.0.0-alpha.2"
 #r "nuget: Expecto"
@@ -35,13 +35,14 @@ ReleaseNotes: |
 open ARCtrl
 open ARCtrl.QueryModel
 open Expecto
-// open ARCExpect
+open ARCExpect
 // open ARCTokenization
 // open ARCTokenization.StructuralOntology
 open System.IO
 open Fable.SimpleHttp
 open System.Text
 // open FSharpAux
+
 
 let pathIsUrl (p: string) =
     p.StartsWith("http:") || p.StartsWith("https:")
@@ -69,13 +70,13 @@ let urlResolves (url: string) =
 
 // Input:
 
-// let arcDir = Directory.GetCurrentDirectory()
+let arcDir = Directory.GetCurrentDirectory()
 
 ////////////////////////
 // TODO: Workaround for local test while waiting for dependency fixes
-let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
+// let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
 // let arcDir = home + "/datahub-dataplant/SARD1-2_CBP60g-1"
-let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
+// let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
 // let arcDir = home + "/datahub-dataplant/hordeum_erectifolium_genome_and_drought/"
 ////////////////////////
 
@@ -357,19 +358,22 @@ let nonCriticalCases =
 
 // TODO: fix dependencies ARCtrl, ARCtrl.QueryModel, ARCExpect, ARCTokenization
 
-// // Execution:
-// Setup.ValidationPackage(
-//     metadata = Setup.Metadata(PACKAGE_METADATA),
-//     CriticalValidationCases = [cases],
-//     NonCriticalValidationCases = [nonCriticalCases]
-// )
-// |> Execute.ValidationPipeline(
-//     basePath = arcDir
-// )
+// Execution:
+Setup.ValidationPackage(
+    metadata = Setup.Metadata(
+        PACKAGE_METADATA,
+        AVPRIndex.Frontmatter.FrontmatterLanguage.FSharpFrontmatter
+        ),
+    CriticalValidationCases = [criticalCases],
+    NonCriticalValidationCases = [nonCriticalCases]
+)
+|> Execute.ValidationPipeline(
+    basePath = arcDir
+)
 
 
-// run tests
+//// run tests locally
 
-runTestsWithCLIArgs [] [||] criticalCases
-runTestsWithCLIArgs [] [||] nonCriticalCases
+// runTestsWithCLIArgs [] [||] criticalCases
+// runTestsWithCLIArgs [] [||] nonCriticalCases
 
