@@ -3,18 +3,32 @@ let [<Literal>]PACKAGE_METADATA = """(*
 Name: ceplas-experimental
 Summary: Validates whether the ARC contains the minimal metadata to meet the CEPLAS quality criteria for a typical experimental ARC.
 Description: |
-    ## Critical
-        - ARC contains README
-        - ARC contains any LICENSE file
-        - Investigation contains title
-        - Investigation contains description
-        - Investigation contains contact
-        - Investigation contacts contain first name, last name, email, affiliation, ORCID
-        - ARC contains at least one study or one assay
-        - Every study and assay must contain at least one annotation table
-        - ARC contains annotated "raw" data (e.g. raw dataset file or URL)
-    ## Non-Critical
-        - Every study and assay contains top-level metadata
+    ## Critical quality criteria
+
+    - ARC contains README
+    - ARC contains any LICENSE file
+    - Investigation contains title
+    - Investigation contains description
+    - Investigation contains contact
+    - Investigation contacts contain first name, last name, email, affiliation, ORCID
+    - At least one investigation contact must have email and affiliation
+    - ARC contains at least one study or one assay
+    - Every study must contain at least one annotation table
+    - Every assay must contain at least one annotation table
+    - ARC contains 'raw' data (e.g. raw dataset file or URL)
+    
+    ## Non-Critical quality criteria
+    
+    - Every investigation contact should have a valid email
+    - Every investigation contact should have an affiliation
+    - Every investigation contact should have an ORCID
+    - At least one investigation contact should have role 'researcher'
+    - At least one investigation contact should have role 'principal investigator'
+    - ARC annotation tables are connected
+    - Every data entity should be derived from a Source or Sample
+    - Every data entity should be annotated with at least one of Characteristic, Parameter, Factor
+    - Every study contains top-level metadata
+    - Every assay contains top-level metadata
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
@@ -200,7 +214,6 @@ let criticalCases =
     
     // TestCase Critical: Investigation contacts contain first name, last name, email, affiliation, ORCID
 
-
     for c in arc.Contacts |> Seq.distinctBy (fun c -> (c.FirstName, c.LastName)) do
 
         let fname = Option.defaultValue "" c.FirstName
@@ -216,9 +229,9 @@ let criticalCases =
             if c.LastName.IsNone then
                 failwith $"Contact contains no last name"
 
-    // At least one person must have email and affiliation
+    // TestCase Critical: At least one investigation contact must have email and affiliation
     
-    testCase $"At least one person must have email and affiliation" <| fun _ ->
+    testCase $"At least one investigation contact must have email and affiliation" <| fun _ ->
     
         if arc.Contacts |> Seq.exists (fun c ->
 
@@ -245,9 +258,8 @@ let criticalCases =
         if arc.StudyCount + arc.AssayCount = 0 then
             failwith "ARC does not contain any study or assay"
 
-    // TestCase Critical: Every study and assay must contain at least one annotation table
+    // TestCase Critical: Every study must contain at least one annotation table
 
-    //// Studies
     for s in arc.Studies do
         
         // Study contains annotation table
@@ -264,7 +276,8 @@ let criticalCases =
                 if t.RowCount = 0 then
                     failwith $"Table {t.Name} contains no rows"
     
-    //// Assays
+    // TestCase Critical: Every assay must contain at least one annotation table
+
     for a in arc.Assays do
         // Assay contains annotation table
         testCase $"Assay {a.Identifier} contains annotation table" <| fun _ ->
@@ -280,15 +293,15 @@ let criticalCases =
                 if t.RowCount = 0 then
                     failwith $"Table {t.Name} contains no rows"
     
-    // TestCase Critical: ARC contains annotated "raw" data (e.g. raw dataset file or URL)
+    // TestCase Critical: ARC contains 'raw' data (e.g. raw dataset file or URL)
         
         // data entity should resolve
             // 1. annotation resolves local file
             // 2. if not local (./dataset), resolves URL
 
-    testCase "ARC contains annotated data entities" <| fun _ ->
+    testCase "ARC contains data entities" <| fun _ ->
         if arc.ArcTables.Data.Count = 0 then
-            failwith "ARC contains no annotated data entities"
+            failwith "ARC contains no data entities"
     
     // Reminder: this is for an "experimental ARC", hence only checking for data entities in assays
 
@@ -329,7 +342,7 @@ let nonCriticalCases =
 
         let fullName = $"{fname} {lname}"
     
-    // Non-critical: every contact should have a valid email
+    // TestCase Non-critical: Every investigation contact should have a valid email
 
         testCase $"Contact {fullName} contains email" <| fun _ ->
             match c.EMail with
@@ -337,21 +350,21 @@ let nonCriticalCases =
             | Some email when emailIsValid email -> ()
             | Some email -> failwith $"{email} is not a valid email"
         
-    // Non-critical: every contact should have an affiliation
+    // TestCase Non-critical: Every investigation contact should have an affiliation
         
         testCase $"Contact {fullName} contains affiliation" <| fun _ ->
             if c.Affiliation.IsNone then
                 failwith $"Contact contains no affiliation"
     
-    // Non-critical: every contact should have an ORCID
+    // TestCase Non-critical: Every investigation contact should have an ORCID
     
         testCase $"Contact {fullName} contains ORCID" <| fun _ ->
             if c.ORCID.IsNone then
                 failwith $"Contact contains no ORCID"    
     
-    // Non-critical: At least one person should have role 'researcher'
+    // TestCase Non-critical: At least one investigation contact should have role 'researcher'
 
-    testCase $"At least one person should have role 'researcher'" <| fun _ ->
+    testCase $"At least one investigation contact should have role 'researcher'" <| fun _ ->
         if arc.Contacts |> Seq.exists (fun c ->
             c.Roles |> Seq.exists (fun oa -> 
                 oa.NameText = "researcher"    
@@ -359,11 +372,11 @@ let nonCriticalCases =
         )
             |> not
         then
-            failwith $"No contact has role 'researcher'"
+            failwith $"No investigation contact has role 'researcher'"
 
-    // Non-critical: At least one person should have role "principal investigator"
+    // TestCase Non-critical: At least one investigation contact should have role 'principal investigator'
     
-    testCase $"At least one person should have role 'principal investigator'" <| fun _ ->
+    testCase $"At least one investigation contact should have role 'principal investigator'" <| fun _ ->
     
         if arc.Contacts |> Seq.exists (fun c ->
             c.Roles |> Seq.exists (fun oa -> 
@@ -372,7 +385,7 @@ let nonCriticalCases =
         )
             |> not
         then
-            failwith $"No contact has role 'principal investigator'"
+            failwith $"No investigation contact has role 'principal investigator'"
     
     /////////////////////////////////////////////////////////////////
 
@@ -401,7 +414,7 @@ let nonCriticalCases =
             if d.FirstSamples.IsEmpty && d.Sources.Count = 0 then
                 failwith $"Data entity {d.Name} does not derive from a Source or Sample"
     
-    // TestCase Non-Critical: Data entity should be annotated with at least one of Characteristic, Parameter, Factor    
+    // TestCase Non-Critical: Every data entity should be annotated with at least one of Characteristic, Parameter, Factor
         
         testCase $"Data entity {d.Name} contains at least one of Characteristic, Parameter, Factor"  <| fun _ ->
             if d.PreviousValues.IsEmpty then
@@ -413,9 +426,7 @@ let nonCriticalCases =
     ////// ARC Study + Assay
     ////////////////////////////////////
     
-    // TestCase Non-Critical: Every study and assay contains top-level metadata
-
-    //// Studies
+    // TestCase Non-Critical: Every study contains top-level metadata
     
     for s in arc.Studies do
         // Study contains useful title
@@ -441,7 +452,7 @@ let nonCriticalCases =
             if s.Contacts.Count < 1 then
                 failwith $"Study {s.Identifier} contains no contacts"
 
-    //// Assays
+    // TestCase Non-Critical: Every assay contains top-level metadata
 
     for a in arc.Assays do
 
