@@ -514,8 +514,8 @@ Setup.ValidationPackage(
 )
 
 
-//// run tests locally
+// //// run tests locally
 
-runTestsWithCLIArgs [] [||] criticalCases
-runTestsWithCLIArgs [] [||] nonCriticalCases   
+// runTestsWithCLIArgs [] [||] criticalCases
+// runTestsWithCLIArgs [] [||] nonCriticalCases   
 
