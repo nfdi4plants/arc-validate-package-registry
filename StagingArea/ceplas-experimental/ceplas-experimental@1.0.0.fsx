@@ -102,7 +102,9 @@ let arcDir = Directory.GetCurrentDirectory()
 
 ////////////////////////
 
-let arc = ARC.load arcDir   
+let arc =
+    try ARC.load arcDir with
+    | _ -> ARC(identifier = "placeholder")
 
 arc.MakeDataFilesAbsolute()
 arc.DataContextMapping()
