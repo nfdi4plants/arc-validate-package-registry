@@ -4,7 +4,6 @@ Name: ceplas-experimental
 Summary: Validates whether the ARC contains the minimal metadata to meet the CEPLAS quality criteria for a typical experimental ARC.
 Description: |
     ## Critical quality criteria
-
     - ARC contains README
     - ARC contains any LICENSE file
     - Investigation contains title
@@ -15,20 +14,21 @@ Description: |
     - ARC contains at least one study or one assay
     - Every study must contain at least one annotation table
     - Every assay must contain at least one annotation table
-    - ARC contains 'raw' data (e.g. raw dataset file or URL)
-    
-    ## Non-Critical quality criteria
-    
+    - ARC contains 'raw' data (e.g. raw dataset file or URL)    
+    ## Non-Critical quality criteria    
     - Every investigation contact should have a valid email
     - Every investigation contact should have an affiliation
     - Every investigation contact should have an ORCID
     - At least one investigation contact should have role 'researcher'
     - At least one investigation contact should have role 'principal investigator'
+    - Every study contains top-level metadata
+    - Every assay contains top-level metadata
     - ARC annotation tables are connected
     - Every data entity should be derived from a Source or Sample
     - Every data entity should be annotated with at least one of Characteristic, Parameter, Factor
-    - Every study contains top-level metadata
-    - Every assay contains top-level metadata
+    - Every annotation table contains an Input
+    - Every annotation table contains an Output
+    - Every annotation table contains a Protocol reference
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
@@ -341,6 +341,10 @@ let criticalCases =
 let nonCriticalCases =
     testList "nonCriticalCases" [
 
+    /////////////////////////////////////////////////////////////////
+    ////// ARC Investigation metadata
+    /////////////////////////////////////////////////////////////////
+
     for c in arc.Contacts |> Seq.distinctBy (fun c -> (c.FirstName, c.LastName)) do
         let fname = Option.defaultValue "" c.FirstName
         let lname = Option.defaultValue "" c.LastName
@@ -391,45 +395,10 @@ let nonCriticalCases =
             |> not
         then
             failwith $"No investigation contact has role 'principal investigator'"
-    
+
     /////////////////////////////////////////////////////////////////
-
-    // TestCase Non-Critical: ARC annotation tables are connected
-    for name, nodes in tableNodes do    
-        
-        testCase $"ARC annotation tables are connected"  <| fun _ ->
-
-            let tableConnection = tableNodes |> Seq.exists (fun (n, nds) ->
-                    if n <> name then
-                        Set.intersect nodes nds
-                        |> Seq.length
-                        |> (<>) 0
-                    else
-                        false
-                )
-            
-            if not tableConnection then
-                failwith $"Annotation table {name} is not connected to any other annotation table"
-
-    for d in arc.ArcTables.Data do
-
-    // TestCase Non-Critical: Every data entity should be derived from a Source or Sample
-
-        testCase $"Data entity {d.Name} derives from a Source or Sample"  <| fun _ ->
-            if d.FirstSamples.IsEmpty && d.Sources.Count = 0 then
-                failwith $"Data entity {d.Name} does not derive from a Source or Sample"
-    
-    // TestCase Non-Critical: Every data entity should be annotated with at least one of Characteristic, Parameter, Factor
-        
-        testCase $"Data entity {d.Name} contains at least one of Characteristic, Parameter, Factor"  <| fun _ ->
-            if d.PreviousValues.IsEmpty then
-                failwith $"Data entity {d.Name} is not associated with any annotation value"
-
-
-
-    ////////////////////////////////////
-    ////// ARC Study + Assay
-    ////////////////////////////////////
+    ////// ARC Study + Assay top level metadata
+    /////////////////////////////////////////////////////////////////
     
     // TestCase Non-Critical: Every study contains top-level metadata
     
@@ -497,7 +466,44 @@ let nonCriticalCases =
         // Assay contains technology platform
         testCase $"Assay {a.Identifier} contains top-level metadata technology platform" <| fun _ ->
             if a.TechnologyPlatform.IsNone then
-                failwith $"Assay {a.Identifier} contains no top-level metadata technology platform"   
+                failwith $"Assay {a.Identifier} contains no top-level metadata technology platform"
+
+
+        
+    /////////////////////////////////////////////////////////////////
+
+    // TestCase Non-Critical: ARC annotation tables are connected
+    for name, nodes in tableNodes do    
+        
+        testCase $"ARC annotation tables are connected"  <| fun _ ->
+
+            let tableConnection = tableNodes |> Seq.exists (fun (n, nds) ->
+                    if n <> name then
+                        Set.intersect nodes nds
+                        |> Seq.length
+                        |> (<>) 0
+                    else
+                        false
+                )
+            
+            if not tableConnection then
+                failwith $"Annotation table {name} is not connected to any other annotation table"
+
+    for d in arc.ArcTables.Data do
+
+    // TestCase Non-Critical: Every data entity should be derived from a Source or Sample
+
+        testCase $"Data entity {d.Name} derives from a Source or Sample"  <| fun _ ->
+            if d.FirstSamples.IsEmpty && d.Sources.Count = 0 then
+                failwith $"Data entity {d.Name} does not derive from a Source or Sample"
+    
+    // TestCase Non-Critical: Every data entity should be annotated with at least one of Characteristic, Parameter, Factor
+        
+        testCase $"Data entity {d.Name} contains at least one of Characteristic, Parameter, Factor"  <| fun _ ->
+            if d.PreviousValues.IsEmpty then
+                failwith $"Data entity {d.Name} is not associated with any annotation value"
+
+    /////////////////////////////////////////////////////////////////
 
     for t in arc.ArcTables do
 
@@ -539,17 +545,10 @@ Setup.ValidationPackage(
     basePath = arcDir
 )
 
-//// run tests locally
-
-runTestsWithCLIArgs [] [||] criticalCases
-runTestsWithCLIArgs [] [||] nonCriticalCases
-
 
 
 // let t1 = arc.ArcTables[1]
 
 // t1.TryGetProtocolNameColumn().Value.Header
 
-// contains "ProtocolREF" or 
-
-// "ProtocolREF"
+// contains "ProtocolREF" or "Protocol Uri"
