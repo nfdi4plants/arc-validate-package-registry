@@ -78,7 +78,7 @@ summary_data = {
     },
     "ValidationPackage": {
         "Name": "edal",
-        "Version": "0.0.4",
+        "Version": "0.0.1",
         "Summary": "ARC Validation for e!DAL data repository",
         "Description": "See summary :)"
     }
