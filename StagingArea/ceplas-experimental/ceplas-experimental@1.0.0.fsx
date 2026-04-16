@@ -96,13 +96,16 @@ let emailIsValid (email: string) =
 
 let arcDir = Directory.GetCurrentDirectory()
 
+// let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
+// let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
+
+
 ////////////////////////
 
 let arc = ARC.load arcDir   
 
 arc.MakeDataFilesAbsolute()
 arc.DataContextMapping()
-
 
 
 // Collection of all tables in the ARC together with a set of their I/O nodes
@@ -492,11 +495,32 @@ let nonCriticalCases =
         // Assay contains technology platform
         testCase $"Assay {a.Identifier} contains top-level metadata technology platform" <| fun _ ->
             if a.TechnologyPlatform.IsNone then
-                failwith $"Assay {a.Identifier} contains no top-level metadata technology platform"
+                failwith $"Assay {a.Identifier} contains no top-level metadata technology platform"   
 
+    for t in arc.ArcTables do
 
-    // TODO: every annotation table should contain Input, Output, ProtocolUri
+        // TestCase Non-Critical: Every annotation table contains an Input
+        
+        testCase $"Table {t.Name} contains `Input`" <| fun _ ->
+                
+                if t.InputNames.Length < 1 then
+                    failwith $"Table {t.Name} contains no Input"
 
+        // TestCase Non-Critical: Every annotation table contains an Output
+        
+        testCase $"Table {t.Name} contains `Output`" <| fun _ ->
+                
+                if t.OutputNames.Length < 1 then
+                    failwith $"Table {t.Name} contains no Output"
+
+        // TestCase Non-Critical: Every annotation table contains a Protocol reference
+                    
+        testCase $"Table {t.Name} contains `Protocol`" <| fun _ ->
+                
+                // TODO: more specifically check for Protocol REF, Protocol Uri
+
+                if t.TryGetProtocolNameColumn().IsNone then
+                    failwith $"Table {t.Name} contains no Protocol Column"
 
     ]
 
@@ -513,9 +537,17 @@ Setup.ValidationPackage(
     basePath = arcDir
 )
 
+//// run tests locally
 
-// //// run tests locally
+runTestsWithCLIArgs [] [||] criticalCases
+runTestsWithCLIArgs [] [||] nonCriticalCases
 
-// runTestsWithCLIArgs [] [||] criticalCases
-// runTestsWithCLIArgs [] [||] nonCriticalCases   
 
+
+// let t1 = arc.ArcTables[1]
+
+// t1.TryGetProtocolNameColumn().Value.Header
+
+// contains "ProtocolREF" or 
+
+// "ProtocolREF"
