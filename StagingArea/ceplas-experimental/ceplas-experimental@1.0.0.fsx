@@ -28,7 +28,7 @@ Description: |
     - Every data entity should be annotated with at least one of Characteristic, Parameter, Factor
     - Every annotation table contains an Input
     - Every annotation table contains an Output
-    - Every annotation table contains a Protocol reference
+    - Every annotation table contains a ProtocolREF column
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
@@ -95,10 +95,6 @@ let emailIsValid (email: string) =
 // Input:
 
 let arcDir = Directory.GetCurrentDirectory()
-
-// let home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile)
-// let arcDir = home + "/datahub-dataplant/Facultative-CAM-in-Talinum"
-
 
 ////////////////////////
 
@@ -525,10 +521,11 @@ let nonCriticalCases =
                     
         testCase $"Table {t.Name} contains `Protocol`" <| fun _ ->
                 
-                // TODO: more specifically check for Protocol REF, Protocol Uri
+                // TODO: check for Protocol Uri as well
 
                 if t.TryGetProtocolNameColumn().IsNone then
-                    failwith $"Table {t.Name} contains no Protocol Column"
+                    failwith $"Table {t.Name} contains no Protocol Column"               
+                
 
     ]
 
@@ -544,11 +541,3 @@ Setup.ValidationPackage(
 |> Execute.ValidationPipeline(
     basePath = arcDir
 )
-
-
-
-// let t1 = arc.ArcTables[1]
-
-// t1.TryGetProtocolNameColumn().Value.Header
-
-// contains "ProtocolREF" or "Protocol Uri"
