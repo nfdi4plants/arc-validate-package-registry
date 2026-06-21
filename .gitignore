@@ -399,3 +399,4 @@ FodyWeavers.xsd
 /src/PackageRegistryService/wwwroot/css/desktop.ini
 
 .env
+.venv/
