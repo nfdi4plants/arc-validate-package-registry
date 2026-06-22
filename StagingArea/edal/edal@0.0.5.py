@@ -26,8 +26,8 @@ CQCHookEndpoint: https://mira.ipk-gatersleben.de/submit
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#     "arctrl==3.0.0b13",
-#     "arcexpect",
+#     "arctrl==3.1.0",
+#     "arcexpect==0.0.3",
 # ]
 # ///
 
@@ -36,7 +36,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from arctrl import ARC
+from arctrl import ARC, start_as_task
 from arcexpect import Execute, Expect, Setup, test_case, test_list
 
 
@@ -48,12 +48,10 @@ args = parser.parse_args()
 
 arc: ARC | None = None
 
-
 def load_arc() -> None:
     global arc
     Expect.is_true(args.input.is_dir(), "The input path must be an ARC directory")
-    arc = ARC.load(str(args.input))
-
+    arc = start_as_task(ARC.load_async(str(args.input)))
 
 def arc_has_title() -> None:
     Expect.is_true(arc.Title != "", "No title found.")
@@ -61,7 +59,6 @@ def arc_has_title() -> None:
 
 def arc_has_description() -> None:
     Expect.is_true(arc.Description != "", "No description found.")
-
 
 def arc_has_valid_contacts() -> None:
     contacts = arc.Contacts
@@ -72,7 +69,6 @@ def arc_has_valid_contacts() -> None:
         Expect.is_true(c.Affiliation != "", f"No affiliation found for contact: {c}")
         Expect.is_true(c.EMail != "", f"No email found for contact: {c}")
         Expect.is_true(c.ORCID != "", f"No ORCID found for contact: {c}")
-
 
 def arc_has_license() -> None:
     Expect.is_true(bool(arc.License), "No license found.")
