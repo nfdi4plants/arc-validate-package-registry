@@ -42,20 +42,22 @@ from arcexpect import Execute, Expect, Setup, test_case, test_list
 
 parser = argparse.ArgumentParser(description="Validate an ARC for e!DAL submission.")
 parser.add_argument("-i", "--input", required=True, type=Path, help="Path to the ARC directory")
-parser.add_argument("-o", "--output", required=True, type=Path, help="Directory for validation results")
+parser.add_argument("-o", "--output", required=False, type=Path, help="Directory for validation results")
 args = parser.parse_args()
 
+output_dir = str(args.output if args.output else args.input)
 
 arc: ARC | None = None
+arc_error: str | None = None
 
-def load_arc() -> None:
-    global arc
-    Expect.is_true(args.input.is_dir(), "The input path must be an ARC directory")
-    arc = start_as_task(ARC.load_async(str(args.input)))
+try:
+    arc = ARC.load(str(args.input))
+except Exception as e:
+    arc_error = str(e)
+
 
 def arc_has_title() -> None:
     Expect.is_true(arc.Title != "", "No title found.")
-
 
 def arc_has_description() -> None:
     Expect.is_true(arc.Description != "", "No description found.")
@@ -74,20 +76,25 @@ def arc_has_license() -> None:
     Expect.is_true(bool(arc.License), "No license found.")
 
 
+if arc_error is not None:
+    testList = [test_case("load ARC", lambda: Expect.is_true(False, f"Failed to load ARC: {arc_error}"))]
+else:
+    testList = [
+        test_case("load ARC", lambda: None),
+        test_case("Title", arc_has_title),
+        test_case("Description", arc_has_description),
+        test_case("Contacts", arc_has_valid_contacts),
+        test_case("License", arc_has_license),
+    ]
+
 package = Setup.validation_package_from_script(
     __file__,
     critical=[
         test_list(
             "e!DAL ARC validation",
-            [
-                test_case("load ARC", load_arc),
-                test_case("Title", arc_has_title),
-                test_case("Description", arc_has_description),
-                test_case("Contacts", arc_has_valid_contacts),
-                test_case("License", arc_has_license),
-            ],
+            testList
         )
     ],
 )
 
-Execute.validation_pipeline(package, str(args.output))
+Execute.validation_pipeline(package, output_dir)
