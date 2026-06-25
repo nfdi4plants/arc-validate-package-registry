@@ -361,11 +361,33 @@ def _offline_forced():
 
 
 def main(argv=None):
-    arc_dir = os.environ.get("ARC_PATH") or os.getcwd()
-    out_dir = Path(arc_dir) / ".arc-validate-results" / f"{NAME}@{VERSION}"
+    import argparse
+    parser = argparse.ArgumentParser(
+        description="Validate ontology term annotations in an ARC.")
+    parser.add_argument("-i", "--input", type=Path, default=None,
+                        help="Path to the ARC directory (default: $ARC_PATH or cwd)")
+    parser.add_argument("-o", "--output", type=Path, default=None,
+                        help="Directory to write results into (default: the input directory)")
+    args, _ = parser.parse_known_args(argv)
+
+    arc_dir = args.input or Path(os.environ.get("ARC_PATH") or os.getcwd())
+    out_root = args.output or arc_dir
+    out_dir = Path(out_root) / ".arc-validate-results" / f"{NAME}@{VERSION}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    arc = load_arc(arc_dir)
+    try:
+        arc = load_arc(str(arc_dir))
+    except Exception as e:
+        # The input is not a readable ARC: report it as a finding, never crash the
+        # runner. (The registry CI smoke-tests every package against a non-ARC dir and
+        # only requires a clean exit.)
+        findings = [Finding("arc_loadable", "error", "failed",
+                            f"Could not load an ARC at '{arc_dir}': {e}", str(arc_dir))]
+        write_junit(findings, out_dir / "validation_report.xml")
+        write_summary(findings, out_dir / "validation_summary.json")
+        write_badge(findings, out_dir / "badge.svg")
+        return 0
+
     declared = declared_sources(arc)
     occurrences = collect_terms(arc)
 
