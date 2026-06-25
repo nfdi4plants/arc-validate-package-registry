@@ -1,26 +1,38 @@
-"""
+PACKAGE_METADATA = """
 ---
-Name: edal
+Name: bioprofilekit
 MajorVersion: 0
 MinorVersion: 0
-PatchVersion: 5
-Summary: e!DAL validation package for submission
+PatchVersion: 1
+Summary: BioProfileKit validation package for explorative data analysis
 Description: |
-  This python package validates ARCs for the e!DAL
-  PGP research data repository.
+  BioProfileKit is a web application for explorative data analysis of biological data. 
+  This python package validates ARCs for containment of relevant data for the BioProfileKit web application.
 Publish: true
 Authors:
-  - FullName: Jonathan Bauer
-    Email: bauer@nfdi4plants.org
-    Affiliation: University of Freiburg
-    AffiliationLink: https://uni-freiburg.de
+  - FullName: Sonja Diedrich
+    Email: sonja.diedrich@computational.bio.uni-giessen.de
+    Affiliation: JLU Giessen
+    AffiliationLink: https://www.uni-giessen.de
+  - FullName: Maria Hansen
+    Email: maria.hansen@computational.bio.uni-giessen.de
+    Affiliation: JLU Giessen
+    AffiliationLink: https://www.uni-giessen.de
+  - FullName: Julian Hahnfeld
+    Email: julian.hahnfeld@computational.bio.uni-giessen.de
+    Affiliation: JLU Giessen
+    AffiliationLink: https://www.uni-giessen.de
   - FullName: Heinrich Lukas Weil
     Email: weil@rptu.de
     Affiliation: RPTU Kaiserslautern-Landau
     AffiliationLink: https://www.rptu.de
+  - FullName: Jonathan Bauer
+    Email: jonathan.bauer@rz.uni-freiburg.de
+    Affiliation: University of Freiburg
+    AffiliationLink: https://uni-freiburg.de
 Tags:
-  - Name: e!DAL
-  - Name: data-submission
+  - Name: BioProfileKit
+  - Name: explorative-data-analysis
 ReleaseNotes: |
   - fixed folder output path again
 CQCHookEndpoint: https://mira.ipk-gatersleben.de/submit
@@ -44,7 +56,7 @@ from arctrl import ARC, start_as_task
 from arcexpect import Execute, Expect, Setup, test_case, test_list
 
 
-parser = argparse.ArgumentParser(description="Validate an ARC for e!DAL submission.")
+parser = argparse.ArgumentParser(description="Validate an ARC for BioProfileKit submission.")
 parser.add_argument("-i", "--input", required=True, type=Path, help="Path to the ARC directory")
 parser.add_argument("-o", "--output", required=False, type=Path, help="Directory for validation results")
 args = parser.parse_args()
@@ -63,21 +75,8 @@ except Exception as e:
 def arc_has_title() -> None:
     Expect.is_true(arc.Title != "", "No title found.")
 
-def arc_has_description() -> None:
-    Expect.is_true(arc.Description != "", "No description found.")
-
-def arc_has_valid_contacts() -> None:
-    contacts = arc.Contacts
-    Expect.is_true(len(contacts) > 0, "No contacts found.")
-    for c in contacts:
-        Expect.is_true(c.FirstName != "", f"No first name found for contact: {c}")
-        Expect.is_true(c.LastName != "", f"No last name found for contact: {c}")
-        Expect.is_true(c.Affiliation != "", f"No affiliation found for contact: {c}")
-        Expect.is_true(c.EMail != "", f"No email found for contact: {c}")
-        Expect.is_true(c.ORCID != "", f"No ORCID found for contact: {c}")
-
-def arc_has_license() -> None:
-    Expect.is_true(bool(arc.License), "No license found.")
+def arc_has_datamap() -> None:
+    datamaps = arc.Studies.iter
 
 
 if arc_error is not None:
@@ -86,16 +85,13 @@ else:
     testList = [
         test_case("load ARC", lambda: None),
         test_case("Title", arc_has_title),
-        test_case("Description", arc_has_description),
-        test_case("Contacts", arc_has_valid_contacts),
-        test_case("License", arc_has_license),
     ]
 
 package = Setup.validation_package_from_script(
     __file__,
     critical=[
         test_list(
-            "e!DAL ARC validation",
+            "BioProfileKit ARC validation",
             testList
         )
     ],
