@@ -14,6 +14,10 @@ Authors:
     Email: bauer@nfdi4plants.org
     Affiliation: University of Freiburg
     AffiliationLink: https://uni-freiburg.de
+  - FullName: Heinrich Lukas Weil
+    Email: weil@rptu.de
+    Affiliation: RPTU Kaiserslautern-Landau
+    AffiliationLink: https://www.rptu.de
 Tags:
   - Name: e!DAL
   - Name: data-submission
