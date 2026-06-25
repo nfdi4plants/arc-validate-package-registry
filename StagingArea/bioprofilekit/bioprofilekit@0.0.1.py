@@ -1,4 +1,4 @@
-PACKAGE_METADATA = """
+"""
 ---
 Name: bioprofilekit
 MajorVersion: 0
@@ -35,7 +35,7 @@ Tags:
   - Name: explorative-data-analysis
 ReleaseNotes: |
   - fixed folder output path again
-CQCHookEndpoint: https://mira.ipk-gatersleben.de/submit
+CQCHookEndpoint: https://bioprofilekit.computational.bio/ready
 ---
 """
 
@@ -52,7 +52,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from arctrl import ARC, start_as_task
+from arctrl import ARC, start_as_task, DataContext
 from arcexpect import Execute, Expect, Setup, test_case, test_list
 
 
@@ -71,12 +71,24 @@ try:
 except Exception as e:
     arc_error = str(e)
 
+def get_datamaps() -> list:
+    datamaps = []
+    for study in arc.Studies:
+        datamaps.append(study.Datamap)
+    for assay in arc.Assays:
+        datamaps.append(assay.Datamap)
+    for workflow in arc.Workflows:
+        datamaps.append(workflow.Datamap)   
+    for run in arc.Runs:
+        datamaps.append(run.Datamap)
+    return datamaps
 
-def arc_has_title() -> None:
-    Expect.is_true(arc.Title != "", "No title found.")
-
+# def datacontext_is_relevant(datacontext : DataContext) -> bool:
+#     return datacontext.Explication.NameText != "" and datacontext.FilePath != None  
+    
 def arc_has_datamap() -> None:
-    datamaps = arc.Studies.iter
+    datamaps = get_datamaps()
+    Expect.is_true(len(datamaps) > 0, "No datamap found in the ARC.")
 
 
 if arc_error is not None:
@@ -84,7 +96,7 @@ if arc_error is not None:
 else:
     testList = [
         test_case("load ARC", lambda: None),
-        test_case("Title", arc_has_title),
+        test_case("Datamap", arc_has_datamap),
     ]
 
 package = Setup.validation_package_from_script(
