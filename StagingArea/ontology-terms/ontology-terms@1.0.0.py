@@ -4,7 +4,7 @@ Name: ontology-terms
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
-Publish: false
+Publish: true
 Summary: Validates that ontology/CV annotations in ARC ISA tables are complete, well-formed, declared, and resolvable.
 Description: |
   Checks the quality of ontology / controlled-vocabulary annotations on
