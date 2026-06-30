@@ -1,6 +1,7 @@
 let [<Literal>]PACKAGE_METADATA = """(*
 ---
 Name: insdc_curation
+Description: Validates certain INSDC record curation metadata.
 Summary: |
   Validates certain INSDC record curation metadata.
     - fastqc files
