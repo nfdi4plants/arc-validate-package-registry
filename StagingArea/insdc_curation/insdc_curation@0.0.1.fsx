@@ -97,14 +97,17 @@ module ExpectedData =
     let reader = new Csv.CsvReader<Domain.INSDC_Relations>(SchemaMode=Csv.Fill)
 
     let relations = 
-        http {
-            GET $"https://www.ebi.ac.uk/ena/portal/api/filereport?accession={project_accession}&result=read_run&fields=study_accession,sample_accession,experiment_accession,run_accession,tax_id,scientific_name,fastq_ftp,submitted_ftp,bam_ftp&format=tsv&download=true&limit=0"
-        }
-        |> Request.send
-        |> Response.toText
-        |> fun response -> reader.ReadFromString(response, '\t', firstLineHasHeader = true)
-        |> Seq.collect Domain.splitByFastq
-        |> List.ofSeq
+        try
+            http {
+                GET $"https://www.ebi.ac.uk/ena/portal/api/filereport?accession={project_accession}&result=read_run&fields=study_accession,sample_accession,experiment_accession,run_accession,tax_id,scientific_name,fastq_ftp,submitted_ftp,bam_ftp&format=tsv&download=true&limit=0"
+            }
+            |> Request.send
+            |> Response.toText
+            |> fun response -> reader.ReadFromString(response, '\t', firstLineHasHeader = true)
+            |> Seq.collect Domain.splitByFastq
+            |> List.ofSeq
+        with
+            | _ -> []
 
     let relations_index = Domain.buildIndex relations
 
