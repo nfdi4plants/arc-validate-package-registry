@@ -33,9 +33,10 @@ open ARCtrl
 open ARCtrl.QueryModel
 open ARCExpect
 open FsHttp
-open FSharpAux
+open FSharpAux.IO.SchemaReader
 open Expecto
 open System.IO
+open System
 
 let arcDir = Directory.GetCurrentDirectory()
 
@@ -43,71 +44,73 @@ let arc = ARC.load arcDir
 
 let project_accession = arc.Identifier
 
+module Domain =
 
-open FSharpAux.IO
-open FSharpAux.IO.SchemaReader
-open FSharpAux.IO.SchemaReader.Attribute
+    open FSharpAux.IO.SchemaReader.Attribute
+    open System.Collections.Generic
 
-type INSDC_Relations = {
-    [<FieldAttribute("study_accession")>]
-    study_accession: string
-    [<FieldAttribute("sample_accession")>]
-    sample_accession: string
-    [<FieldAttribute("experiment_accession")>]
-    experiment_accession: string
-    [<FieldAttribute("run_accession")>]
-    run_accession: string
-    [<FieldAttribute("fastq_ftp")>]
-    fastq_ftp: string
-}
-
-let reader = new Csv.CsvReader<INSDC_Relations>(SchemaMode=Csv.Fill)
-
-
-let insdc_relations_response = 
-    http {
-        GET $"https://www.ebi.ac.uk/ena/portal/api/filereport?accession={project_accession}&result=read_run&fields=study_accession,sample_accession,experiment_accession,run_accession,tax_id,scientific_name,fastq_ftp,submitted_ftp,bam_ftp&format=tsv&download=true&limit=0"
+    /// represents the relations provided by ENA portal API in TSV form
+    type INSDC_Relations = {
+        [<FieldAttribute("study_accession")>]
+        study_accession: string
+        [<FieldAttribute("sample_accession")>]
+        sample_accession: string
+        [<FieldAttribute("experiment_accession")>]
+        experiment_accession: string
+        [<FieldAttribute("run_accession")>]
+        run_accession: string
+        [<FieldAttribute("fastq_ftp")>]
+        fastq_ftp: string
     }
-    |> Request.send
-    |> Response.toText
 
-let splitByFastq (r: INSDC_Relations) =
-    match r.fastq_ftp.Split(';') |> Array.filter (fun s -> s <> "") with
-    | [||]  -> [ r ]                                        // no fastq → keep row as-is
-    | files -> [ for f in files -> { r with fastq_ftp = f } ]
+    /// Some records map from sample to multiple fastq files in a single line (e.g., paired end reads). This function splits such records into multiple records, one for each fastq file.
+    let splitByFastq (r: INSDC_Relations) =
+        match r.fastq_ftp.Split(';') |> Array.filter (fun s -> s <> "") with
+        | [||]  -> [ r ]                                        // no fastq → keep row as-is
+        | files -> [ for f in files -> { r with fastq_ftp = f } ]
 
-let relations =
-    reader.ReadFromString(insdc_relations_response, '\t', firstLineHasHeader = true)
-    |> Seq.collect splitByFastq
-    |> List.ofSeq
+    /// lookup index for retrieving INSDC_Relations by any of the accession numbers or fastq file name. Last-wins in case of duplicates.
+    let buildIndex (records: INSDC_Relations seq) =
+        let d = Dictionary<string, INSDC_Relations>(StringComparer.OrdinalIgnoreCase)
+        for r in records do
+            for v in [ 
+                r.study_accession
+                r.sample_accession
+                r.experiment_accession
+                r.run_accession
+                r.fastq_ftp 
+            ] do
+                if not (String.IsNullOrEmpty v) then d[v] <- r   // last-wins
+        d
 
+    module OntologyTerms = 
+        let experiment_accession_term =
+            OntologyAnnotation.fromTermAnnotation(
+                "NCIT:C175892",
+                name = "Experiment Accession Number"
+            )
 
-open System
-open System.Collections.Generic
+module ExpectedData =
 
-let buildIndex (records: INSDC_Relations seq) =
-    let d = Dictionary<string, INSDC_Relations>(StringComparer.OrdinalIgnoreCase)
-    for r in records do
-        for v in [ r.study_accession
-                   r.sample_accession
-                   r.experiment_accession
-                   r.run_accession
-                   r.fastq_ftp ] do
-            if not (String.IsNullOrEmpty v) then d[v] <- r   // last-wins
-    d
+    let reader = new Csv.CsvReader<Domain.INSDC_Relations>(SchemaMode=Csv.Fill)
 
-let index = buildIndex relations
+    let relations = 
+        http {
+            GET $"https://www.ebi.ac.uk/ena/portal/api/filereport?accession={project_accession}&result=read_run&fields=study_accession,sample_accession,experiment_accession,run_accession,tax_id,scientific_name,fastq_ftp,submitted_ftp,bam_ftp&format=tsv&download=true&limit=0"
+        }
+        |> Request.send
+        |> Response.toText
+        |> fun response -> reader.ReadFromString(response, '\t', firstLineHasHeader = true)
+        |> Seq.collect Domain.splitByFastq
+        |> List.ofSeq
 
-let tryFindRelation (s: string) =
-    match index.TryGetValue s with
-    | true, r  -> Some r
-    | false, _ -> None
+    let relations_index = Domain.buildIndex relations
 
-let experiment_accession_term =
-    OntologyAnnotation.fromTermAnnotation(
-        "NCIT:C175892",
-        name = "Experiment Accession Number"
-    )
+    let tryFindRelation (s: string) =
+        match relations_index.TryGetValue s with
+        | true, r  -> Some r
+        | false, _ -> None
+
 
 let create_insdc_relation_validation_cases_for_fastq_file (node: QNode) =
 
@@ -118,11 +121,11 @@ let create_insdc_relation_validation_cases_for_fastq_file (node: QNode) =
 
     let experiment_accession_actual =
         try 
-            Some (arc.PreviousParametersOf(node)).[experiment_accession_term]
+            Some (arc.PreviousParametersOf(node)).[Domain.OntologyTerms.experiment_accession_term]
         with
             | _ -> None
 
-    let expected_relations = Expect.wantSome (tryFindRelation node.Name) "Experiment accession annotation is missing in INSDC relations" 
+    let expected_relations = Expect.wantSome (ExpectedData.tryFindRelation node.Name) "Experiment accession annotation is missing in INSDC relations" 
 
     testList node.Name [
 
