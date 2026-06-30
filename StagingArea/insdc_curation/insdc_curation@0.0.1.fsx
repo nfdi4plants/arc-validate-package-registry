@@ -40,7 +40,9 @@ open System
 
 let arcDir = Directory.GetCurrentDirectory()
 
-let arc = ARC.load arcDir
+let arc =
+    try ARC.load arcDir with
+    | _ -> ARC(identifier = "unable to load arc from this dir")
 
 let project_accession = arc.Identifier
 
