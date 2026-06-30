@@ -1,10 +1,11 @@
 let [<Literal>]PACKAGE_METADATA = """(*
 ---
 Name: insdc_curation
-Summary: Validates certain INSDC record curation metadata. |
-  - fastqc files
-    - experiment accession annotation is present and correct
-    - descends from a correctly named sample
+Summary: |
+  Validates certain INSDC record curation metadata.
+    - fastqc files
+      - experiment accession annotation is present and correct
+      - descends from a correctly named sample
 MajorVersion: 0
 MinorVersion: 0
 PatchVersion: 1
