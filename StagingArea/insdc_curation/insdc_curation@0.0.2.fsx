@@ -136,13 +136,13 @@ let create_insdc_relation_validation_cases_for_fastq_file (node: QNode) =
         let expected_relations = ExpectedData.tryFindRelation node.Name
 
         test $"""has correct experiment accession annotation (expected: {(expected_relations |> Option.map (fun r -> r.experiment_accession) |> Option.defaultValue "N/A")})""" {
-            let expected = (Expect.wantSome expected_relations $"No relations for {node.Name} in INSDC relations").experiment_accession
+            let expected = (Expect.wantSome expected_relations $"No relations for {node.Name} in {project_accession} relations").experiment_accession
             let actual = Expect.wantSome experiment_accession_actual "Experiment accession annotation is missing"
             Expect.equal actual.ValueText expected "Experiment accession annotation does not match node name"
         }
 
         test $"""descends from correct sample (expected: {(expected_relations |> Option.map (fun r -> r.sample_accession) |> Option.defaultValue "N/A")})""" {
-            let expected = (Expect.wantSome expected_relations $"No relations for {node.Name} in INSDC relations").sample_accession
+            let expected = (Expect.wantSome expected_relations $"No relations for {node.Name} in {project_accession} relations").sample_accession
             Expect.contains samples expected $"Sample accession {expected} not found in ARC"
         }
     ]
