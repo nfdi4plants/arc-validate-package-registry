@@ -115,8 +115,9 @@ package = Setup.validation_package_from_script(
 
 payload : Mapping[str, str]= dict()
 
-if len(get_datamaps()) > 0:
-    for datamap in get_datamaps():
-        payload[str(datamap.__hash__())] = JsonController.Datamap().to_json_string(datamap, 0)
+if arc is not None:
+    if len(get_datamaps()) > 0:
+        for datamap in get_datamaps():
+            payload[str(datamap.__hash__())] = JsonController.Datamap().to_json_string(datamap, 0)
 
 Execute.validation_pipeline(package, output_dir, payload = payload)
