@@ -34,7 +34,7 @@ Tags:
   - Name: BioProfileKit
   - Name: explorative-data-analysis
 ReleaseNotes: |
-  - fixed folder output path again
+  - updated arcexpect to ensure correct creation of payload
 CQCHookEndpoint: https://bioprofilekit.computational.bio/ready
 ---
 """
@@ -43,7 +43,7 @@ CQCHookEndpoint: https://bioprofilekit.computational.bio/ready
 # requires-python = ">=3.11"
 # dependencies = [
 #     "arctrl==3.1.0",
-#     "arcexpect==0.0.3",
+#     "arcexpect==0.0.4",
 # ]
 # ///
 
@@ -117,8 +117,6 @@ payload : Mapping[str, str]= dict()
 
 if len(get_datamaps()) > 0:
     for datamap in get_datamaps():
-        payload[datamap.__hash__()] = JsonController.Datamap().to_json_string(datamap, 0)
-
-print("payload: ", payload)
+        payload[str(datamap.__hash__())] = JsonController.Datamap().to_json_string(datamap, 0)
 
 Execute.validation_pipeline(package, output_dir, payload = payload)
