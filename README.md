@@ -111,6 +111,8 @@ The following programming languages can be used to create validation packages:
 
 Any change to a package in the staging area triggers the tests located at [/StagingAreaTests](./StagingAreaTests), which are run on every package. (see also [CI/CD pipeline](#cicd-pipeline)). publishing packages to the production registry is only possible if all tests pass.
 
+The default package sanity checks do not execute staged package code. F# scripts are parsed and type-checked, while Python scripts are compiled without being imported or run. Runtime checks are limited to small repository-owned fixtures.
+
 ## Package publication workflow
 
 In principle, packages can be published via 2 channels:
