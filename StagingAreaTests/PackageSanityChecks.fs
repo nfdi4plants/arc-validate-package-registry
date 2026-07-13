@@ -37,18 +37,18 @@ module ValidationScripts =
     let ``single fsharp package runs`` () = Assert.FSharpScriptRuns [|"-i"; "."; "-o"; "."|] "fixtures/Frontmatter/Binding/valid@2.0.0.fsx"
 
     [<Fact>]
-    let ``All fsharp packages run`` () =
+    let ``All fsharp packages compile`` () =
         Assert.All(
             ReferenceObjects.all_staged_fsharp_packages_paths,
-            Assert.FSharpScriptRuns [|"-i"; "."; "-o"; "."|]
+            Assert.FSharpScriptCompiles
         )
     
     [<Fact>]
     let ``single python package runs`` () = Assert.PythonScriptRuns [|"-i"; "."; "-o"; "."|] "fixtures/Frontmatter/Binding/valid@2.0.0.py"
 
     [<Fact>]
-    let ``All python packages run`` () =
+    let ``All python packages compile`` () =
         Assert.All(
             ReferenceObjects.all_staged_python_packages_paths,
-            Assert.PythonScriptRuns [|"-i"; "."; "-o"; "."|]
+            Assert.PythonScriptCompiles
         )

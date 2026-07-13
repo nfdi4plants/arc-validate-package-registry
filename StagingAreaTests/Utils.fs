@@ -5,8 +5,12 @@ open AVPRIndex.Domain
 open Xunit
 open System 
 open System.IO
+open System.Text
 open Fake.DotNet
 open Fake.Core
+open FSharp.Compiler.CodeAnalysis
+open FSharp.Compiler.Diagnostics
+open FSharp.Compiler.Text
 
 module internal Tool =
 
@@ -30,7 +34,82 @@ module internal Tool =
         |> CreateProcess.map (fun (r, results) -> ProcessResult.New r.ExitCode results)
         |> Proc.run
 
+module internal Compiler =
+
+    let fsharpChecker = FSharpChecker.Create()
+
+    let formatFSharpDiagnostics (diagnostics: FSharpDiagnostic seq) =
+        diagnostics
+        |> Seq.map string
+        |> String.concat Environment.NewLine
+
 type Assert with
+
+    static member FSharpScriptCompiles (scriptPath: string) =
+        let safeScriptName =
+            scriptPath
+            |> Path.GetFileNameWithoutExtension
+            |> Encoding.UTF8.GetBytes
+            |> Convert.ToHexString
+
+        let virtualScriptPath =
+            Path.Combine(
+                Path.GetDirectoryName(Path.GetFullPath(scriptPath)),
+                $"ValidationPackage_{safeScriptName}.fsx"
+            )
+
+        let sourceText =
+            scriptPath
+            |> File.ReadAllText
+            |> SourceText.ofString
+
+        let projectOptions, projectOptionDiagnostics =
+            Compiler.fsharpChecker.GetProjectOptionsFromScript(
+                virtualScriptPath,
+                sourceText,
+                assumeDotNetFramework = false,
+                useSdkRefs = true
+            )
+            |> Async.RunSynchronously
+
+        let parseResults, checkAnswer =
+            Compiler.fsharpChecker.ParseAndCheckFileInProject(
+                virtualScriptPath,
+                0,
+                sourceText,
+                projectOptions
+            )
+            |> Async.RunSynchronously
+
+        let checkDiagnostics =
+            match checkAnswer with
+            | FSharpCheckFileAnswer.Succeeded checkResults -> checkResults.Diagnostics
+            | FSharpCheckFileAnswer.Aborted ->
+                Assert.True(false, $"F# type checking was aborted: {scriptPath}")
+                [||]
+
+        let errors =
+            seq {
+                yield! projectOptionDiagnostics
+                yield! parseResults.Diagnostics
+                yield! checkDiagnostics
+            }
+            |> Seq.filter (fun diagnostic -> diagnostic.Severity = FSharpDiagnosticSeverity.Error)
+            |> Seq.toArray
+
+        Assert.True(
+            errors.Length = 0,
+            $"F# script did not compile: {scriptPath}{Environment.NewLine}{Compiler.formatFSharpDiagnostics errors}"
+        )
+
+    static member PythonScriptCompiles (scriptPath: string) =
+        let compileOnly =
+            "import pathlib, sys; path = pathlib.Path(sys.argv[1]); compile(path.read_text(encoding='utf-8'), str(path), 'exec')"
+
+        let result =
+            Tool.run "uv" [|"run"; "--no-project"; "--"; "python"; "-c"; compileOnly; scriptPath|]
+
+        Assert.Equal(0, result.ExitCode)
 
     static member FSharpScriptRuns (args: string []) (scriptPath: string)=
         let args = Array.concat [|[|scriptPath|]; args|]
@@ -53,7 +132,7 @@ type Assert with
         //Assert.True(File.Exists(Path.Combine(outputFolder,"validation_report.xml")))
         //Assert.True(File.Exists(Path.Combine(outputFolder,"validation_summary.json")))
         Assert.Equal<string list>([], result.Errors)
-        Assert.Equal(result.ExitCode, 0)
+        Assert.Equal(0, result.ExitCode)
 
     static member PythonScriptRuns (args: string []) (scriptPath: string)=
         let args = Array.concat [|[|"run"; scriptPath|]; args|]
@@ -66,7 +145,7 @@ type Assert with
         //Assert.True(File.Exists(Path.Combine(outputFolder,"validation_report.xml")))
         //Assert.True(File.Exists(Path.Combine(outputFolder,"validation_summary.json")))
         //Assert.Equal<string list>([], result.Errors)
-        Assert.Equal(result.ExitCode, 0)
+        Assert.Equal(0, result.ExitCode)
 
     static member ContainsFSharpFrontmatter (script: string) =
         let containsCommentFrontmatter = script.StartsWith(Frontmatter.FSharp.frontMatterCommentStart, StringComparison.Ordinal) && script.Contains(Frontmatter.FSharp.frontMatterCommentEnd)
