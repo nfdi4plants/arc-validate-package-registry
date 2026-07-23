@@ -43,6 +43,31 @@ module internal Compiler =
         |> Seq.map string
         |> String.concat Environment.NewLine
 
+    /// Locate FSharp.Compiler.Interactive.Settings.dll from the running .NET SDK.
+    /// This assembly provides the `fsi` object that the `dotnet fsi` host injects into
+    /// scripts. It ships in the SDK's `FSharp/` folder (not in the FSharp.Compiler.Service
+    /// nuget package), so `useFsiAuxLib` alone cannot find it when checking scripts here.
+    let fsiSettingsDll =
+        let candidateRoots =
+            [
+                Environment.GetEnvironmentVariable "DOTNET_ROOT"
+                (try Path.GetDirectoryName(Diagnostics.Process.GetCurrentProcess().MainModule.FileName) with _ -> null)
+                Path.GetDirectoryName(typeof<obj>.Assembly.Location)
+            ]
+            |> List.filter (String.IsNullOrWhiteSpace >> not)
+            |> List.collect (fun r -> [ r; Path.Combine(r, ".."); Path.Combine(r, "..", ".."); Path.Combine(r, "..", "..", "..") ])
+            |> List.map Path.GetFullPath
+            |> List.distinct
+        candidateRoots
+        |> List.tryPick (fun root ->
+            let sdkDir = Path.Combine(root, "sdk")
+            if Directory.Exists sdkDir then
+                Directory.GetFiles(sdkDir, "FSharp.Compiler.Interactive.Settings.dll", SearchOption.AllDirectories)
+                |> Array.sortDescending // prefer the newest SDK
+                |> Array.tryHead
+            else None
+        )
+
 type Assert with
 
     static member FSharpScriptCompiles (scriptPath: string) =
@@ -59,16 +84,34 @@ type Assert with
             )
 
         let sourceText =
-            scriptPath
-            |> File.ReadAllText
+            // Emulate the `dotnet fsi` host, since these packages are always executed via fsi:
+            // `open` the FSI settings module so the `fsi` object (e.g. fsi.CommandLineArgs)
+            // resolves during type-checking, just as it does when the package runs under fsi.
+            // The `#line 1` directive resets numbering so diagnostics still point at the
+            // original source lines despite the prepended prelude.
+            let originalSource = File.ReadAllText scriptPath
+            let prelude =
+                "open FSharp.Compiler.Interactive.Settings\n"
+                + "#line 1\n"
+            (prelude + originalSource)
             |> SourceText.ofString
+
+        // Make the FSI settings assembly available to the checker so the prepended `open`
+        // resolves. useFsiAuxLib cannot find it against the nuget-packaged compiler, so we
+        // reference the SDK's copy explicitly when we can locate it.
+        let otherFlags =
+            match Compiler.fsiSettingsDll with
+            | Some dll -> [| "-r:" + dll |]
+            | None -> [||]
 
         let projectOptions, projectOptionDiagnostics =
             Compiler.fsharpChecker.GetProjectOptionsFromScript(
                 virtualScriptPath,
                 sourceText,
+                otherFlags = otherFlags,
                 assumeDotNetFramework = false,
-                useSdkRefs = true
+                useSdkRefs = true,
+                useFsiAuxLib = true
             )
             |> Async.RunSynchronously
 
