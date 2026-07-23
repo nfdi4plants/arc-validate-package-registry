@@ -415,6 +415,12 @@ in the repo root, run:
 dotnet run --project .\src\AVPRCI\AVPRCI.fsproj -- publish --api-key yourKeyHere --dry-run
 ```
 
+e.g.
+
+```shell
+dotnet run --project .\src\AVPRCI\AVPRCI.fsproj -- publish --api-key $ENV:AVPR_Token --dry-run
+```
+
 to see what would be published, and remove the `--dry-run` flag to actually publish the packages.
 
 [🔼 Back to top](#table-of-contents)
