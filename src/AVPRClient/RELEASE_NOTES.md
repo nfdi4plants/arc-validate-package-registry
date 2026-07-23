@@ -1,3 +1,6 @@
+## v0.3.0
+- Regen client for `CLIArguments` field and add `CLIArgument` type mappings in `ValidationPackage` type extension.
+
 ## v0.2.1
 - fix : Correct `ProgrammingLanguage` field mapping in `ValidationPackage` type extension.
 

@@ -162,6 +162,43 @@ module Domain =
             TermAccessionNumber |> Option.iter (fun x -> tmp.TermAccessionNumber <- x)
             tmp
 
+    type CLIArgument() =
+
+        member val Flags: string [] = Array.empty<string> with get,set
+        member val Description = "" with get,set
+        member val Example = "" with get,set
+
+        override this.GetHashCode() =
+            hash (
+                this.Flags,
+                this.Description,
+                this.Example
+            )
+
+        override this.Equals(other) =
+            match other with
+            | :? CLIArgument as cli ->
+                (
+                    this.Flags,
+                    this.Description,
+                    this.Example
+                ) = (
+                    cli.Flags,
+                    cli.Description,
+                    cli.Example
+                )
+            | _ -> false
+
+        static member create (
+            flags: string [],
+            ?Description: string,
+            ?Example: string
+        ) =
+            let tmp = CLIArgument(Flags = flags)
+            Description |> Option.iter (fun x -> tmp.Description <- x)
+            Example |> Option.iter (fun x -> tmp.Example <- x)
+            tmp
+
     type ValidationPackageMetadata() =
         // mandatory fields
         member val Name = "" with get,set
@@ -179,6 +216,7 @@ module Domain =
         member val Tags: OntologyAnnotation [] = Array.empty<OntologyAnnotation> with get,set
         member val ReleaseNotes = "" with get,set
         member val CQCHookEndpoint = "" with get,set
+        member val CLIArguments: CLIArgument [] = Array.empty<CLIArgument> with get,set
 
         override this.GetHashCode() =
             hash (
@@ -195,7 +233,8 @@ module Domain =
                 this.Authors,
                 this.Tags,
                 this.ReleaseNotes,
-                this.CQCHookEndpoint
+                this.CQCHookEndpoint,
+                this.CLIArguments
             )
 
         override this.Equals(other) =
@@ -215,7 +254,8 @@ module Domain =
                     this.Authors,
                     this.Tags,
                     this.ReleaseNotes,
-                    this.CQCHookEndpoint
+                    this.CQCHookEndpoint,
+                    this.CLIArguments
                 ) = (
                     vpm.Name, 
                     vpm.Summary, 
@@ -230,7 +270,8 @@ module Domain =
                     vpm.Authors,
                     vpm.Tags,
                     vpm.ReleaseNotes,
-                    vpm.CQCHookEndpoint
+                    vpm.CQCHookEndpoint,
+                    vpm.CLIArguments
                 )
             | _ -> false
         
@@ -248,8 +289,9 @@ module Domain =
             ?Authors: Author [],
             ?Tags: OntologyAnnotation [],
             ?ReleaseNotes,
-            ?CQCHookEndpoint
-        ) = 
+            ?CQCHookEndpoint,
+            ?CLIArguments: CLIArgument []
+        ) =
             let tmp = ValidationPackageMetadata(
                 Name = name,
                 Summary = summary,
@@ -267,7 +309,8 @@ module Domain =
             Tags |> Option.iter (fun x -> tmp.Tags <- x)
             ReleaseNotes |> Option.iter (fun x -> tmp.ReleaseNotes <- x)
             CQCHookEndpoint |> Option.iter (fun x -> tmp.CQCHookEndpoint <- x)
-        
+            CLIArguments |> Option.iter (fun x -> tmp.CLIArguments <- x)
+
             tmp
         
         static member tryGetSemanticVersion(m: ValidationPackageMetadata) = 

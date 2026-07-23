@@ -31,5 +31,16 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
+CLIArguments:
+  - Flags:
+      - -i
+      - --input
+    Description: Input ARC path
+    Example: ./my-arc
+  - Flags:
+      - -v
+      - --verbose
+    Description: Enable verbose logging
+    Example: enabled
 ---
 *)

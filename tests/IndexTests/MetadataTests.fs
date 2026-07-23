@@ -38,6 +38,23 @@ module FSharp =
                 )
             )
 
+        [<Fact>]
+        let ``unknown frontmatter keys are ignored (forward-compat)`` () =
+            // a key unknown to this version (e.g. a field added in a newer release) must not break parsing
+            let fm = """(*
+---
+Name: valid
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Summary: My package does the thing.
+Description: desc
+SomeFutureFieldAddedLater: whatever
+---
+*)"""
+            let actual = ValidationPackageMetadata.extractFromString FSharpFrontmatter fm
+            Assert.Equal("valid", actual.Name)
+
     module IO =
 
         open System.IO

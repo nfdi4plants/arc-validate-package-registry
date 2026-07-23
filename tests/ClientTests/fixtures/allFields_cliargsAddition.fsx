@@ -3,9 +3,17 @@
 Name: name
 Summary: summary
 Description: description
+CLIArguments:
+  - Flags:
+      - -i
+      - --input
+    Description: Input ARC path
+    Example: ./my-arc
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
+PreReleaseVersionSuffix: use
+BuildMetadataVersionSuffix: suffixes
 Publish: true
 Authors:
   - FullName: test

@@ -134,6 +134,22 @@ module OntologyAnnotation =
         )
         Assert.Equivalent(OntologyAnnotation.allFields, actual)
 
+module CLIArgument =
+
+    [<Fact>]
+    let ``create function for mandatory fields``() =
+        let actual = CLIArgument.create(flags = [| "-i" |])
+        Assert.Equivalent(CLIArgument.mandatoryFields, actual)
+
+    [<Fact>]
+    let ``create function for all fields``() =
+        let actual = CLIArgument.create(
+            flags = [| "-i"; "--input" |],
+            Description = "Input ARC path",
+            Example = "./my-arc"
+        )
+        Assert.Equivalent(CLIArgument.allFields, actual)
+
 module ValidationPackageMetadata =
     
     [<Fact>]
@@ -178,7 +194,11 @@ module ValidationPackageMetadata =
                 )
             |],
             ReleaseNotes = "releasenotes",
-            CQCHookEndpoint = "hookendpoint"
+            CQCHookEndpoint = "hookendpoint",
+            CLIArguments = [|
+                CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
+                CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
+            |]
         )
         Assert.Equivalent(ValidationPackageMetadata.allFields, actual)
 

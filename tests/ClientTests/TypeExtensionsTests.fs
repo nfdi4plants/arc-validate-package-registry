@@ -106,6 +106,30 @@ module ValidationPackageIndex =
         let actual = allFields_semVerAddition.toPackageContentHash(HashFileDirectly = true)
         Assert.Equivalent(ReferenceObjects.Hash.allFields_semVerAddition, actual)
 
+
+    let allFields_cliargsAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
+        repoPath = "fixtures/allFields_cliargsAddition.fsx",
+        fileName = "allFields_cliargsAddition.fsx",
+        lastUpdated = ReferenceObjects.date,
+        contentHash = ReferenceObjects.Hash.expected_hash_cliargsAddition,
+        metadata = ReferenceObjects.ValidationPackageMetadata.allFields_cliargsAddition
+    )
+
+    [<Fact>]
+    let ``CLI Arguments Addition - toValidationPackage with release date`` () =
+        let actual = allFields_cliargsAddition.toValidationPackage(ReferenceObjects.date)
+        Assert.Equivalent(actual, ReferenceObjects.ValidationPackage.allFields_cliargsAddition)
+
+    [<Fact>]
+    let ``CLI Arguments Addition - toPackageContentHash without direct file hash`` () =
+        let actual = allFields_cliargsAddition.toPackageContentHash()
+        Assert.Equivalent(ReferenceObjects.Hash.allFields_cliargsAddition, actual)
+
+    [<Fact>]
+    let ``CLI Arguments Addition - toPackageContentHash with direct file hash`` () =
+        let actual = allFields_cliargsAddition.toPackageContentHash(HashFileDirectly = true)
+        Assert.Equivalent(ReferenceObjects.Hash.allFields_cliargsAddition, actual)
+
     [<Fact>]
     let ``IdentityEquals returns true for package with same version (no suffixes)`` () =
         Assert.True(
@@ -175,3 +199,25 @@ module OntologyAnnotation =
     let ``AsIndexType with all fields on collection`` () =
         let actual = [|ReferenceObjects.OntologyAnnotation.allFieldsClient|].AsIndexType()
         Assert.Equivalent(actual, [|ReferenceObjects.OntologyAnnotation.allFieldsClient|])
+
+module CLIArgument =
+
+    [<Fact>]
+    let ``AsIndexType with mandatory fields`` () =
+        let actual = ReferenceObjects.CLIArgument.mandatoryFieldsClient.AsIndexType()
+        Assert.Equivalent(actual, ReferenceObjects.CLIArgument.mandatoryFieldsClient)
+
+    [<Fact>]
+    let ``AsIndexType with all fields`` () =
+        let actual = ReferenceObjects.CLIArgument.allFieldsClient.AsIndexType()
+        Assert.Equivalent(actual, ReferenceObjects.CLIArgument.allFieldsClient)
+
+    [<Fact>]
+    let ``AsIndexType with mandatory fields on collection`` () =
+        let actual = [|ReferenceObjects.CLIArgument.mandatoryFieldsClient|].AsIndexType()
+        Assert.Equivalent(actual, [|ReferenceObjects.CLIArgument.mandatoryFieldsClient|])
+
+    [<Fact>]
+    let ``AsIndexType with all fields on collection`` () =
+        let actual = [|ReferenceObjects.CLIArgument.allFieldsClient|].AsIndexType()
+        Assert.Equivalent(actual, [|ReferenceObjects.CLIArgument.allFieldsClient|])

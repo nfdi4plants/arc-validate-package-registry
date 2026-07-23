@@ -120,9 +120,10 @@ has no correctly formatted Python frontmatter."""
         | FSharpFrontmatter -> FSharp.extractFromString str
         | PythonFrontmatter -> Python.extractFromString str
 
-    let yamlDeserializer() = 
+    let yamlDeserializer() =
         DeserializerBuilder()
             .WithNamingConvention(NamingConventions.PascalCaseNamingConvention.Instance)
+            .IgnoreUnmatchedProperties() // forward-compat: tolerate frontmatter keys unknown to this version (e.g. fields added in newer releases)
             .Build()
 
     type ValidationPackageMetadata with

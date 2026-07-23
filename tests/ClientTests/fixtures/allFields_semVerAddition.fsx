@@ -2,7 +2,7 @@
 ---
 Name: name
 Summary: summary
-Description = description
+Description: description
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0

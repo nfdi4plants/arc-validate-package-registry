@@ -56,13 +56,13 @@ module Hash =
         module CommentFrontmatter =
             
             let validMandatoryFrontmatter = "2A29D85A29D908C7DE214D56119DE207"
-            let validFullFrontmatter = "E2BE9000A07122842FC805530DDC9FDA"
+            let validFullFrontmatter = "934D42E108F282C71DF23D21A36B3348"
             let invalidMissingMandatoryFrontmatter = "4331EE804414463D7E6DE9B8B6A3D49C"
 
         module BindingFrontmatter =
             
             let validMandatoryFrontmatter = "FC9558E6681A4114794BA912925FC283"
-            let validFullFrontmatter = "93B48B7357D19EC9F78A6F578A47CBEC"
+            let validFullFrontmatter = "A2A9320C44C9DD0959D3FC7F34A5D5EC"
             let invalidMissingMandatoryFrontmatter = "94C704CFD2538A819CC2C0FFA406A355"
 
 module BinaryContent =
@@ -162,7 +162,18 @@ module OntologyAnnotation =
         TermAccessionNumber = "TAN"
     )
 
-module ValidationPackageMetadata = 
+module CLIArgument =
+
+    let mandatoryFields = CLIArgument(Flags = [| "-i" |])
+
+    let allFields =
+        CLIArgument(
+            Flags = [| "-i"; "--input" |],
+            Description = "Input ARC path",
+            Example = "./my-arc"
+        )
+
+module ValidationPackageMetadata =
     
     let mandatoryFields = ValidationPackageMetadata( 
         Name = "name",
@@ -188,7 +199,11 @@ module ValidationPackageMetadata =
         Authors = [|Author.allFields|],
         Tags = [|OntologyAnnotation.allFields|],
         ReleaseNotes = "releasenotes",
-        CQCHookEndpoint = "hookendpoint"
+        CQCHookEndpoint = "hookendpoint",
+        CLIArguments = [|
+            CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
+            CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
+        |]
     )
 
 module Frontmatter = 
@@ -257,6 +272,17 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
+CLIArguments:
+  - Flags:
+      - -i
+      - --input
+    Description: Input ARC path
+    Example: ./my-arc
+  - Flags:
+      - -v
+      - --verbose
+    Description: Enable verbose logging
+    Example: enabled
 ---
 *)"""                                                                         .ReplaceLineEndings("\n")
 
@@ -292,6 +318,17 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
+CLIArguments:
+  - Flags:
+      - -i
+      - --input
+    Description: Input ARC path
+    Example: ./my-arc
+  - Flags:
+      - -v
+      - --verbose
+    Description: Enable verbose logging
+    Example: enabled
 """                                                                         .ReplaceLineEndings("\n")
 
             let invalidStartFrontmatter = """(
@@ -406,6 +443,17 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
+CLIArguments:
+  - Flags:
+      - -i
+      - --input
+    Description: Input ARC path
+    Example: ./my-arc
+  - Flags:
+      - -v
+      - --verbose
+    Description: Enable verbose logging
+    Example: enabled
 ---
 *)\"\"\""                                                                         .ReplaceLineEndings("\n")
 
@@ -441,6 +489,17 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
+CLIArguments:
+  - Flags:
+      - -i
+      - --input
+    Description: Input ARC path
+    Example: ./my-arc
+  - Flags:
+      - -v
+      - --verbose
+    Description: Enable verbose logging
+    Example: enabled
 """                                                                         .ReplaceLineEndings("\n")
 
             let invalidStartFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"
@@ -573,10 +632,14 @@ It does it very fast, it does it very swell.
   - does the thing
   - does it well
 """.ReplaceLineEndings("\n"),
-                CQCHookEndpoint = "https://hook.com"
+                CQCHookEndpoint = "https://hook.com",
+                CLIArguments = [|
+                    CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
+                    CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
+                |]
             )
 
-        let invalidMissingMandatoryFrontmatter = 
+        let invalidMissingMandatoryFrontmatter =
                 ValidationPackageMetadata(
                     Name = "invalid",
                     MajorVersion = -1,
@@ -644,7 +707,11 @@ It does it very fast, it does it very swell.
   - does it well
 """.ReplaceLineEndings("\n"),
                 CQCHookEndpoint = "https://hook.com",
-                ProgrammingLanguage = "Python"
+                ProgrammingLanguage = "Python",
+                CLIArguments = [|
+                    CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
+                    CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
+                |]
             )
 
         let invalidMissingMandatoryFrontmatter = 

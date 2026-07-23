@@ -99,7 +99,19 @@ namespace AVPRClient
                         };
                     })
                     .ToList(),
-                CQCHookEndpoint = indexedPackage.Metadata.CQCHookEndpoint
+                CQCHookEndpoint = indexedPackage.Metadata.CQCHookEndpoint,
+                CLIArguments =
+                    indexedPackage.Metadata.CLIArguments
+                    .Select(cliArgument =>
+                    {
+                        return new AVPRClient.CLIArgument
+                        {
+                            Flags = cliArgument.Flags.ToList(),
+                            Description = cliArgument.Description,
+                            Example = cliArgument.Example
+                        };
+                    })
+                    .ToList()
             };
         }
 
@@ -187,6 +199,27 @@ namespace AVPRClient
                 .ToArray();
         }
 
+        public static AVPRIndex.Domain.CLIArgument AsIndexType(
+            this CLIArgument cliArgument
+        )
+        {
+            return new AVPRIndex.Domain.CLIArgument
+            {
+                Flags = (cliArgument.Flags ?? new List<string>()).ToArray(),
+                Description = cliArgument.Description,
+                Example = cliArgument.Example
+            };
+        }
+
+        public static AVPRIndex.Domain.CLIArgument[] AsIndexType(
+            this ICollection<CLIArgument> cliArguments
+        )
+        {
+            return cliArguments
+                .Select(cliArgument => cliArgument.AsIndexType())
+                .ToArray();
+        }
+
         public static AVPRIndex.Domain.ValidationPackageMetadata toValidationPackageMetadata(
             this AVPRClient.ValidationPackage validationPackage
         )
@@ -205,7 +238,8 @@ namespace AVPRClient
                 Authors: validationPackage.Authors.AsIndexType(),
                 Tags: validationPackage.Tags.AsIndexType(),
                 ReleaseNotes: validationPackage.ReleaseNotes,
-                CQCHookEndpoint: validationPackage.CQCHookEndpoint
+                CQCHookEndpoint: validationPackage.CQCHookEndpoint,
+                CLIArguments: (validationPackage.CLIArguments ?? new List<CLIArgument>()).AsIndexType()
             );
         }
     }

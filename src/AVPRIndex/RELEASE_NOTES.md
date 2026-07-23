@@ -1,3 +1,8 @@
+## v0.5.0
+
+- Add optional `CLIArguments` metadata field (declares the command-line arguments a package accepts: `Flags`, `Description`, `Example`)
+- Ignore unmatched frontmatter properties on deserialization (forward-compat for fields added in newer releases)
+
 ## v0.4.0
 
 - Add support for python package frontmatter

@@ -48,8 +48,28 @@ module OntologyAnnotation =
         TermAccessionNumber = "TAN"
     )
 
-module ValidationPackageMetadata = 
-    
+module CLIArgument =
+
+    let mandatoryFieldsClient = AVPRClient.CLIArgument(Flags = ResizeArray [ "-i" ])
+
+    let allFieldsClient =
+        AVPRClient.CLIArgument(
+            Flags = ResizeArray [ "-i"; "--input" ],
+            Description = "Input ARC path",
+            Example = "./my-arc"
+        )
+
+    let mandatoryFieldsIndex = AVPRIndex.Domain.CLIArgument(Flags = [| "-i" |])
+
+    let allFieldsIndex =
+        AVPRIndex.Domain.CLIArgument(
+            Flags = [| "-i"; "--input" |],
+            Description = "Input ARC path",
+            Example = "./my-arc"
+        )
+
+module ValidationPackageMetadata =
+
     let mandatoryFields = ValidationPackageMetadata(
         Name = "name",
         Summary = "summary" ,
@@ -72,7 +92,8 @@ module ValidationPackageMetadata =
         Authors = [|Author.allFieldsIndex|],
         Tags = [|OntologyAnnotation.allFieldsIndex|],
         ReleaseNotes = "releasenotes",
-        CQCHookEndpoint = "hookendpoint"
+        CQCHookEndpoint = "hookendpoint",
+        CLIArguments = [| |]
     )
 
     let allFields_semVerAddition = ValidationPackageMetadata(
@@ -89,12 +110,31 @@ module ValidationPackageMetadata =
         Authors = [|Author.allFieldsIndex|],
         Tags = [|OntologyAnnotation.allFieldsIndex|],
         ReleaseNotes = "releasenotes",
-        CQCHookEndpoint = "hookendpoint"
+        CQCHookEndpoint = "hookendpoint",
+        CLIArguments = [| |]
+    )
+
+    let allFields_cliargsAddition = ValidationPackageMetadata(
+        Name = "name",
+        Summary = "summary" ,
+        Description = "description" ,
+        MajorVersion = 1,
+        MinorVersion = 0,
+        PatchVersion = 0,
+        ProgrammingLanguage = "FSharp",
+        PreReleaseVersionSuffix = "use",
+        BuildMetadataVersionSuffix = "suffixes",
+        Publish = true,
+        Authors = [|Author.allFieldsIndex|],
+        Tags = [|OntologyAnnotation.allFieldsIndex|],
+        ReleaseNotes = "releasenotes",
+        CQCHookEndpoint = "hookendpoint",
+        CLIArguments = [| CLIArgument.allFieldsIndex |]
     )
 
 module Hash =
 
-    let expected_hash_cqcHookAddition = "C5BD4262301D27CF667106D9024BD721"
+    let expected_hash_cqcHookAddition = "D76692DF8B591B0C63789C638190C6BF"
 
     let allFields_cqcHookAddition = AVPRClient.PackageContentHash(
         PackageName = "name",
@@ -106,7 +146,7 @@ module Hash =
         Hash = expected_hash_cqcHookAddition
     )
 
-    let expected_hash_semVerAddition = "E3D3C259C4B3F54783283735B20F8C23"
+    let expected_hash_semVerAddition = "AA408D5E4ABDCD52979DC7AB1D289E49"
 
     let allFields_semVerAddition = AVPRClient.PackageContentHash(
         PackageName = "name",
@@ -118,6 +158,18 @@ module Hash =
         Hash = expected_hash_semVerAddition
     )
 
+    let expected_hash_cliargsAddition = "5142A8191A58896DF0ACF91B6BAE0B7F"
+
+    let allFields_cliargsAddition = AVPRClient.PackageContentHash(
+        PackageName = "name",
+        PackageMajorVersion = 1,
+        PackageMinorVersion = 0,
+        PackagePatchVersion = 0,
+        PackagePreReleaseVersionSuffix = "use",
+        PackageBuildMetadataVersionSuffix = "suffixes",
+        Hash = expected_hash_cliargsAddition
+    )
+
 module BinaryContent =
 
     open System.IO
@@ -126,7 +178,7 @@ module BinaryContent =
 ---
 Name: name
 Summary: summary
-Description = description
+Description: description
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
@@ -153,7 +205,7 @@ printfn \"yes\""                                    .ReplaceLineEndings("\n")
 ---
 Name: name
 Summary: summary
-Description = description
+Description: description
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
@@ -178,6 +230,41 @@ printfn \"yes\""                                    .ReplaceLineEndings("\n")
 
     let expected_binary_content_semVerAddition = expected_content_semVerAddition |> System.Text.Encoding.UTF8.GetBytes
 
+    let expected_content_cliargsAddition = "(*
+---
+Name: name
+Summary: summary
+Description: description
+CLIArguments:
+  - Flags:
+      - -i
+      - --input
+    Description: Input ARC path
+    Example: ./my-arc
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+PreReleaseVersionSuffix: use
+BuildMetadataVersionSuffix: suffixes
+Publish: true
+Authors:
+  - FullName: test
+    Email: test@test.test
+    Affiliation: testaffiliation
+    AffiliationLink: test.com
+Tags:
+  - Name: test
+    TermSourceREF: REF
+    TermAccessionNumber: TAN
+ReleaseNotes: releasenotes
+CQCHookEndpoint: hookendpoint
+---
+*)
+
+printfn \"yes\""                                    .ReplaceLineEndings("\n")
+
+    let expected_binary_content_cliargsAddition = expected_content_cliargsAddition |> System.Text.Encoding.UTF8.GetBytes
+
 module ValidationPackage =
 
     open System.IO
@@ -197,7 +284,8 @@ module ValidationPackage =
         Authors = [|Author.allFieldsClient|],
         Tags = [|OntologyAnnotation.allFieldsClient|],
         ReleaseNotes = "releasenotes",
-        CQCHookEndpoint = "hookendpoint"
+        CQCHookEndpoint = "hookendpoint",
+        CLIArguments = ResizeArray [ ]
     )
 
     let allFields_semVerAddition = AVPRClient.ValidationPackage(
@@ -215,7 +303,27 @@ module ValidationPackage =
         Authors = [|Author.allFieldsClient|],
         Tags = [|OntologyAnnotation.allFieldsClient|],
         ReleaseNotes = "releasenotes",
-        CQCHookEndpoint = "hookendpoint"
+        CQCHookEndpoint = "hookendpoint",
+        CLIArguments = ResizeArray [ ]
+    )
+
+    let allFields_cliargsAddition = AVPRClient.ValidationPackage(
+        Name = "name",
+        Summary = "summary" ,
+        Description = "description" ,
+        MajorVersion = 1,
+        MinorVersion = 0,
+        PatchVersion = 0,
+        PreReleaseVersionSuffix = "use",
+        BuildMetadataVersionSuffix = "suffixes",
+        ProgrammingLanguage= "FSharp",
+        PackageContent = BinaryContent.expected_binary_content_cliargsAddition,
+        ReleaseDate = date,
+        Authors = [|Author.allFieldsClient|],
+        Tags = [|OntologyAnnotation.allFieldsClient|],
+        ReleaseNotes = "releasenotes",
+        CQCHookEndpoint = "hookendpoint",
+        CLIArguments = ResizeArray [ CLIArgument.allFieldsClient ]
     )
 
 module ValidationPackageIndex =
@@ -229,12 +337,17 @@ module ValidationPackageIndex =
         contentHash = "",
         metadata = AVPRIndex.Domain.ValidationPackageMetadata.create(
             name = "name",
+            summary = "summary" ,
+            description = "description" ,
             majorVersion = 1,
             minorVersion = 0,
             patchVersion = 0,
-            summary = "summary",
-            description = "description",
-            programmingLanguage = "FSharp"
+            programmingLanguage= "FSharp",
+            Authors = [|Author.allFieldsIndex|],
+            Tags = [|OntologyAnnotation.allFieldsIndex|],
+            ReleaseNotes = "releasenotes",
+            CQCHookEndpoint = "hookendpoint",
+            CLIArguments = [| |]
         )
     )
 
@@ -245,13 +358,41 @@ module ValidationPackageIndex =
         contentHash = "",
         metadata = AVPRIndex.Domain.ValidationPackageMetadata.create(
             name = "name",
+            summary = "summary" ,
+            description = "description" ,
             majorVersion = 1,
             minorVersion = 0,
             patchVersion = 0,
-            summary = "summary",
-            description = "description",
+            programmingLanguage= "FSharp",
             PreReleaseVersionSuffix = "use",
             BuildMetadataVersionSuffix = "suffixes",
-            programmingLanguage = "FSharp"
+            Authors = [|Author.allFieldsIndex|],
+            Tags = [|OntologyAnnotation.allFieldsIndex|],
+            ReleaseNotes = "releasenotes",
+            CQCHookEndpoint = "hookendpoint",
+            CLIArguments = [| |]
+        )
+    )
+
+    let allFields_cliargsAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
+        repoPath = "",
+        fileName = "",
+        lastUpdated = System.DateTime.Now,
+        contentHash = "",
+        metadata = AVPRIndex.Domain.ValidationPackageMetadata.create(
+            name = "name",
+            summary = "summary" ,
+            description = "description" ,
+            majorVersion = 1,
+            minorVersion = 0,
+            patchVersion = 0,
+            programmingLanguage= "FSharp",
+            PreReleaseVersionSuffix = "use",
+            BuildMetadataVersionSuffix = "suffixes",
+            Authors = [|Author.allFieldsIndex|],
+            Tags = [|OntologyAnnotation.allFieldsIndex|],
+            ReleaseNotes = "releasenotes",
+            CQCHookEndpoint = "hookendpoint",
+            CLIArguments = [|CLIArgument.allFieldsIndex|]
         )
     )

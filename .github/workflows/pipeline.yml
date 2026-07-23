@@ -2,7 +2,7 @@ name: "pipeline"
 
 on:
   push:
-    branches: ['main']
+    branches: ['main', 'dev']
 
   workflow_dispatch:
     inputs:
@@ -13,7 +13,7 @@ on:
         type: boolean
 
   pull_request:
-    branches: ['main']
+    branches: ['main', 'dev']
 
 jobs:   
   setup:
@@ -88,8 +88,8 @@ jobs:
         id: set-triggers
         run: |
           echo "trigger-build-and-test-projects=${{ steps.changed-files-yaml.outputs.tests_any_modified == 'true' || steps.changed-files-yaml.outputs.api_any_modified  == 'true' || steps.changed-files-yaml.outputs.client_any_modified == 'true'  || steps.changed-files-yaml.outputs.index_any_modified == 'true'}}" >> $GITHUB_OUTPUT
-          echo "trigger-release-index=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_modified_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
-          echo "trigger-release-client=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_modified_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "trigger-release-index=${{github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.index_all_modified_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
+          echo "trigger-release-client=${{github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.decide-on-dry-run.outputs.dry_run == 'false' && contains(steps.changed-files-yaml.outputs.client_all_modified_files, 'RELEASE_NOTES.md')}}" >> $GITHUB_OUTPUT
           echo "trigger-test-staging-area=${{steps.changed-files-yaml.outputs.packages_any_modified == 'true' && steps.decide-on-dry-run.outputs.dry_run == 'false'}}" >> $GITHUB_OUTPUT
           echo "trigger-release-api=${{github.event_name == 'push' && steps.decide-on-dry-run.outputs.dry_run == 'false' && steps.changed-files-yaml.outputs.api_any_modified == 'true' }}" >> $GITHUB_OUTPUT
           echo "$GITHUB_OUTPUT"

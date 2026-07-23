@@ -48,7 +48,8 @@ namespace PackageRegistryService.Data
                                 ReleaseNotes = i.Metadata.ReleaseNotes,
                                 Authors = i.Metadata.Authors,
                                 CQCHookEndpoint = i.Metadata.CQCHookEndpoint,
-                                ProgrammingLanguage = i.Metadata.ProgrammingLanguage
+                                ProgrammingLanguage = i.Metadata.ProgrammingLanguage,
+                                CLIArguments = i.Metadata.CLIArguments
                             };
                         });
 

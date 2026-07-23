@@ -28,6 +28,7 @@ Read more at [avpr.nfdi4plants.org/about](https://avpr.nfdi4plants.org/about)
     - [Objects](#objects)
       - [Author](#author)
       - [Tag](#tag)
+      - [CLIArgument](#cliargument)
 - [Development](#development)
   - [AVPRIndex and AVPRClient libraries](#avprindex-and-avprclient-libraries)
     - [Triggering a nuget release](#triggering-a-nuget-release)
@@ -35,13 +36,14 @@ Read more at [avpr.nfdi4plants.org/about](https://avpr.nfdi4plants.org/about)
     - [Triggering a image release](#triggering-a-image-release)
     - [OpenAPI endpoint documentation via Swagger UI](#openapi-endpoint-documentation-via-swagger-ui)
   - [Testing](#testing)
+    - [Testing metadata model changes](#testing-metadata-model-changes)
   - [Release packages to production](#release-packages-to-production)
 
 # General
 
 ## CI/CD pipeline
 
-This repo runs an [extensive CI/CD pipeline](.github/workflows/pipeline.yml) on every commit and PR on the `main` branch. The pipeline includes:
+This repo runs an [extensive CI/CD pipeline](.github/workflows/pipeline.yml) on every push and pull request targeting the `main` or `dev` branch. The pipeline includes:
 
 - tests and pre-publish checks for every package in the [staging area](#validation-package-staging-area).
 - a release pipeline for validation packages:
@@ -268,6 +270,7 @@ doSomeValidation ()
 | Tags | string[] | a list of tags with optional ontology annotations that describe the package. For more information about mandatory and optional fields in this object, see [Objects > Tag](#tag)  |
 | ReleaseNotes | string[] | a list of release notes for the package indicating changes from previous versions |
 | CQCHookEndpoint | string | an optional URL to a CQC Hook endpoint that can be used for continuous quality control (CQC) integration. If provided, this endpoint will be called with validation results after each package execution. |
+| CLIArguments | CLIArgument[] | a list of command line arguments the package accepts. Rendered on the package page under "Available Commands". For more information about the fields in this object, see [Objects > CLIArgument](#cliargument) |
 
 <details>
 <summary>Example: all fields</summary>
@@ -304,6 +307,17 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://some-url.xd
+CLIArguments:
+  - Flags:
+      - -i
+      - --input
+    Description: Path to the input ARC
+    Example: ./my-arc
+  - Flags:
+      - -v
+      - --verbose
+    Description: Enable verbose logging
+    Example: enabled
 ---
 *)
 let doSomeValidation () = ()
@@ -334,6 +348,16 @@ Tags can be any string with an optional ontology annotation from a controlled vo
 | Name | string | the name of the tag | yes |
 | TermSourceREF | string | Reference to a controlled vocabulary source | no |
 | TermAccessionNumber | string | Accession in the referenced controlled vocabulary source | no |
+
+#### CLIArgument
+
+A command line argument that the package accepts. Declared arguments are listed on the package page under an "Available Commands" section (the section is omitted when a package declares none). Declaring them here does not wire up parsing — the package script is still responsible for reading and acting on the arguments — but it documents the supported configuration for users and consuming tools.
+
+| Field | Type | Description | Mandatory |
+| --- | --- | --- | --- |
+| Flags | string[] | the accepted flag(s) for this argument. Multiple entries denote aliases for the same argument (e.g. `-i` and `--input`) | yes |
+| Description | string | a description of what the argument does | no |
+| Example | string | an example value for the argument | no |
 
 [🔼 Back to top](#table-of-contents)
 
@@ -384,7 +408,12 @@ Changes in e.g. ValidationPackage metadata need to be reflected at several point
 
 ### Triggering a image release
 
-Currently, any change in `src/PackageRegistryService` will trigger a release to the production registry. This is done by the CI/CD pipeline, which builds and pushes a docker image to the registry on every relevant commit to the `main` branch.
+Any change under `src/PackageRegistryService` on a push to a release branch builds and pushes a docker image to `ghcr.io/nfdi4plants/avpr`, tagged by branch name (via `docker/metadata-action`):
+
+- pushes to `main` publish `ghcr.io/nfdi4plants/avpr:main`, deployed to the **production** instance at [avpr.nfdi4plants.org](https://avpr.nfdi4plants.org).
+- pushes to `dev` publish `ghcr.io/nfdi4plants/avpr:dev`, deployed to the **development** instance.
+
+`dev` is a long-lived integration branch for trying changes on the development instance before they are merged to `main`. NuGet releases of the `AVPRIndex`/`AVPRClient` libraries are gated to `main` only, so a `dev` push produces the `:dev` image and nothing else. The development instance is deployed from the `:dev` tag; its hosting/deployment lives outside this repository.
 
 This will move to a versioned release process in the future.
 
@@ -400,6 +429,28 @@ There are 2 solutions that contain test projects:
 - `PackageStagingArea.sln` contains the tests and sanity checks for all packages in the staging area.
 
 Run the tests with `dotnet test` in the respective test project folders or on the respective solution.
+
+### Testing metadata model changes
+
+A validation-package metadata field crosses the index model, frontmatter parser, generated API client, registry service, and sometimes the website. Test a new or changed field at each representation it affects:
+
+1. **Domain construction and value behavior:** add mandatory/default and all-fields reference values in `tests/IndexTests/ReferenceObjects.fs`, then cover the type's factory and equality-relevant values in `tests/IndexTests/DomainTests.fs`. Include the field in both the mandatory/default and all-fields `ValidationPackageMetadata` cases as appropriate.
+2. **Frontmatter parsing:** update the full-frontmatter source and extracted-YAML reference strings, expected metadata objects, and all relevant fixtures under `tests/IndexTests/fixtures/Frontmatter/`. The canonical matrix contains comment and binding frontmatter for both F# and Python. Keep no-field cases to prove that an optional addition remains backwards compatible; add a focused malformed, missing-field, or unknown-key case when parser behavior changes.
+3. **Hashes and package indexes:** changing fixture bytes changes content hashes. Recompute the affected MD5 reference constants and update the expected `ValidationPackageIndex` values in `ValidationPackageIndexTests.fs`; do not copy an old hash forward. Check both parsed metadata and the content hash.
+4. **Generated-client round trips:** regenerate `src/AVPRClient/AVPRClient.cs`, add equivalent client and index reference objects in `tests/ClientTests/ReferenceObjects.fs`, and exercise the mappings in `TypeExtensionsTests.fs`. Cover index-to-client and client-to-index conversion, including nested collections and null/empty handling. Add a dedicated fixture under `tests/ClientTests/fixtures/` when serialized package content is part of the behavior, while retaining older fixtures without the optional field.
+5. **Staging compatibility:** run the staging solution whenever the new syntax can occur in a submitted package. Prefer the focused index fixtures above for parser behavior. Add a new semantically versioned package under `StagingArea/` only when the real staging layout or sanity checker itself needs coverage; never alter an already published package version, and read a package before invoking it.
+6. **Service boundaries:** build the main solution to catch API schema, Entity Framework ownership, seeding, handler, and generated-client drift. For database or rendered-page behavior not covered by an existing automated test, run the local stack, apply the migration, inspect old and newly seeded rows, and check both the present and absent rendering cases. Add a focused API/component test when introducing reusable service behavior rather than relying on the placeholder API test.
+
+Run focused suites while iterating, followed by both affected solutions:
+
+```shell
+dotnet test tests/IndexTests/IndexTests.fsproj --configuration Release
+dotnet test tests/ClientTests/ClientTests.fsproj --configuration Release
+dotnet build arc-validate-package-registry.sln --configuration Release
+dotnet test arc-validate-package-registry.sln --configuration Release --no-build
+dotnet build PackageStagingArea.sln --configuration Release
+dotnet test PackageStagingArea.sln --configuration Release --no-build
+```
 
 [🔼 Back to top](#table-of-contents)
 

@@ -99,9 +99,14 @@ namespace PackageRegistryService.Models
         public ICollection<AVPRIndex.Domain.Author> Authors { get; set; } = Array.Empty<AVPRIndex.Domain.Author>().ToList();// https://www.learnentityframeworkcore.com/relationships#navigation-properties
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string ProgrammingLanguage { get; set; } = "";
+
+        /// <summary>
+        /// The command-line arguments this validation package accepts.
+        /// </summary>
+        public ICollection<AVPRIndex.Domain.CLIArgument> CLIArguments { get; set; } = Array.Empty<AVPRIndex.Domain.CLIArgument>().ToList();
 
         /// <summary>
         /// 

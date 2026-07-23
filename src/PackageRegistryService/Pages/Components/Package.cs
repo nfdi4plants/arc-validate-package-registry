@@ -17,6 +17,7 @@ namespace PackageRegistryService.Pages.Components
             string packageProgrammingLanguage,
             string[] packageTags,
             Author[] packageAuthors,
+            CLIArgument[] packageCLIArguments,
             string versionTable,
             int downloads
         )
@@ -42,11 +43,12 @@ namespace PackageRegistryService.Pages.Components
     version: {packageVersion}</code></pre>
 </section>
 <hr />
-<section> 
+<section>
   <h2>Description</h2>
   {PackageDescription.Render(packageDescription)}
 </section>
 <hr />
+{PackageCLIArguments.Render(packageCLIArguments)}
 <section>
   <details>
     <summary role=""button"" class=""primary"">Release notes</summary>

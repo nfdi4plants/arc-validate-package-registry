@@ -81,18 +81,34 @@ Validation package metadata changes commonly require coordinated edits in:
 
 - `src/AVPRIndex/Domain.fs`
 - `src/PackageRegistryService/Models/ValidationPackage.cs`
+- `src/PackageRegistryService/Models/ValidationPackageDb.cs` (register owned-JSON collection fields with `OwnsMany(...).ToJson()`)
 - `src/PackageRegistryService/Data/DataInitializer.cs`
 - Entity Framework migrations under `src/PackageRegistryService/Migrations/`
-- generated client code or its generation inputs in `src/AVPRClient/`
+- generated client code in `src/AVPRClient/AVPRClient.cs` **and** the index↔client mapping in `src/AVPRClient/Extensions.cs` (easy to miss)
+- website rendering under `src/PackageRegistryService/Pages/Components/` when a field should be shown
 - frontmatter/metadata tests and README documentation
 
 Search for every use of the changed field before editing. Do not hand-author a migration unless the existing migration workflow requires it.
+
+## Test coverage for metadata model changes
+
+Trace a metadata field through every representation it affects; a green build alone does not prove parsing or mapping behavior.
+
+- In `tests/IndexTests/ReferenceObjects.fs`, maintain mandatory/default and all-fields domain objects, full source frontmatter, extracted YAML, expected parsed metadata, and content-hash constants.
+- Exercise the field's factory/default/equality behavior in `DomainTests.fs`. In `MetadataTests.fs` and the fixtures under `tests/IndexTests/fixtures/Frontmatter/`, cover the applicable comment/binding and F#/Python combinations. Preserve a no-field case for optional-field backwards compatibility, and add focused negative or unknown-key cases when parser policy changes.
+- Fixture byte changes require recomputing the corresponding MD5 values and updating expected packages in `ValidationPackageIndexTests.fs`. Verify both metadata and hashes.
+- In `tests/ClientTests/`, keep equivalent index and generated-client reference objects. Test index-to-client and client-to-index mappings, nested collection conversion, and null/empty behavior in `TypeExtensionsTests.fs`. Add a dedicated serialized-content fixture when needed, but retain older fixtures without a new optional field.
+- Run `PackageStagingArea.sln` when submitted-package syntax or sanity checks are affected. Prefer small index/staging-test fixtures; add a real staged package only when the real layout must be exercised, always as a new semantic version and only after reading it.
+- The API test project is currently a placeholder. For service behavior, add focused API/component tests where practical; otherwise explicitly verify generated OpenAPI/client changes, EF migrations and backfills against Postgres, seeded JSON persistence, and both present/absent website rendering cases.
+
+Use focused index/client tests while iterating, then run the main solution and, when package syntax is affected, the staging solution. Recompute expected values from actual fixture content instead of weakening assertions.
 
 ## CI and release safety
 
 - Changes under `StagingArea/**` trigger the staging solution on Windows with `uv` installed.
 - Changes under `tests/**` or the main `src` projects can trigger the main solution build/test job.
-- On pushes to `main`, release-note changes can publish NuGet packages and service changes can publish a container image.
+- On pushes to `main`, release-note changes can publish NuGet packages and service changes can publish the production container image (`ghcr.io/nfdi4plants/avpr:main`).
+- `dev` is a long-lived integration branch: pushes there publish a separate `ghcr.io/nfdi4plants/avpr:dev` image for the development instance, but NuGet releases and production package publication are gated to `main` only.
 - A staged package marked for publication can be pushed to the production registry after checks pass.
 - Workflow actions should remain pinned to deliberate versions/commits. Preserve least-privilege permissions and never print secrets.
 

@@ -23,6 +23,10 @@
             .OwnsMany(v => v.Tags, t =>
             {
                  t.ToJson();
+            })
+            .OwnsMany(v => v.CLIArguments, c =>
+            {
+                c.ToJson();
             });
         }
 
