@@ -1,0 +1,19 @@
+{
+  "runtime": "Net100",
+  "defaultVariables": "OpenApiUrl=http://localhost:5099/swagger/v1/swagger.json,ClientOutput=AVPRClient.cs",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "$(OpenApiUrl)"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "Client",
+      "operationGenerationMode": "SingleClientFromOperationId",
+      "namespace": "AVPRClient",
+      "jsonLibrary": "NewtonsoftJson",
+      "output": "$(ClientOutput)",
+      "newLineBehavior": "LF"
+    }
+  }
+}
