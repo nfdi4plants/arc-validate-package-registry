@@ -7,6 +7,14 @@ namespace PackageRegistryService.Pages.Components
     {
         private static string Escape(string? value) => HtmlEncoder.Default.Encode(value ?? "");
 
+        private static string RenderType(CommandInputType inputType)
+        {
+            var cwlType = CommandInputType.toCwlString(inputType);
+            return inputType.IsNullable
+                ? $"{cwlType[..^1]} (optional)"
+                : cwlType;
+        }
+
         private static string RenderDocumentation(CommandInputParameter input)
         {
             var label = Escape(input.Label);
@@ -58,7 +66,7 @@ namespace PackageRegistryService.Pages.Components
                 {
                     return $@"    <tr>
       <td><code>{Escape(input.Id)}</code></td>
-      <td><code>{Escape(CommandInputType.toCwlString(input.Type))}</code></td>
+      <td><code>{Escape(RenderType(input.Type))}</code></td>
       <td>{RenderBinding(input.InputBinding)}</td>
       <td>{RenderDocumentation(input)}</td>
     </tr>";

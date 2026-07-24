@@ -30,6 +30,16 @@ public class PackagePageTests
             },
             new CommandInputParameter
             {
+                Id = "verbose",
+                Type = new CommandInputType
+                {
+                    PrimitiveType = CwlPrimitive.Boolean,
+                    IsNullable = true
+                },
+                InputBinding = new CommandInputBinding { Prefix = "--verbose" }
+            },
+            new CommandInputParameter
+            {
                 Id = "threads",
                 Type = new CommandInputType
                 {
@@ -55,7 +65,10 @@ public class PackagePageTests
         Assert.Contains("position: 2; separate: false", html);
         Assert.Contains("<strong>Output &amp; file</strong>", html);
         Assert.Contains("Write &lt;script&gt;alert(&#x27;x&#x27;)&lt;/script&gt; here", html);
-        Assert.Contains("<code>int?</code>", html);
+        Assert.Contains("<code>boolean (optional)</code>", html);
+        Assert.Contains("<code>int (optional)</code>", html);
+        Assert.DoesNotContain("<code>boolean?</code>", html);
+        Assert.DoesNotContain("<code>int?</code>", html);
         Assert.Contains("<em>positional</em>", html);
         Assert.DoesNotContain("<script>alert", html);
     }
