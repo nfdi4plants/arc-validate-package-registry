@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.Text
 open System.Text.Json
+open System.Text.Json.Serialization
 open System.Security.Cryptography
 
 [<AutoOpen>]
@@ -170,6 +171,7 @@ module Domain =
         | Double = 4
         | String = 5
 
+    [<JsonConverter(typeof<CommandInputTypeJsonConverter>)>]
     type CommandInputType() =
 
         let mutable primitiveType = CwlPrimitive.String
@@ -210,10 +212,79 @@ module Domain =
             IsNullable |> Option.iter (fun x -> tmp.IsNullable <- x)
             tmp
 
+        static member fromCwlString (value: string) =
+            if isNull value then
+                nullArg "value"
+
+            let isNullable = value.EndsWith("?", StringComparison.Ordinal)
+            let primitiveName =
+                if isNullable then value.Substring(0, value.Length - 1)
+                else value
+
+            let primitiveType =
+                match primitiveName with
+                | "boolean" -> CwlPrimitive.Boolean
+                | "int" -> CwlPrimitive.Int
+                | "long" -> CwlPrimitive.Long
+                | "float" -> CwlPrimitive.Float
+                | "double" -> CwlPrimitive.Double
+                | "string" -> CwlPrimitive.String
+                | _ -> invalidArg "value" $"unsupported CWL command input type: {value}"
+
+            CommandInputType.create(primitiveType, isNullable)
+
+        static member toCwlString (inputType: CommandInputType) =
+            if Object.ReferenceEquals(inputType, null) then
+                nullArg "inputType"
+
+            let primitiveName =
+                match inputType.PrimitiveType with
+                | CwlPrimitive.Boolean -> "boolean"
+                | CwlPrimitive.Int -> "int"
+                | CwlPrimitive.Long -> "long"
+                | CwlPrimitive.Float -> "float"
+                | CwlPrimitive.Double -> "double"
+                | CwlPrimitive.String -> "string"
+                | value -> invalidArg "inputType" $"unsupported CWL primitive type: {value}"
+
+            if inputType.IsNullable then $"{primitiveName}?"
+            else primitiveName
+
+    and CommandInputTypeJsonConverter() =
+        inherit JsonConverter<CommandInputType>()
+
+        override _.HandleNull = true
+
+        override _.Read(reader: byref<Utf8JsonReader>, _typeToConvert: Type, _options: JsonSerializerOptions) =
+            if reader.TokenType <> JsonTokenType.String then
+                raise (JsonException("CWL command input type must be one supported scalar type string"))
+
+            let value = reader.GetString()
+
+            try
+                CommandInputType.fromCwlString(value)
+            with
+            | :? ArgumentException ->
+                raise (JsonException($"unsupported CWL command input type: {value}"))
+
+        override _.Write(writer: Utf8JsonWriter, value: CommandInputType, _options: JsonSerializerOptions) =
+            try
+                value
+                |> CommandInputType.toCwlString
+                |> writer.WriteStringValue
+            with
+            | :? ArgumentException as error ->
+                raise (JsonException(error.Message, error))
+
 
     type CommandInputBinding() =
+        [<JsonPropertyName("position")>]
         member val Position: int = 0 with get,set
+
+        [<JsonPropertyName("prefix")>]
         member val Prefix: string = "" with get,set
+
+        [<JsonPropertyName("separate")>]
         member val Separate: bool = true with get,set
 
         override this.GetHashCode() =
@@ -249,10 +320,19 @@ module Domain =
             tmp
 
     type CommandInputParameter() =
+        [<JsonPropertyName("id"); JsonRequired>]
         member val Id: string = "" with get,set
+
+        [<JsonPropertyName("type"); JsonRequired>]
         member val Type: CommandInputType = (CommandInputType.create(CwlPrimitive.String, false)) with get,set
+
+        [<JsonPropertyName("label")>]
         member val Label: string = "" with get,set
+
+        [<JsonPropertyName("doc")>]
         member val Doc: string = "" with get,set
+
+        [<JsonPropertyName("inputBinding"); JsonRequired>]
         member val InputBinding = CommandInputBinding() with get,set
 
         override this.GetHashCode() =
@@ -349,6 +429,8 @@ module Domain =
         member val Tags: OntologyAnnotation [] = Array.empty<OntologyAnnotation> with get,set
         member val ReleaseNotes = "" with get,set
         member val CQCHookEndpoint = "" with get,set
+
+        [<JsonPropertyName("Inputs")>]
         member val Inputs: CommandInputParameter [] = Array.empty<CommandInputParameter> with get,set
 
         override this.GetHashCode() =

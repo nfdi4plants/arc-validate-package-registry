@@ -19,36 +19,18 @@ module Frontmatter =
             emitter.Emit(Scalar(value))
 
         let parseType (value: string) =
-            let isNullable = value.EndsWith("?", StringComparison.Ordinal)
-            let primitiveName =
-                if isNullable then value.Substring(0, value.Length - 1)
-                else value
-
-            let primitiveType =
-                match primitiveName with
-                | "boolean" -> CwlPrimitive.Boolean
-                | "int" -> CwlPrimitive.Int
-                | "long" -> CwlPrimitive.Long
-                | "float" -> CwlPrimitive.Float
-                | "double" -> CwlPrimitive.Double
-                | "string" -> CwlPrimitive.String
-                | _ -> raise (YamlException($"unsupported CWL command input type: {value}"))
-
-            CommandInputType.create(primitiveType, isNullable)
+            try
+                CommandInputType.fromCwlString(value)
+            with
+            | :? ArgumentException ->
+                raise (YamlException($"unsupported CWL command input type: {value}"))
 
         let formatType (inputType: CommandInputType) =
-            let primitiveName =
-                match inputType.PrimitiveType with
-                | CwlPrimitive.Boolean -> "boolean"
-                | CwlPrimitive.Int -> "int"
-                | CwlPrimitive.Long -> "long"
-                | CwlPrimitive.Float -> "float"
-                | CwlPrimitive.Double -> "double"
-                | CwlPrimitive.String -> "string"
-                | value -> raise (YamlException($"unsupported CWL primitive type: {value}"))
-
-            if inputType.IsNullable then $"{primitiveName}?"
-            else primitiveName
+            try
+                CommandInputType.toCwlString(inputType)
+            with
+            | :? ArgumentException as error ->
+                raise (YamlException(error.Message, error))
 
         let readScalar (parser: IParser) =
             parser.Consume<Scalar>().Value

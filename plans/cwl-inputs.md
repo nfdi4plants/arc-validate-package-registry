@@ -12,6 +12,7 @@ complete; the registry service and persistence slice is next.
   `ValidationPackageMetadata.Inputs`)
 - [x] YamlDotNet converters and registration for scalar types and nested CWL
   mappings
+- [x] shared CWL scalar conversion and the System.Text.Json wire contract
 - [x] Index domain/frontmatter fixtures, reference objects, hashes, and tests
 - [ ] Registry service, EF JSON mapping, and migration
 - [ ] Website rendering
