@@ -5,8 +5,8 @@
 Implementation status as of 2026-07-24:
 
 **Current stage: implementation.** The index/domain/frontmatter,
-registry-service/persistence, OpenAPI, and generated-client slices are complete;
-website rendering is next.
+registry-service/persistence, OpenAPI, generated-client, and website-rendering
+slices are complete; the staging package and documentation are next.
 
 - [x] `AVPRIndex` domain model (`CwlPrimitive`, `CommandInputType`,
   `CommandInputBinding`, `CommandInputParameter`, and
@@ -16,7 +16,7 @@ website rendering is next.
 - [x] shared CWL scalar conversion and the System.Text.Json wire contract
 - [x] Index domain/frontmatter fixtures, reference objects, hashes, and tests
 - [x] Registry service, EF JSON mapping, migration, and focused model/wire tests
-- [ ] Website rendering
+- [x] Website rendering
 - [x] generated client and bidirectional mappings
 - [ ] staging package, release notes, README, and `AGENTS.md`
 
@@ -649,7 +649,7 @@ Package-specific aliases are intentionally unavailable through the structured co
 4. **Completed:** replace the service model, EF JSON ownership, seeding, and
    unshipped migration; add focused assertions for the internal database shape
    and the distinct public CWL scalar JSON contract.
-5. Update website rendering.
+5. **Completed:** update website rendering.
 6. **Completed:** add the converter-aware OpenAPI schema, regenerate the client,
    and update both `CommandInputType` mapping directions.
 7. **Client fixtures/tests completed; staging package pending:** convert client

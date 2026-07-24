@@ -43,6 +43,7 @@ namespace PackageRegistryService.Pages.Components
     version: {packageVersion}</code></pre>
 </section>
 <hr />
+{PackageInputs.Render(packageInputs)}
 <section>
   <h2>Description</h2>
   {PackageDescription.Render(packageDescription)}
