@@ -56,13 +56,13 @@ module Hash =
         module CommentFrontmatter =
             
             let validMandatoryFrontmatter = "2A29D85A29D908C7DE214D56119DE207"
-            let validFullFrontmatter = "934D42E108F282C71DF23D21A36B3348"
+            let validFullFrontmatter = "9110F8BE0A42BFE2DE1937566D356144"
             let invalidMissingMandatoryFrontmatter = "4331EE804414463D7E6DE9B8B6A3D49C"
 
         module BindingFrontmatter =
             
             let validMandatoryFrontmatter = "FC9558E6681A4114794BA912925FC283"
-            let validFullFrontmatter = "A2A9320C44C9DD0959D3FC7F34A5D5EC"
+            let validFullFrontmatter = "A371BF34F8F4CCA7DBBB8C2F500D821E"
             let invalidMissingMandatoryFrontmatter = "94C704CFD2538A819CC2C0FFA406A355"
 
 module BinaryContent =
@@ -173,6 +173,70 @@ module CLIArgument =
             Example = "./my-arc"
         )
 
+module CommandInputType =
+
+    let requiredString =
+        CommandInputType.create(CwlPrimitive.String)
+
+    let nullableBoolean =
+        CommandInputType.create(CwlPrimitive.Boolean, true)
+
+module CommandInputBinding =
+
+    let defaultFields = CommandInputBinding()
+
+    let allFields =
+        CommandInputBinding(
+            Position = 2,
+            Prefix = "--output=",
+            Separate = false
+        )
+
+module CommandInputParameter =
+
+    let mandatoryFields =
+        CommandInputParameter.create(
+            "input",
+            CommandInputType.create(CwlPrimitive.String, true),
+            CommandInputBinding(Prefix = "--input")
+        )
+
+    let allFields =
+        CommandInputParameter.create(
+            "output",
+            CommandInputType.requiredString,
+            CommandInputBinding.allFields,
+            Label = "Output file",
+            Doc = "Write output to this file"
+        )
+
+    let canonicalInputs = [|
+        CommandInputParameter.create(
+            "input",
+            CommandInputType.create(CwlPrimitive.String, true),
+            CommandInputBinding(Prefix = "--input"),
+            Label = "Input ARC",
+            Doc = "Input ARC path"
+        )
+        CommandInputParameter.create(
+            "verbose",
+            CommandInputType.nullableBoolean,
+            CommandInputBinding(Prefix = "--verbose"),
+            Doc = "Enable verbose logging"
+        )
+        CommandInputParameter.create(
+            "threads",
+            CommandInputType.create(CwlPrimitive.Int),
+            CommandInputBinding(Position = 2, Prefix = "--threads")
+        )
+        allFields
+        CommandInputParameter.create(
+            "mode",
+            CommandInputType.create(CwlPrimitive.String, true),
+            CommandInputBinding(Position = 3)
+        )
+    |]
+
 module ValidationPackageMetadata =
     
     let mandatoryFields = ValidationPackageMetadata( 
@@ -200,10 +264,7 @@ module ValidationPackageMetadata =
         Tags = [|OntologyAnnotation.allFields|],
         ReleaseNotes = "releasenotes",
         CQCHookEndpoint = "hookendpoint",
-        CLIArguments = [|
-            CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
-            CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
-        |]
+        Inputs = CommandInputParameter.canonicalInputs
     )
 
 module Frontmatter = 
@@ -272,19 +333,37 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
-CLIArguments:
-  - Flags:
-      - -i
-      - --input
-    Description: Input ARC path
-    Example: ./my-arc
-  - Flags:
-      - -v
-      - --verbose
-    Description: Enable verbose logging
-    Example: enabled
+Inputs:
+  - id: input
+    type: string?
+    label: Input ARC
+    doc: Input ARC path
+    inputBinding:
+      prefix: --input
+  - id: verbose
+    type: boolean?
+    doc: Enable verbose logging
+    inputBinding:
+      prefix: --verbose
+  - id: threads
+    type: int
+    inputBinding:
+      position: 2
+      prefix: --threads
+  - id: output
+    type: string
+    label: Output file
+    doc: Write output to this file
+    inputBinding:
+      position: 2
+      prefix: --output=
+      separate: false
+  - id: mode
+    type: string?
+    inputBinding:
+      position: 3
 ---
-*)"""                                                                         .ReplaceLineEndings("\n")
+*)"""                                                                         .ReplaceLineEndings("\n") + "\n"
 
             let validFullFrontmatterExtracted = """
 Name: valid
@@ -318,17 +397,35 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
-CLIArguments:
-  - Flags:
-      - -i
-      - --input
-    Description: Input ARC path
-    Example: ./my-arc
-  - Flags:
-      - -v
-      - --verbose
-    Description: Enable verbose logging
-    Example: enabled
+Inputs:
+  - id: input
+    type: string?
+    label: Input ARC
+    doc: Input ARC path
+    inputBinding:
+      prefix: --input
+  - id: verbose
+    type: boolean?
+    doc: Enable verbose logging
+    inputBinding:
+      prefix: --verbose
+  - id: threads
+    type: int
+    inputBinding:
+      position: 2
+      prefix: --threads
+  - id: output
+    type: string
+    label: Output file
+    doc: Write output to this file
+    inputBinding:
+      position: 2
+      prefix: --output=
+      separate: false
+  - id: mode
+    type: string?
+    inputBinding:
+      position: 3
 """                                                                         .ReplaceLineEndings("\n")
 
             let invalidStartFrontmatter = """(
@@ -443,19 +540,37 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
-CLIArguments:
-  - Flags:
-      - -i
-      - --input
-    Description: Input ARC path
-    Example: ./my-arc
-  - Flags:
-      - -v
-      - --verbose
-    Description: Enable verbose logging
-    Example: enabled
+Inputs:
+  - id: input
+    type: string?
+    label: Input ARC
+    doc: Input ARC path
+    inputBinding:
+      prefix: --input
+  - id: verbose
+    type: boolean?
+    doc: Enable verbose logging
+    inputBinding:
+      prefix: --verbose
+  - id: threads
+    type: int
+    inputBinding:
+      position: 2
+      prefix: --threads
+  - id: output
+    type: string
+    label: Output file
+    doc: Write output to this file
+    inputBinding:
+      position: 2
+      prefix: --output=
+      separate: false
+  - id: mode
+    type: string?
+    inputBinding:
+      position: 3
 ---
-*)\"\"\""                                                                         .ReplaceLineEndings("\n")
+*)\"\"\""                                                                         .ReplaceLineEndings("\n") + "\n"
 
             let validFullFrontmatterExtracted = """
 Name: valid
@@ -489,17 +604,35 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
-CLIArguments:
-  - Flags:
-      - -i
-      - --input
-    Description: Input ARC path
-    Example: ./my-arc
-  - Flags:
-      - -v
-      - --verbose
-    Description: Enable verbose logging
-    Example: enabled
+Inputs:
+  - id: input
+    type: string?
+    label: Input ARC
+    doc: Input ARC path
+    inputBinding:
+      prefix: --input
+  - id: verbose
+    type: boolean?
+    doc: Enable verbose logging
+    inputBinding:
+      prefix: --verbose
+  - id: threads
+    type: int
+    inputBinding:
+      position: 2
+      prefix: --threads
+  - id: output
+    type: string
+    label: Output file
+    doc: Write output to this file
+    inputBinding:
+      position: 2
+      prefix: --output=
+      separate: false
+  - id: mode
+    type: string?
+    inputBinding:
+      position: 3
 """                                                                         .ReplaceLineEndings("\n")
 
             let invalidStartFrontmatter = "let [<Literal>]PACKAGE_METADATA = \"\"\"
@@ -633,10 +766,7 @@ It does it very fast, it does it very swell.
   - does it well
 """.ReplaceLineEndings("\n"),
                 CQCHookEndpoint = "https://hook.com",
-                CLIArguments = [|
-                    CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
-                    CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
-                |]
+                Inputs = CommandInputParameter.canonicalInputs
             )
 
         let invalidMissingMandatoryFrontmatter =
@@ -708,10 +838,7 @@ It does it very fast, it does it very swell.
 """.ReplaceLineEndings("\n"),
                 CQCHookEndpoint = "https://hook.com",
                 ProgrammingLanguage = "Python",
-                CLIArguments = [|
-                    CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
-                    CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
-                |]
+                Inputs = CommandInputParameter.canonicalInputs
             )
 
         let invalidMissingMandatoryFrontmatter = 

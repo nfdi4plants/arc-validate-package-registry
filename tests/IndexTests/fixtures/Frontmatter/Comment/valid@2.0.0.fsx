@@ -31,16 +31,34 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://hook.com
-CLIArguments:
-  - Flags:
-      - -i
-      - --input
-    Description: Input ARC path
-    Example: ./my-arc
-  - Flags:
-      - -v
-      - --verbose
-    Description: Enable verbose logging
-    Example: enabled
+Inputs:
+  - id: input
+    type: string?
+    label: Input ARC
+    doc: Input ARC path
+    inputBinding:
+      prefix: --input
+  - id: verbose
+    type: boolean?
+    doc: Enable verbose logging
+    inputBinding:
+      prefix: --verbose
+  - id: threads
+    type: int
+    inputBinding:
+      position: 2
+      prefix: --threads
+  - id: output
+    type: string
+    label: Output file
+    doc: Write output to this file
+    inputBinding:
+      position: 2
+      prefix: --output=
+      separate: false
+  - id: mode
+    type: string?
+    inputBinding:
+      position: 3
 ---
 *)

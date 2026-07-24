@@ -162,6 +162,139 @@ module Domain =
             TermAccessionNumber |> Option.iter (fun x -> tmp.TermAccessionNumber <- x)
             tmp
 
+    type CwlPrimitive =
+        | Boolean = 0
+        | Int = 1
+        | Long = 2
+        | Float = 3
+        | Double = 4
+        | String = 5
+
+    type CommandInputType() =
+
+        let mutable primitiveType = CwlPrimitive.String
+
+        member _.PrimitiveType
+            with get () = primitiveType
+            and set value =
+                if not (Enum.IsDefined(typeof<CwlPrimitive>, value)) then
+                    invalidArg "PrimitiveType" $"Invalid primitive type: {value}"
+
+                primitiveType <- value
+
+        member val IsNullable = false with get,set
+
+        override this.GetHashCode() =
+            hash (
+                this.PrimitiveType,
+                this.IsNullable
+            )
+
+        override this.Equals(other) =
+            match other with
+            | :? CommandInputType as c ->
+                (
+                    this.PrimitiveType,
+                    this.IsNullable
+                ) = (
+                    c.PrimitiveType,
+                    c.IsNullable
+                )
+            | _ -> false
+
+        static member create (
+            primitiveType: CwlPrimitive,
+            ?IsNullable: bool
+        ) =
+            let tmp = CommandInputType(PrimitiveType = primitiveType)
+            IsNullable |> Option.iter (fun x -> tmp.IsNullable <- x)
+            tmp
+
+
+    type CommandInputBinding() =
+        member val Position: int = 0 with get,set
+        member val Prefix: string = "" with get,set
+        member val Separate: bool = true with get,set
+
+        override this.GetHashCode() =
+            hash (
+                this.Position,
+                this.Prefix,
+                this.Separate
+            )
+
+        override this.Equals(other) =
+            match other with
+            | :? CommandInputBinding as c ->
+                (
+                    this.Position,
+                    this.Prefix,
+                    this.Separate
+                ) = (
+                    c.Position,
+                    c.Prefix,
+                    c.Separate
+                )
+            | _ -> false
+
+        static member create (
+            ?Position: int,
+            ?Prefix: string,
+            ?Separate: bool
+        ) =
+            let tmp = CommandInputBinding()
+            Position |> Option.iter (fun x -> tmp.Position <- x)
+            Prefix |> Option.iter (fun x -> tmp.Prefix <- x)
+            Separate |> Option.iter (fun x -> tmp.Separate <- x)
+            tmp
+
+    type CommandInputParameter() =
+        member val Id: string = "" with get,set
+        member val Type: CommandInputType = (CommandInputType.create(CwlPrimitive.String, false)) with get,set
+        member val Label: string = "" with get,set
+        member val Doc: string = "" with get,set
+        member val InputBinding = CommandInputBinding() with get,set
+
+        override this.GetHashCode() =
+            hash (
+                this.Id,
+                this.Type,
+                this.Label,
+                this.Doc,
+                this.InputBinding
+            )
+
+        override this.Equals(other) =
+            match other with
+            | :? CommandInputParameter as i ->
+                (
+                    this.Id,
+                    this.Type,
+                    this.Label,
+                    this.Doc,
+                    this.InputBinding
+                ) = (
+                    i.Id,
+                    i.Type,
+                    i.Label,
+                    i.Doc,
+                    i.InputBinding
+                )
+            | _ -> false
+
+        static member create (
+            id: string,
+            inputType: CommandInputType,
+            inputBinding: CommandInputBinding,
+            ?Label: string,
+            ?Doc: string
+        ) =
+            let tmp = CommandInputParameter(Id = id, Type = inputType, InputBinding = inputBinding)
+            Label |> Option.iter (fun x -> tmp.Label <- x)
+            Doc |> Option.iter (fun x -> tmp.Doc <- x)
+
+            tmp
+
     type CLIArgument() =
 
         member val Flags: string [] = Array.empty<string> with get,set
@@ -216,7 +349,7 @@ module Domain =
         member val Tags: OntologyAnnotation [] = Array.empty<OntologyAnnotation> with get,set
         member val ReleaseNotes = "" with get,set
         member val CQCHookEndpoint = "" with get,set
-        member val CLIArguments: CLIArgument [] = Array.empty<CLIArgument> with get,set
+        member val Inputs: CommandInputParameter [] = Array.empty<CommandInputParameter> with get,set
 
         override this.GetHashCode() =
             hash (
@@ -234,7 +367,7 @@ module Domain =
                 this.Tags,
                 this.ReleaseNotes,
                 this.CQCHookEndpoint,
-                this.CLIArguments
+                this.Inputs
             )
 
         override this.Equals(other) =
@@ -255,7 +388,7 @@ module Domain =
                     this.Tags,
                     this.ReleaseNotes,
                     this.CQCHookEndpoint,
-                    this.CLIArguments
+                    this.Inputs
                 ) = (
                     vpm.Name, 
                     vpm.Summary, 
@@ -271,7 +404,7 @@ module Domain =
                     vpm.Tags,
                     vpm.ReleaseNotes,
                     vpm.CQCHookEndpoint,
-                    vpm.CLIArguments
+                    vpm.Inputs
                 )
             | _ -> false
         
@@ -290,7 +423,7 @@ module Domain =
             ?Tags: OntologyAnnotation [],
             ?ReleaseNotes,
             ?CQCHookEndpoint,
-            ?CLIArguments: CLIArgument []
+            ?Inputs: CommandInputParameter []
         ) =
             let tmp = ValidationPackageMetadata(
                 Name = name,
@@ -309,7 +442,7 @@ module Domain =
             Tags |> Option.iter (fun x -> tmp.Tags <- x)
             ReleaseNotes |> Option.iter (fun x -> tmp.ReleaseNotes <- x)
             CQCHookEndpoint |> Option.iter (fun x -> tmp.CQCHookEndpoint <- x)
-            CLIArguments |> Option.iter (fun x -> tmp.CLIArguments <- x)
+            Inputs |> Option.iter (fun x -> tmp.Inputs <- x)
 
             tmp
         

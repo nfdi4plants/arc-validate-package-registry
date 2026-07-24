@@ -16,6 +16,7 @@
     <Compile Include="HashTests.fs" />
     <Compile Include="BinaryContentTests.fs" />
     <Compile Include="DomainTests.fs" />
+    <Compile Include="CommandInputYamlTests.fs" />
     <Compile Include="FrontmatterTests.fs" />
     <Compile Include="MetadataTests.fs" />
     <Compile Include="ValidationPackageIndexTests.fs" />

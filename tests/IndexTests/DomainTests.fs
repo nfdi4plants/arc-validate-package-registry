@@ -150,6 +150,122 @@ module CLIArgument =
         )
         Assert.Equivalent(CLIArgument.allFields, actual)
 
+module CommandInputType =
+
+    [<Fact>]
+    let ``create function uses required primitive type by default`` () =
+        let actual = CommandInputType.create(CwlPrimitive.String)
+        Assert.Equivalent(CommandInputType.requiredString, actual)
+
+    [<Fact>]
+    let ``create function supports nullable primitive type`` () =
+        let actual = CommandInputType.create(CwlPrimitive.Boolean, true)
+        Assert.Equivalent(CommandInputType.nullableBoolean, actual)
+
+    [<Fact>]
+    let ``primitive type setter rejects undefined enum values`` () =
+        let actual = CommandInputType()
+        Assert.Throws<ArgumentException>(fun () ->
+            actual.PrimitiveType <- enum<CwlPrimitive> 999
+        )
+        |> ignore
+
+    [<Fact>]
+    let ``equality and hashing include primitive type and nullability`` () =
+        let requiredString = CommandInputType.create(CwlPrimitive.String)
+        let sameRequiredString = CommandInputType.create(CwlPrimitive.String)
+        let nullableString = CommandInputType.create(CwlPrimitive.String, true)
+        let requiredBoolean = CommandInputType.create(CwlPrimitive.Boolean)
+
+        Assert.Equal(requiredString, sameRequiredString)
+        Assert.Equal(requiredString.GetHashCode(), sameRequiredString.GetHashCode())
+        Assert.NotEqual(requiredString, nullableString)
+        Assert.NotEqual(requiredString, requiredBoolean)
+
+module CommandInputBinding =
+
+    [<Fact>]
+    let ``create function uses CWL binding defaults`` () =
+        let actual = CommandInputBinding.create()
+        Assert.Equivalent(CommandInputBinding.defaultFields, actual)
+
+    [<Fact>]
+    let ``create function supports all binding fields`` () =
+        let actual =
+            CommandInputBinding.create(
+                Position = 2,
+                Prefix = "--output=",
+                Separate = false
+            )
+        Assert.Equivalent(CommandInputBinding.allFields, actual)
+
+    [<Fact>]
+    let ``equality and hashing include every binding field`` () =
+        let defaults = CommandInputBinding.create()
+        let sameDefaults = CommandInputBinding.create()
+
+        Assert.Equal(defaults, sameDefaults)
+        Assert.Equal(defaults.GetHashCode(), sameDefaults.GetHashCode())
+        Assert.NotEqual(defaults, CommandInputBinding.create(Position = 1))
+        Assert.NotEqual(defaults, CommandInputBinding.create(Prefix = "--value"))
+        Assert.NotEqual(defaults, CommandInputBinding.create(Separate = false))
+
+module CommandInputParameter =
+
+    [<Fact>]
+    let ``create function supports mandatory fields`` () =
+        let actual =
+            CommandInputParameter.create(
+                "input",
+                CommandInputType.create(CwlPrimitive.String, true),
+                CommandInputBinding(Prefix = "--input")
+            )
+        Assert.Equivalent(CommandInputParameter.mandatoryFields, actual)
+
+    [<Fact>]
+    let ``create function supports all fields`` () =
+        let actual =
+            CommandInputParameter.create(
+                "output",
+                CommandInputType.requiredString,
+                CommandInputBinding.allFields,
+                Label = "Output file",
+                Doc = "Write output to this file"
+            )
+        Assert.Equivalent(CommandInputParameter.allFields, actual)
+
+    [<Fact>]
+    let ``equality and hashing include nested type and binding`` () =
+        let input =
+            CommandInputParameter.create(
+                "value",
+                CommandInputType.create(CwlPrimitive.String),
+                CommandInputBinding.create()
+            )
+        let sameInput =
+            CommandInputParameter.create(
+                "value",
+                CommandInputType.create(CwlPrimitive.String),
+                CommandInputBinding.create()
+            )
+        let nullableInput =
+            CommandInputParameter.create(
+                "value",
+                CommandInputType.create(CwlPrimitive.String, true),
+                CommandInputBinding.create()
+            )
+        let prefixedInput =
+            CommandInputParameter.create(
+                "value",
+                CommandInputType.create(CwlPrimitive.String),
+                CommandInputBinding.create(Prefix = "--value")
+            )
+
+        Assert.Equal(input, sameInput)
+        Assert.Equal(input.GetHashCode(), sameInput.GetHashCode())
+        Assert.NotEqual(input, nullableInput)
+        Assert.NotEqual(input, prefixedInput)
+
 module ValidationPackageMetadata =
     
     [<Fact>]
@@ -195,10 +311,7 @@ module ValidationPackageMetadata =
             |],
             ReleaseNotes = "releasenotes",
             CQCHookEndpoint = "hookendpoint",
-            CLIArguments = [|
-                CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
-                CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
-            |]
+            Inputs = CommandInputParameter.canonicalInputs
         )
         Assert.Equivalent(ValidationPackageMetadata.allFields, actual)
 

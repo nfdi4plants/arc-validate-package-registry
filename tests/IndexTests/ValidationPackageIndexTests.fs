@@ -43,7 +43,7 @@ It does it very fast, it does it very swell.
                     repoPath = "fixtures/Frontmatter/Comment/valid@2.0.0.fsx",
                     fileName = "valid@2.0.0.fsx",
                     lastUpdated = testDate,
-                    contentHash = "934D42E108F282C71DF23D21A36B3348",
+                    contentHash = "9110F8BE0A42BFE2DE1937566D356144",
                     metadata = ValidationPackageMetadata.create(
                         name = "valid",
                         majorVersion = 2,
@@ -81,10 +81,7 @@ It does it very fast, it does it very swell.
   - does it well
 """.ReplaceLineEndings("\n"),
                         CQCHookEndpoint = "https://hook.com",
-                        CLIArguments = [|
-                            CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
-                            CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
-                        |]
+                        Inputs = CommandInputParameter.canonicalInputs
                     )
                 )
             Assert.Equivalent(ValidationPackageIndex.FSharp.CommentFrontmatter.validFullFrontmatter, actual)
@@ -260,7 +257,7 @@ It does it very fast, it does it very swell.
                     repoPath = "fixtures/Frontmatter/Comment/valid@2.0.0.py",
                     fileName = "valid@2.0.0.py",
                     lastUpdated = testDate,
-                    contentHash = "8DAE6DA8DC2D22A2FED6B99EB4B25633",
+                    contentHash = "3379E0CEBA29F16A9B360D56C8861B5E",
                     metadata = ValidationPackageMetadata.create(
                         name = "valid",
                         majorVersion = 2,
@@ -298,10 +295,7 @@ It does it very fast, it does it very swell.
   - does it well
 """.ReplaceLineEndings("\n"),
                         CQCHookEndpoint = "https://hook.com",
-                        CLIArguments = [|
-                            CLIArgument(Flags = [| "-i"; "--input" |], Description = "Input ARC path", Example = "./my-arc")
-                            CLIArgument(Flags = [| "-v"; "--verbose" |], Description = "Enable verbose logging", Example = "enabled")
-                        |]
+                        Inputs = CommandInputParameter.canonicalInputs
                     )
                 )
             Assert.Equivalent(ValidationPackageIndex.Python.CommentFrontmatter.validFullFrontmatter, actual)
