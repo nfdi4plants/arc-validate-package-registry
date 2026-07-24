@@ -8,6 +8,22 @@ namespace APITests;
 
 public class PackageRegistryWebApplicationFactoryTests
 {
+    private static readonly string[] SupportedCommandInputTypes =
+    [
+        "boolean",
+        "boolean?",
+        "int",
+        "int?",
+        "long",
+        "long?",
+        "float",
+        "float?",
+        "double",
+        "double?",
+        "string",
+        "string?"
+    ];
+
     [Fact]
     public async Task SeededPackageIsServedThroughTheRealApiPipeline()
     {
@@ -25,6 +41,55 @@ public class PackageRegistryWebApplicationFactoryTests
         var input = root.GetProperty("Inputs")[0];
         Assert.Equal("verbose", input.GetProperty("id").GetString());
         Assert.Equal("boolean?", input.GetProperty("type").GetString());
+    }
+
+    [Fact]
+    public async Task OpenApiDescribesTheSupportedCwlInputContract()
+    {
+        using var factory = new PackageRegistryWebApplicationFactory();
+        using var client = factory.CreateClient();
+        using var response = await client.GetAsync("/swagger/v1/swagger.json");
+
+        response.EnsureSuccessStatusCode();
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+
+        var schemas = document.RootElement.GetProperty("components").GetProperty("schemas");
+        var inputType = schemas.GetProperty("CommandInputType");
+        Assert.Equal("string", inputType.GetProperty("type").GetString());
+        Assert.Equal(
+            SupportedCommandInputTypes,
+            inputType.GetProperty("enum").EnumerateArray().Select(value => value.GetString()));
+        Assert.False(inputType.TryGetProperty("properties", out _));
+        Assert.False(schemas.TryGetProperty("CwlPrimitive", out _));
+
+        var parameter = schemas.GetProperty("CommandInputParameter");
+        var required = parameter
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(value => value.GetString())
+            .ToArray();
+
+        Assert.Contains("id", required);
+        Assert.Contains("type", required);
+        Assert.Contains("inputBinding", required);
+
+        var properties = parameter.GetProperty("properties");
+        Assert.True(properties.TryGetProperty("id", out _));
+        Assert.True(properties.TryGetProperty("type", out _));
+        Assert.True(properties.TryGetProperty("label", out _));
+        Assert.True(properties.TryGetProperty("doc", out _));
+        Assert.True(properties.TryGetProperty("inputBinding", out _));
+        Assert.False(properties.TryGetProperty("Id", out _));
+        Assert.False(properties.TryGetProperty("Type", out _));
+        Assert.False(properties.TryGetProperty("InputBinding", out _));
+
+        foreach (var requiredProperty in new[] { "id", "type", "inputBinding" })
+        {
+            var property = properties.GetProperty(requiredProperty);
+            Assert.False(
+                property.TryGetProperty("nullable", out var nullable) && nullable.GetBoolean(),
+                $"{requiredProperty} must be required and non-null: {property.GetRawText()}");
+        }
     }
 
     internal static ValidationPackage CreatePackage() => new()

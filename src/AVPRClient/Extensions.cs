@@ -100,17 +100,9 @@ namespace AVPRClient
                     })
                     .ToList(),
                 CQCHookEndpoint = indexedPackage.Metadata.CQCHookEndpoint,
-                CLIArguments =
-                    indexedPackage.Metadata.CLIArguments
-                    .Select(cliArgument =>
-                    {
-                        return new AVPRClient.CLIArgument
-                        {
-                            Flags = cliArgument.Flags.ToList(),
-                            Description = cliArgument.Description,
-                            Example = cliArgument.Example
-                        };
-                    })
+                Inputs =
+                    (indexedPackage.Metadata.Inputs ?? Array.Empty<AVPRIndex.Domain.CommandInputParameter>())
+                    .Select(input => input.AsClientType())
                     .ToList()
             };
         }
@@ -199,24 +191,118 @@ namespace AVPRClient
                 .ToArray();
         }
 
-        public static AVPRIndex.Domain.CLIArgument AsIndexType(
-            this CLIArgument cliArgument
+        public static AVPRClient.CommandInputType AsClientType(
+            this AVPRIndex.Domain.CommandInputType inputType
         )
         {
-            return new AVPRIndex.Domain.CLIArgument
+            ArgumentNullException.ThrowIfNull(inputType);
+
+            return (inputType.PrimitiveType, inputType.IsNullable) switch
             {
-                Flags = (cliArgument.Flags ?? new List<string>()).ToArray(),
-                Description = cliArgument.Description,
-                Example = cliArgument.Example
+                (CwlPrimitive.Boolean, false) => AVPRClient.CommandInputType.Boolean,
+                (CwlPrimitive.Boolean, true) => AVPRClient.CommandInputType.Boolean_,
+                (CwlPrimitive.Int, false) => AVPRClient.CommandInputType.Int,
+                (CwlPrimitive.Int, true) => AVPRClient.CommandInputType.Int_,
+                (CwlPrimitive.Long, false) => AVPRClient.CommandInputType.Long,
+                (CwlPrimitive.Long, true) => AVPRClient.CommandInputType.Long_,
+                (CwlPrimitive.Float, false) => AVPRClient.CommandInputType.Float,
+                (CwlPrimitive.Float, true) => AVPRClient.CommandInputType.Float_,
+                (CwlPrimitive.Double, false) => AVPRClient.CommandInputType.Double,
+                (CwlPrimitive.Double, true) => AVPRClient.CommandInputType.Double_,
+                (CwlPrimitive.String, false) => AVPRClient.CommandInputType.String,
+                (CwlPrimitive.String, true) => AVPRClient.CommandInputType.String_,
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(inputType),
+                    inputType.PrimitiveType,
+                    "Unsupported CWL command input type")
             };
         }
 
-        public static AVPRIndex.Domain.CLIArgument[] AsIndexType(
-            this ICollection<CLIArgument> cliArguments
+        public static AVPRIndex.Domain.CommandInputType AsIndexType(
+            this AVPRClient.CommandInputType inputType
         )
         {
-            return cliArguments
-                .Select(cliArgument => cliArgument.AsIndexType())
+            return inputType switch
+            {
+                AVPRClient.CommandInputType.Boolean => new() { PrimitiveType = CwlPrimitive.Boolean },
+                AVPRClient.CommandInputType.Boolean_ => new() { PrimitiveType = CwlPrimitive.Boolean, IsNullable = true },
+                AVPRClient.CommandInputType.Int => new() { PrimitiveType = CwlPrimitive.Int },
+                AVPRClient.CommandInputType.Int_ => new() { PrimitiveType = CwlPrimitive.Int, IsNullable = true },
+                AVPRClient.CommandInputType.Long => new() { PrimitiveType = CwlPrimitive.Long },
+                AVPRClient.CommandInputType.Long_ => new() { PrimitiveType = CwlPrimitive.Long, IsNullable = true },
+                AVPRClient.CommandInputType.Float => new() { PrimitiveType = CwlPrimitive.Float },
+                AVPRClient.CommandInputType.Float_ => new() { PrimitiveType = CwlPrimitive.Float, IsNullable = true },
+                AVPRClient.CommandInputType.Double => new() { PrimitiveType = CwlPrimitive.Double },
+                AVPRClient.CommandInputType.Double_ => new() { PrimitiveType = CwlPrimitive.Double, IsNullable = true },
+                AVPRClient.CommandInputType.String => new() { PrimitiveType = CwlPrimitive.String },
+                AVPRClient.CommandInputType.String_ => new() { PrimitiveType = CwlPrimitive.String, IsNullable = true },
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(inputType), inputType, "Unsupported generated CWL command input type")
+            };
+        }
+
+        public static AVPRClient.CommandInputBinding AsClientType(
+            this AVPRIndex.Domain.CommandInputBinding? binding
+        )
+        {
+            return new AVPRClient.CommandInputBinding
+            {
+                Position = binding?.Position ?? 0,
+                Prefix = binding?.Prefix ?? "",
+                Separate = binding?.Separate ?? true
+            };
+        }
+
+        public static AVPRIndex.Domain.CommandInputBinding AsIndexType(
+            this AVPRClient.CommandInputBinding? binding
+        )
+        {
+            return new AVPRIndex.Domain.CommandInputBinding
+            {
+                Position = binding?.Position ?? 0,
+                Prefix = binding?.Prefix ?? "",
+                Separate = binding?.Separate ?? true
+            };
+        }
+
+        public static AVPRClient.CommandInputParameter AsClientType(
+            this AVPRIndex.Domain.CommandInputParameter input
+        )
+        {
+            ArgumentNullException.ThrowIfNull(input);
+
+            return new AVPRClient.CommandInputParameter
+            {
+                Id = input.Id ?? "",
+                Type = input.Type.AsClientType(),
+                Label = input.Label ?? "",
+                Doc = input.Doc ?? "",
+                InputBinding = input.InputBinding.AsClientType()
+            };
+        }
+
+        public static AVPRIndex.Domain.CommandInputParameter AsIndexType(
+            this AVPRClient.CommandInputParameter input
+        )
+        {
+            ArgumentNullException.ThrowIfNull(input);
+
+            return new AVPRIndex.Domain.CommandInputParameter
+            {
+                Id = input.Id ?? "",
+                Type = input.Type.AsIndexType(),
+                Label = input.Label ?? "",
+                Doc = input.Doc ?? "",
+                InputBinding = input.InputBinding.AsIndexType()
+            };
+        }
+
+        public static AVPRIndex.Domain.CommandInputParameter[] AsIndexType(
+            this ICollection<AVPRClient.CommandInputParameter>? inputs
+        )
+        {
+            return (inputs ?? Array.Empty<AVPRClient.CommandInputParameter>())
+                .Select(input => input.AsIndexType())
                 .ToArray();
         }
 
@@ -239,7 +325,7 @@ namespace AVPRClient
                 Tags: validationPackage.Tags.AsIndexType(),
                 ReleaseNotes: validationPackage.ReleaseNotes,
                 CQCHookEndpoint: validationPackage.CQCHookEndpoint,
-                CLIArguments: (validationPackage.CLIArguments ?? new List<CLIArgument>()).AsIndexType()
+                Inputs: validationPackage.Inputs.AsIndexType()
             );
         }
     }

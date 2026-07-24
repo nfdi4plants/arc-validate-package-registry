@@ -3,12 +3,15 @@
 Name: name
 Summary: summary
 Description: description
-CLIArguments:
-  - Flags:
-      - -i
-      - --input
-    Description: Input ARC path
-    Example: ./my-arc
+Inputs:
+  - id: output
+    type: string
+    label: Output file
+    doc: Write output to this file
+    inputBinding:
+      position: 2
+      prefix: --output=
+      separate: false
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0

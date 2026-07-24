@@ -7,6 +7,7 @@ open Xunit
 open AVPRClient
 
 open System.Security.Cryptography
+open Newtonsoft.Json.Linq
 
 module ValidationPackage =
     
@@ -58,6 +59,16 @@ module ValidationPackage =
             )
         )
 
+    [<Fact>]
+    let ``toValidationPackageMetadata maps nested inputs to the index model`` () =
+        let actual =
+            ReferenceObjects.ValidationPackage.allFields_inputsAddition.toValidationPackageMetadata()
+
+        Assert.Equivalent(
+            ReferenceObjects.ValidationPackageMetadata.allFields_inputsAddition.Inputs,
+            actual.Inputs
+        )
+
 module ValidationPackageIndex =
 
     let allFields_cqcHookAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
@@ -107,28 +118,28 @@ module ValidationPackageIndex =
         Assert.Equivalent(ReferenceObjects.Hash.allFields_semVerAddition, actual)
 
 
-    let allFields_cliargsAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
-        repoPath = "fixtures/allFields_cliargsAddition.fsx",
-        fileName = "allFields_cliargsAddition.fsx",
+    let allFields_inputsAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
+        repoPath = "fixtures/allFields_inputsAddition.fsx",
+        fileName = "allFields_inputsAddition.fsx",
         lastUpdated = ReferenceObjects.date,
-        contentHash = ReferenceObjects.Hash.expected_hash_cliargsAddition,
-        metadata = ReferenceObjects.ValidationPackageMetadata.allFields_cliargsAddition
+        contentHash = ReferenceObjects.Hash.expected_hash_inputsAddition,
+        metadata = ReferenceObjects.ValidationPackageMetadata.allFields_inputsAddition
     )
 
     [<Fact>]
-    let ``CLI Arguments Addition - toValidationPackage with release date`` () =
-        let actual = allFields_cliargsAddition.toValidationPackage(ReferenceObjects.date)
-        Assert.Equivalent(actual, ReferenceObjects.ValidationPackage.allFields_cliargsAddition)
+    let ``Inputs Addition - toValidationPackage with release date`` () =
+        let actual = allFields_inputsAddition.toValidationPackage(ReferenceObjects.date)
+        Assert.Equivalent(ReferenceObjects.ValidationPackage.allFields_inputsAddition, actual)
 
     [<Fact>]
-    let ``CLI Arguments Addition - toPackageContentHash without direct file hash`` () =
-        let actual = allFields_cliargsAddition.toPackageContentHash()
-        Assert.Equivalent(ReferenceObjects.Hash.allFields_cliargsAddition, actual)
+    let ``Inputs Addition - toPackageContentHash without direct file hash`` () =
+        let actual = allFields_inputsAddition.toPackageContentHash()
+        Assert.Equivalent(ReferenceObjects.Hash.allFields_inputsAddition, actual)
 
     [<Fact>]
-    let ``CLI Arguments Addition - toPackageContentHash with direct file hash`` () =
-        let actual = allFields_cliargsAddition.toPackageContentHash(HashFileDirectly = true)
-        Assert.Equivalent(ReferenceObjects.Hash.allFields_cliargsAddition, actual)
+    let ``Inputs Addition - toPackageContentHash with direct file hash`` () =
+        let actual = allFields_inputsAddition.toPackageContentHash(HashFileDirectly = true)
+        Assert.Equivalent(ReferenceObjects.Hash.allFields_inputsAddition, actual)
 
     [<Fact>]
     let ``IdentityEquals returns true for package with same version (no suffixes)`` () =
@@ -200,24 +211,97 @@ module OntologyAnnotation =
         let actual = [|ReferenceObjects.OntologyAnnotation.allFieldsClient|].AsIndexType()
         Assert.Equivalent(actual, [|ReferenceObjects.OntologyAnnotation.allFieldsClient|])
 
-module CLIArgument =
+module CommandInput =
 
     [<Fact>]
-    let ``AsIndexType with mandatory fields`` () =
-        let actual = ReferenceObjects.CLIArgument.mandatoryFieldsClient.AsIndexType()
-        Assert.Equivalent(actual, ReferenceObjects.CLIArgument.mandatoryFieldsClient)
+    let ``default binding fields map in both directions`` () =
+        let clientBinding = ReferenceObjects.CommandInputBinding.defaultFieldsIndex.AsClientType()
+        Assert.Equivalent(ReferenceObjects.CommandInputBinding.defaultFieldsClient, clientBinding)
+
+        let indexBinding = ReferenceObjects.CommandInputBinding.defaultFieldsClient.AsIndexType()
+        Assert.Equivalent(ReferenceObjects.CommandInputBinding.defaultFieldsIndex, indexBinding)
 
     [<Fact>]
-    let ``AsIndexType with all fields`` () =
-        let actual = ReferenceObjects.CLIArgument.allFieldsClient.AsIndexType()
-        Assert.Equivalent(actual, ReferenceObjects.CLIArgument.allFieldsClient)
+    let ``parameter maps client to index with mandatory fields`` () =
+        let actual = ReferenceObjects.CommandInputParameter.mandatoryFieldsClient.AsIndexType()
+        Assert.Equivalent(ReferenceObjects.CommandInputParameter.mandatoryFieldsIndex, actual)
 
     [<Fact>]
-    let ``AsIndexType with mandatory fields on collection`` () =
-        let actual = [|ReferenceObjects.CLIArgument.mandatoryFieldsClient|].AsIndexType()
-        Assert.Equivalent(actual, [|ReferenceObjects.CLIArgument.mandatoryFieldsClient|])
+    let ``parameter maps client to index with all fields`` () =
+        let actual = ReferenceObjects.CommandInputParameter.allFieldsClient.AsIndexType()
+        Assert.Equivalent(ReferenceObjects.CommandInputParameter.allFieldsIndex, actual)
 
     [<Fact>]
-    let ``AsIndexType with all fields on collection`` () =
-        let actual = [|ReferenceObjects.CLIArgument.allFieldsClient|].AsIndexType()
-        Assert.Equivalent(actual, [|ReferenceObjects.CLIArgument.allFieldsClient|])
+    let ``parameter maps index to client with all fields`` () =
+        let actual = ReferenceObjects.CommandInputParameter.allFieldsIndex.AsClientType()
+        Assert.Equivalent(ReferenceObjects.CommandInputParameter.allFieldsClient, actual)
+
+    [<Fact>]
+    let ``all supported types map in both directions`` () =
+        let cases = [|
+            AVPRClient.CommandInputType.Boolean, AVPRIndex.Domain.CwlPrimitive.Boolean, false
+            AVPRClient.CommandInputType.Boolean_, AVPRIndex.Domain.CwlPrimitive.Boolean, true
+            AVPRClient.CommandInputType.Int, AVPRIndex.Domain.CwlPrimitive.Int, false
+            AVPRClient.CommandInputType.Int_, AVPRIndex.Domain.CwlPrimitive.Int, true
+            AVPRClient.CommandInputType.Long, AVPRIndex.Domain.CwlPrimitive.Long, false
+            AVPRClient.CommandInputType.Long_, AVPRIndex.Domain.CwlPrimitive.Long, true
+            AVPRClient.CommandInputType.Float, AVPRIndex.Domain.CwlPrimitive.Float, false
+            AVPRClient.CommandInputType.Float_, AVPRIndex.Domain.CwlPrimitive.Float, true
+            AVPRClient.CommandInputType.Double, AVPRIndex.Domain.CwlPrimitive.Double, false
+            AVPRClient.CommandInputType.Double_, AVPRIndex.Domain.CwlPrimitive.Double, true
+            AVPRClient.CommandInputType.String, AVPRIndex.Domain.CwlPrimitive.String, false
+            AVPRClient.CommandInputType.String_, AVPRIndex.Domain.CwlPrimitive.String, true
+        |]
+
+        for clientType, primitiveType, isNullable in cases do
+            let indexType = clientType.AsIndexType()
+            Assert.Equal(primitiveType, indexType.PrimitiveType)
+            Assert.Equal(isNullable, indexType.IsNullable)
+            Assert.Equal(clientType, indexType.AsClientType())
+
+    [<Fact>]
+    let ``unsupported generated type is rejected`` () =
+        let invalidType = enum<AVPRClient.CommandInputType> 999
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> invalidType.AsIndexType() |> ignore)
+        |> ignore
+
+    [<Fact>]
+    let ``null binding maps to CWL defaults`` () =
+        let input =
+            AVPRClient.CommandInputParameter(
+                Id = "value",
+                Type = AVPRClient.CommandInputType.String,
+                InputBinding = null
+            )
+
+        let actual = input.AsIndexType()
+        Assert.Equal(0, actual.InputBinding.Position)
+        Assert.Equal("", actual.InputBinding.Prefix)
+        Assert.True(actual.InputBinding.Separate)
+
+    [<Fact>]
+    let ``null and empty input collections map to an empty array`` () =
+        let nullInputs: System.Collections.Generic.ICollection<AVPRClient.CommandInputParameter> = null
+        let emptyInputs = ResizeArray<AVPRClient.CommandInputParameter>()
+        Assert.Empty(nullInputs.AsIndexType())
+        Assert.Empty(emptyInputs.AsIndexType())
+
+    [<Fact>]
+    let ``generated parameter JSON uses CWL scalar type and lower camel property names`` () =
+        let input =
+            AVPRClient.CommandInputParameter(
+                Id = "verbose",
+                Type = AVPRClient.CommandInputType.Boolean_,
+                Label = "Verbose",
+                Doc = "Enable verbose logging",
+                InputBinding = AVPRClient.CommandInputBinding(Prefix = "--verbose")
+            )
+
+        let json = JObject.FromObject(input)
+        Assert.Equal("verbose", json.["id"].Value<string>())
+        Assert.Equal("boolean?", json.["type"].Value<string>())
+        Assert.Equal("Verbose", json.["label"].Value<string>())
+        Assert.Equal("Enable verbose logging", json.["doc"].Value<string>())
+        Assert.NotNull(json.["inputBinding"])
+        Assert.Null(json.["Id"])
+        Assert.Null(json.["primitiveType"])

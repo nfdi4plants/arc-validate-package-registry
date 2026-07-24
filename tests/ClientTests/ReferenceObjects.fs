@@ -48,24 +48,62 @@ module OntologyAnnotation =
         TermAccessionNumber = "TAN"
     )
 
-module CLIArgument =
+module CommandInputType =
 
-    let mandatoryFieldsClient = AVPRClient.CLIArgument(Flags = ResizeArray [ "-i" ])
+    let requiredStringClient = AVPRClient.CommandInputType.String
+    let nullableBooleanClient = AVPRClient.CommandInputType.Boolean_
+
+    let requiredStringIndex =
+        AVPRIndex.Domain.CommandInputType.create(AVPRIndex.Domain.CwlPrimitive.String)
+
+    let nullableBooleanIndex =
+        AVPRIndex.Domain.CommandInputType.create(AVPRIndex.Domain.CwlPrimitive.Boolean, true)
+
+module CommandInputBinding =
+
+    let defaultFieldsClient =
+        AVPRClient.CommandInputBinding(Position = 0, Prefix = "", Separate = true)
 
     let allFieldsClient =
-        AVPRClient.CLIArgument(
-            Flags = ResizeArray [ "-i"; "--input" ],
-            Description = "Input ARC path",
-            Example = "./my-arc"
-        )
+        AVPRClient.CommandInputBinding(Position = 2, Prefix = "--output=", Separate = false)
 
-    let mandatoryFieldsIndex = AVPRIndex.Domain.CLIArgument(Flags = [| "-i" |])
+    let defaultFieldsIndex = AVPRIndex.Domain.CommandInputBinding()
 
     let allFieldsIndex =
-        AVPRIndex.Domain.CLIArgument(
-            Flags = [| "-i"; "--input" |],
-            Description = "Input ARC path",
-            Example = "./my-arc"
+        AVPRIndex.Domain.CommandInputBinding(Position = 2, Prefix = "--output=", Separate = false)
+
+module CommandInputParameter =
+
+    let mandatoryFieldsClient =
+        AVPRClient.CommandInputParameter(
+            Id = "input",
+            Type = AVPRClient.CommandInputType.String_,
+            InputBinding = AVPRClient.CommandInputBinding(Prefix = "--input", Separate = true)
+        )
+
+    let allFieldsClient =
+        AVPRClient.CommandInputParameter(
+            Id = "output",
+            Type = CommandInputType.requiredStringClient,
+            Label = "Output file",
+            Doc = "Write output to this file",
+            InputBinding = CommandInputBinding.allFieldsClient
+        )
+
+    let mandatoryFieldsIndex =
+        AVPRIndex.Domain.CommandInputParameter.create(
+            "input",
+            AVPRIndex.Domain.CommandInputType.create(AVPRIndex.Domain.CwlPrimitive.String, true),
+            AVPRIndex.Domain.CommandInputBinding(Prefix = "--input")
+        )
+
+    let allFieldsIndex =
+        AVPRIndex.Domain.CommandInputParameter.create(
+            "output",
+            CommandInputType.requiredStringIndex,
+            CommandInputBinding.allFieldsIndex,
+            Label = "Output file",
+            Doc = "Write output to this file"
         )
 
 module ValidationPackageMetadata =
@@ -93,7 +131,7 @@ module ValidationPackageMetadata =
         Tags = [|OntologyAnnotation.allFieldsIndex|],
         ReleaseNotes = "releasenotes",
         CQCHookEndpoint = "hookendpoint",
-        CLIArguments = [| |]
+        Inputs = [| |]
     )
 
     let allFields_semVerAddition = ValidationPackageMetadata(
@@ -111,10 +149,10 @@ module ValidationPackageMetadata =
         Tags = [|OntologyAnnotation.allFieldsIndex|],
         ReleaseNotes = "releasenotes",
         CQCHookEndpoint = "hookendpoint",
-        CLIArguments = [| |]
+        Inputs = [| |]
     )
 
-    let allFields_cliargsAddition = ValidationPackageMetadata(
+    let allFields_inputsAddition = ValidationPackageMetadata(
         Name = "name",
         Summary = "summary" ,
         Description = "description" ,
@@ -129,7 +167,7 @@ module ValidationPackageMetadata =
         Tags = [|OntologyAnnotation.allFieldsIndex|],
         ReleaseNotes = "releasenotes",
         CQCHookEndpoint = "hookendpoint",
-        CLIArguments = [| CLIArgument.allFieldsIndex |]
+        Inputs = [| CommandInputParameter.allFieldsIndex |]
     )
 
 module Hash =
@@ -158,16 +196,16 @@ module Hash =
         Hash = expected_hash_semVerAddition
     )
 
-    let expected_hash_cliargsAddition = "5142A8191A58896DF0ACF91B6BAE0B7F"
+    let expected_hash_inputsAddition = "474F29ADF13713640AD62C42980CF6EF"
 
-    let allFields_cliargsAddition = AVPRClient.PackageContentHash(
+    let allFields_inputsAddition = AVPRClient.PackageContentHash(
         PackageName = "name",
         PackageMajorVersion = 1,
         PackageMinorVersion = 0,
         PackagePatchVersion = 0,
         PackagePreReleaseVersionSuffix = "use",
         PackageBuildMetadataVersionSuffix = "suffixes",
-        Hash = expected_hash_cliargsAddition
+        Hash = expected_hash_inputsAddition
     )
 
 module BinaryContent =
@@ -230,17 +268,20 @@ printfn \"yes\""                                    .ReplaceLineEndings("\n")
 
     let expected_binary_content_semVerAddition = expected_content_semVerAddition |> System.Text.Encoding.UTF8.GetBytes
 
-    let expected_content_cliargsAddition = "(*
+    let expected_content_inputsAddition = "(*
 ---
 Name: name
 Summary: summary
 Description: description
-CLIArguments:
-  - Flags:
-      - -i
-      - --input
-    Description: Input ARC path
-    Example: ./my-arc
+Inputs:
+  - id: output
+    type: string
+    label: Output file
+    doc: Write output to this file
+    inputBinding:
+      position: 2
+      prefix: --output=
+      separate: false
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
@@ -263,7 +304,7 @@ CQCHookEndpoint: hookendpoint
 
 printfn \"yes\""                                    .ReplaceLineEndings("\n")
 
-    let expected_binary_content_cliargsAddition = expected_content_cliargsAddition |> System.Text.Encoding.UTF8.GetBytes
+    let expected_binary_content_inputsAddition = expected_content_inputsAddition |> System.Text.Encoding.UTF8.GetBytes
 
 module ValidationPackage =
 
@@ -285,7 +326,7 @@ module ValidationPackage =
         Tags = [|OntologyAnnotation.allFieldsClient|],
         ReleaseNotes = "releasenotes",
         CQCHookEndpoint = "hookendpoint",
-        CLIArguments = ResizeArray [ ]
+        Inputs = ResizeArray [ ]
     )
 
     let allFields_semVerAddition = AVPRClient.ValidationPackage(
@@ -304,10 +345,10 @@ module ValidationPackage =
         Tags = [|OntologyAnnotation.allFieldsClient|],
         ReleaseNotes = "releasenotes",
         CQCHookEndpoint = "hookendpoint",
-        CLIArguments = ResizeArray [ ]
+        Inputs = ResizeArray [ ]
     )
 
-    let allFields_cliargsAddition = AVPRClient.ValidationPackage(
+    let allFields_inputsAddition = AVPRClient.ValidationPackage(
         Name = "name",
         Summary = "summary" ,
         Description = "description" ,
@@ -317,13 +358,13 @@ module ValidationPackage =
         PreReleaseVersionSuffix = "use",
         BuildMetadataVersionSuffix = "suffixes",
         ProgrammingLanguage= "FSharp",
-        PackageContent = BinaryContent.expected_binary_content_cliargsAddition,
+        PackageContent = BinaryContent.expected_binary_content_inputsAddition,
         ReleaseDate = date,
         Authors = [|Author.allFieldsClient|],
         Tags = [|OntologyAnnotation.allFieldsClient|],
         ReleaseNotes = "releasenotes",
         CQCHookEndpoint = "hookendpoint",
-        CLIArguments = ResizeArray [ CLIArgument.allFieldsClient ]
+        Inputs = ResizeArray [ CommandInputParameter.allFieldsClient ]
     )
 
 module ValidationPackageIndex =
@@ -347,7 +388,7 @@ module ValidationPackageIndex =
             Tags = [|OntologyAnnotation.allFieldsIndex|],
             ReleaseNotes = "releasenotes",
             CQCHookEndpoint = "hookendpoint",
-            CLIArguments = [| |]
+            Inputs = [| |]
         )
     )
 
@@ -370,11 +411,11 @@ module ValidationPackageIndex =
             Tags = [|OntologyAnnotation.allFieldsIndex|],
             ReleaseNotes = "releasenotes",
             CQCHookEndpoint = "hookendpoint",
-            CLIArguments = [| |]
+            Inputs = [| |]
         )
     )
 
-    let allFields_cliargsAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
+    let allFields_inputsAddition = AVPRIndex.Domain.ValidationPackageIndex.create(
         repoPath = "",
         fileName = "",
         lastUpdated = System.DateTime.Now,
@@ -393,6 +434,6 @@ module ValidationPackageIndex =
             Tags = [|OntologyAnnotation.allFieldsIndex|],
             ReleaseNotes = "releasenotes",
             CQCHookEndpoint = "hookendpoint",
-            CLIArguments = [|CLIArgument.allFieldsIndex|]
+            Inputs = [|CommandInputParameter.allFieldsIndex|]
         )
     )

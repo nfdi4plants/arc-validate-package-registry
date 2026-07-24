@@ -11,6 +11,10 @@ namespace PackageRegistryService.OpenAPI
             settings.Version = "v1";
             settings.Description = "A simple API for retrieving ARC validation packages";
 
+            var commandInputTypeProcessor = new CommandInputTypeSchemaProcessor();
+            settings.SchemaSettings.SchemaProcessors.Add(commandInputTypeProcessor);
+            settings.DocumentProcessors.Add(commandInputTypeProcessor);
+
             // add a security definition for API key authentication
             settings.AddSecurity(
                 name: "ApiKey",

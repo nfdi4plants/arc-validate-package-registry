@@ -39,7 +39,7 @@ namespace AVPRClient
         public Client(System.Net.Http.HttpClient httpClient)
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            BaseUrl = "https://avpr.nfdi4plants.org";
+            BaseUrl = "http://localhost:5099";
             _httpClient = httpClient;
             Initialize();
         }
@@ -1119,7 +1119,7 @@ namespace AVPRClient
         public byte[] PackageContent { get; set; }
 
         /// <summary>
-        ///  
+        ///
         /// </summary>
         [Newtonsoft.Json.JsonProperty("ReleaseDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(DateFormatConverter))]
@@ -1137,11 +1137,17 @@ namespace AVPRClient
         [Newtonsoft.Json.JsonProperty("Authors", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<Author> Authors { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("ProgrammingLanguage", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ProgrammingLanguage { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("CLIArguments", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<CLIArgument> CLIArguments { get; set; }
+        /// <summary>
+        /// The CWL command inputs this validation package accepts.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("Inputs", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<CommandInputParameter> Inputs { get; set; }
 
     }
 
@@ -1179,17 +1185,87 @@ namespace AVPRClient
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CLIArgument
+    public partial class CommandInputParameter
     {
 
-        [Newtonsoft.Json.JsonProperty("Flags", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<string> Flags { get; set; }
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Id { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("Description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Description { get; set; }
+        [Newtonsoft.Json.JsonProperty("type", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public CommandInputType Type { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("Example", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Example { get; set; }
+        [Newtonsoft.Json.JsonProperty("label", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Label { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("doc", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Doc { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("inputBinding", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CommandInputBinding InputBinding { get; set; } = new CommandInputBinding();
+
+    }
+
+    /// <summary>
+    /// A supported scalar CWL command input type, optionally nullable via a trailing '?'.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CommandInputType
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
+        Boolean = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"boolean?")]
+        Boolean_ = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"int")]
+        Int = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"int?")]
+        Int_ = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"long")]
+        Long = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"long?")]
+        Long_ = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"float")]
+        Float = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"float?")]
+        Float_ = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"double")]
+        Double = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"double?")]
+        Double_ = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"string")]
+        String = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"string?")]
+        String_ = 11,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CommandInputBinding
+    {
+
+        [Newtonsoft.Json.JsonProperty("position", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Position { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("prefix", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Prefix { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("separate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Separate { get; set; }
 
     }
 
