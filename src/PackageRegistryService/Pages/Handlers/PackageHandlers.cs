@@ -46,7 +46,7 @@ namespace PackageRegistryService.Pages.Handlers
                     packageReleaseNotes: package.ReleaseNotes ?? "",
                     packageProgrammingLanguage: package.ProgrammingLanguage,
                     packageAuthors: (package.Authors ?? []).ToArray(),
-                    packageCLIArguments: (package.CLIArguments ?? []).ToArray(),
+                    packageInputs: (package.Inputs ?? []).ToArray(),
                     versionTable: Components.PackageAvailableVersion.RenderVersionTable(packages),
                     downloads: downloads?.Downloads ?? 0
                 )
@@ -90,7 +90,7 @@ namespace PackageRegistryService.Pages.Handlers
                     packageReleaseNotes: latestPackage.ReleaseNotes ?? "",
                     packageProgrammingLanguage: latestPackage.ProgrammingLanguage,
                     packageAuthors: (latestPackage.Authors ?? []).ToArray(),
-                    packageCLIArguments: (latestPackage.CLIArguments ?? []).ToArray(),
+                    packageInputs: (latestPackage.Inputs ?? []).ToArray(),
                     versionTable: Components.PackageAvailableVersion.RenderVersionTable(packages),
                     downloads: downloads?.Downloads ?? 0
                 )

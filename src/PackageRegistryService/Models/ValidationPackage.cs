@@ -104,9 +104,9 @@ namespace PackageRegistryService.Models
         public string ProgrammingLanguage { get; set; } = "";
 
         /// <summary>
-        /// The command-line arguments this validation package accepts.
+        /// The CWL command inputs this validation package accepts.
         /// </summary>
-        public ICollection<AVPRIndex.Domain.CLIArgument> CLIArguments { get; set; } = Array.Empty<AVPRIndex.Domain.CLIArgument>().ToList();
+        public ICollection<AVPRIndex.Domain.CommandInputParameter> Inputs { get; set; } = [];
 
         /// <summary>
         /// 

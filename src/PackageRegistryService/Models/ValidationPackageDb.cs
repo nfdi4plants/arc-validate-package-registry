@@ -15,18 +15,66 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ValidationPackage>()
-            .OwnsMany(v => v.Authors, a =>
+            var validationPackage = modelBuilder.Entity<ValidationPackage>();
+
+            validationPackage.OwnsMany(v => v.Authors, author =>
             {
-                a.ToJson();
-            })
-            .OwnsMany(v => v.Tags, t =>
+                author.ToJson();
+            });
+
+            validationPackage.OwnsMany(v => v.Tags, tag =>
             {
-                 t.ToJson();
-            })
-            .OwnsMany(v => v.CLIArguments, c =>
+                tag.ToJson();
+            });
+
+            validationPackage.OwnsMany(v => v.Inputs, input =>
             {
-                c.ToJson();
+                input.ToJson();
+
+                // A JSON-owned collection needs an internal ordinal key. Without an
+                // explicit key, EF treats CWL's semantic string Id property as that
+                // key and consequently excludes it from the stored JSON document.
+                input.Property<int>("__ordinal")
+                    .ValueGeneratedOnAdd();
+                input.HasKey(
+                    "ValidationPackageName",
+                    "ValidationPackageMajorVersion",
+                    "ValidationPackageMinorVersion",
+                    "ValidationPackagePatchVersion",
+                    "ValidationPackagePreReleaseVersionSuffix",
+                    "ValidationPackageBuildMetadataVersionSuffix",
+                    "__ordinal");
+
+                input.Property(i => i.Id)
+                    .IsRequired()
+                    .HasJsonPropertyName("id");
+                input.Property(i => i.Label)
+                    .HasJsonPropertyName("label");
+                input.Property(i => i.Doc)
+                    .HasJsonPropertyName("doc");
+
+                input.OwnsOne(i => i.Type, inputType =>
+                {
+                    inputType.HasJsonPropertyName("type");
+                    inputType.Property(t => t.PrimitiveType)
+                        .HasConversion<CwlPrimitiveStorageConverter>()
+                        .HasJsonPropertyName("primitiveType");
+                    inputType.Property(t => t.IsNullable)
+                        .HasJsonPropertyName("isNullable");
+                });
+                input.Navigation(i => i.Type).IsRequired();
+
+                input.OwnsOne(i => i.InputBinding, binding =>
+                {
+                    binding.HasJsonPropertyName("inputBinding");
+                    binding.Property(b => b.Position)
+                        .HasJsonPropertyName("position");
+                    binding.Property(b => b.Prefix)
+                        .HasJsonPropertyName("prefix");
+                    binding.Property(b => b.Separate)
+                        .HasJsonPropertyName("separate");
+                });
+                input.Navigation(i => i.InputBinding).IsRequired();
             });
         }
 

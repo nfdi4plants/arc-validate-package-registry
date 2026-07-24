@@ -49,7 +49,7 @@ namespace PackageRegistryService.Data
                                 Authors = i.Metadata.Authors,
                                 CQCHookEndpoint = i.Metadata.CQCHookEndpoint,
                                 ProgrammingLanguage = i.Metadata.ProgrammingLanguage,
-                                CLIArguments = i.Metadata.CLIArguments
+                                Inputs = i.Metadata.Inputs?.ToList() ?? []
                             };
                         });
 

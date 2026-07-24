@@ -12,8 +12,8 @@ using PackageRegistryService.Models;
 namespace PackageRegistryService.Migrations
 {
     [DbContext(typeof(ValidationPackageDb))]
-    [Migration("20260723143326_AddCLIArguments")]
-    partial class AddCLIArguments
+    [Migration("20260724094518_AddCWLInputs")]
+    partial class AddCWLInputs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -182,7 +182,7 @@ namespace PackageRegistryService.Migrations
                                 .HasForeignKey("ValidationPackageName", "ValidationPackageMajorVersion", "ValidationPackageMinorVersion", "ValidationPackagePatchVersion", "ValidationPackagePreReleaseVersionSuffix", "ValidationPackageBuildMetadataVersionSuffix");
                         });
 
-                    b.OwnsMany("AVPRIndex.Domain+CLIArgument", "CLIArguments", b1 =>
+                    b.OwnsMany("AVPRIndex.Domain+CommandInputParameter", "Inputs", b1 =>
                         {
                             b1.Property<string>("ValidationPackageName")
                                 .HasColumnType("text");
@@ -202,27 +202,126 @@ namespace PackageRegistryService.Migrations
                             b1.Property<string>("ValidationPackageBuildMetadataVersionSuffix")
                                 .HasColumnType("text");
 
-                            b1.Property<int>("Id")
+                            b1.Property<int>("__ordinal")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("integer");
 
-                            b1.Property<string>("Description")
-                                .HasColumnType("text");
+                            b1.Property<string>("Doc")
+                                .HasColumnType("text")
+                                .HasAnnotation("Relational:JsonPropertyName", "doc");
 
-                            b1.Property<string>("Example")
-                                .HasColumnType("text");
+                            b1.Property<string>("Id")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasAnnotation("Relational:JsonPropertyName", "id");
 
-                            b1.Property<string[]>("Flags")
-                                .HasColumnType("text[]");
+                            b1.Property<string>("Label")
+                                .HasColumnType("text")
+                                .HasAnnotation("Relational:JsonPropertyName", "label");
 
-                            b1.HasKey("ValidationPackageName", "ValidationPackageMajorVersion", "ValidationPackageMinorVersion", "ValidationPackagePatchVersion", "ValidationPackagePreReleaseVersionSuffix", "ValidationPackageBuildMetadataVersionSuffix", "Id");
+                            b1.HasKey("ValidationPackageName", "ValidationPackageMajorVersion", "ValidationPackageMinorVersion", "ValidationPackagePatchVersion", "ValidationPackagePreReleaseVersionSuffix", "ValidationPackageBuildMetadataVersionSuffix", "__ordinal");
 
                             b1.ToTable("ValidationPackages");
 
-                            b1.ToJson("CLIArguments");
+                            b1.ToJson("Inputs");
 
                             b1.WithOwner()
                                 .HasForeignKey("ValidationPackageName", "ValidationPackageMajorVersion", "ValidationPackageMinorVersion", "ValidationPackagePatchVersion", "ValidationPackagePreReleaseVersionSuffix", "ValidationPackageBuildMetadataVersionSuffix");
+
+                            b1.OwnsOne("AVPRIndex.Domain+CommandInputBinding", "InputBinding", b2 =>
+                                {
+                                    b2.Property<string>("CommandInputParameterValidationPackageName")
+                                        .HasColumnType("text");
+
+                                    b2.Property<int>("CommandInputParameterValidationPackageMajorVersion")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<int>("CommandInputParameterValidationPackageMinorVersion")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<int>("CommandInputParameterValidationPackagePatchVersion")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("CommandInputParameterValidationPackagePreReleaseVersionSuffix")
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("CommandInputParameterValidationPackageBuildMetadataVersionSuffix")
+                                        .HasColumnType("text")
+                                        .HasColumnName("CommandInputParameterValidationPackageBuildMetadataVersionSuff~");
+
+                                    b2.Property<int>("CommandInputParameter__ordinal")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<int>("Position")
+                                        .HasColumnType("integer")
+                                        .HasAnnotation("Relational:JsonPropertyName", "position");
+
+                                    b2.Property<string>("Prefix")
+                                        .HasColumnType("text")
+                                        .HasAnnotation("Relational:JsonPropertyName", "prefix");
+
+                                    b2.Property<bool>("Separate")
+                                        .HasColumnType("boolean")
+                                        .HasAnnotation("Relational:JsonPropertyName", "separate");
+
+                                    b2.HasKey("CommandInputParameterValidationPackageName", "CommandInputParameterValidationPackageMajorVersion", "CommandInputParameterValidationPackageMinorVersion", "CommandInputParameterValidationPackagePatchVersion", "CommandInputParameterValidationPackagePreReleaseVersionSuffix", "CommandInputParameterValidationPackageBuildMetadataVersionSuffix", "CommandInputParameter__ordinal");
+
+                                    b2.ToTable("ValidationPackages");
+
+                                    b2.HasAnnotation("Relational:JsonPropertyName", "inputBinding");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("CommandInputParameterValidationPackageName", "CommandInputParameterValidationPackageMajorVersion", "CommandInputParameterValidationPackageMinorVersion", "CommandInputParameterValidationPackagePatchVersion", "CommandInputParameterValidationPackagePreReleaseVersionSuffix", "CommandInputParameterValidationPackageBuildMetadataVersionSuffix", "CommandInputParameter__ordinal");
+                                });
+
+                            b1.OwnsOne("AVPRIndex.Domain+CommandInputType", "Type", b2 =>
+                                {
+                                    b2.Property<string>("CommandInputParameterValidationPackageName")
+                                        .HasColumnType("text");
+
+                                    b2.Property<int>("CommandInputParameterValidationPackageMajorVersion")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<int>("CommandInputParameterValidationPackageMinorVersion")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<int>("CommandInputParameterValidationPackagePatchVersion")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("CommandInputParameterValidationPackagePreReleaseVersionSuffix")
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("CommandInputParameterValidationPackageBuildMetadataVersionSuffix")
+                                        .HasColumnType("text")
+                                        .HasColumnName("CommandInputParameterValidationPackageBuildMetadataVersionSuff~");
+
+                                    b2.Property<int>("CommandInputParameter__ordinal")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<bool>("IsNullable")
+                                        .HasColumnType("boolean")
+                                        .HasAnnotation("Relational:JsonPropertyName", "isNullable");
+
+                                    b2.Property<string>("PrimitiveType")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasAnnotation("Relational:JsonPropertyName", "primitiveType");
+
+                                    b2.HasKey("CommandInputParameterValidationPackageName", "CommandInputParameterValidationPackageMajorVersion", "CommandInputParameterValidationPackageMinorVersion", "CommandInputParameterValidationPackagePatchVersion", "CommandInputParameterValidationPackagePreReleaseVersionSuffix", "CommandInputParameterValidationPackageBuildMetadataVersionSuffix", "CommandInputParameter__ordinal");
+
+                                    b2.ToTable("ValidationPackages");
+
+                                    b2.HasAnnotation("Relational:JsonPropertyName", "type");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("CommandInputParameterValidationPackageName", "CommandInputParameterValidationPackageMajorVersion", "CommandInputParameterValidationPackageMinorVersion", "CommandInputParameterValidationPackagePatchVersion", "CommandInputParameterValidationPackagePreReleaseVersionSuffix", "CommandInputParameterValidationPackageBuildMetadataVersionSuffix", "CommandInputParameter__ordinal");
+                                });
+
+                            b1.Navigation("InputBinding")
+                                .IsRequired();
+
+                            b1.Navigation("Type")
+                                .IsRequired();
                         });
 
                     b.OwnsMany("AVPRIndex.Domain+OntologyAnnotation", "Tags", b1 =>
@@ -270,7 +369,7 @@ namespace PackageRegistryService.Migrations
 
                     b.Navigation("Authors");
 
-                    b.Navigation("CLIArguments");
+                    b.Navigation("Inputs");
 
                     b.Navigation("Tags");
                 });

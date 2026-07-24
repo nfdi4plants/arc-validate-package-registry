@@ -5,26 +5,28 @@
 namespace PackageRegistryService.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCLIArguments : Migration
+    public partial class AddCWLInputs : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "CLIArguments",
+                name: "Inputs",
                 table: "ValidationPackages",
                 type: "jsonb",
                 nullable: true);
 
-            // give pre-existing rows an empty array rather than NULL
-            migrationBuilder.Sql(@"UPDATE ""ValidationPackages"" SET ""CLIArguments"" = '[]' WHERE ""CLIArguments"" IS NULL;");
+            // Keep the F# model's empty-collection default for packages that were
+            // persisted before CWL inputs were introduced.
+            migrationBuilder.Sql(
+                @"UPDATE ""ValidationPackages"" SET ""Inputs"" = '[]' WHERE ""Inputs"" IS NULL;");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "CLIArguments",
+                name: "Inputs",
                 table: "ValidationPackages");
         }
     }
