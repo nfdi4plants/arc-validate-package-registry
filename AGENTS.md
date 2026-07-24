@@ -100,9 +100,22 @@ Trace a metadata field through every representation it affects; a green build al
 - Fixture byte changes require recomputing the corresponding MD5 values and updating expected packages in `ValidationPackageIndexTests.fs`. Verify both metadata and hashes.
 - In `tests/ClientTests/`, keep equivalent index and generated-client reference objects. Test index-to-client and client-to-index mappings, nested collection conversion, and null/empty behavior in `TypeExtensionsTests.fs`. Add a dedicated serialized-content fixture when needed, but retain older fixtures without a new optional field.
 - Run `PackageStagingArea.sln` when submitted-package syntax or sanity checks are affected. Prefer small index/staging-test fixtures; add a real staged package only when the real layout must be exercised, always as a new semantic version and only after reading it.
-- For service/client contract behavior, reuse `tests/PackageRegistryTestHost/PackageRegistryWebApplicationFactory`. It runs the real ASP.NET pipeline in the `Testing` environment with a unique EF in-memory database per factory; seed packages through `SeedPackageAsync` or `SeedPackagesAsync` so their integrity hashes and download rows are created consistently. These tests cover routing and public serialization, not PostgreSQL JSON persistence or migrations. Explicitly verify migrations and backfills against Postgres, along with seeded JSON persistence and both present/absent website rendering cases when those behaviors change.
+- For service/client contract behavior, follow the shared in-process test-host design below. Explicitly verify migrations and backfills against Postgres, along with seeded JSON persistence and both present/absent website rendering cases when those behaviors change.
 
 Use focused index/client tests while iterating, then run the main solution and, when package syntax is affected, the staging solution. Recompute expected values from actual fixture content instead of weakening assertions.
+
+## In-process registry test host
+
+`tests/PackageRegistryTestHost` is shared infrastructure for API and generated-client contract tests. `PackageRegistryWebApplicationFactory` boots the real `PackageRegistryService` entry point and replaces Npgsql with a uniquely named EF in-memory database. The `Testing` environment must remain free of external PostgreSQL health checks, HTTPS redirection, migrations, and staging-data initialization.
+
+When adding tests:
+
+- Create and dispose a factory per test or fixture. Do not share mutable database state between unrelated tests.
+- Seed through `SeedPackageAsync` or `SeedPackagesAsync`; the helpers deliberately create matching integrity-hash and zero-download records required by the real handlers.
+- In `APITests`, use `factory.CreateClient()` to assert HTTP status and exact raw JSON property/value shapes.
+- In `ClientTests`, pass the factory client to `AVPRClient.Client`, replace its production `BaseUrl` with `httpClient.BaseAddress.ToString()`, and assert the generated typed result.
+- For a cross-cutting wire-model change, prefer both a raw API assertion and a generated-client assertion. The former identifies service serialization errors; the latter identifies generated-client route or deserialization drift.
+- Do not treat the in-memory host as database integration coverage. It does not verify PostgreSQL migrations, `jsonb` storage, backfills, Npgsql conversions, or relational behavior. Retain EF model assertions and perform focused PostgreSQL verification when persistence changes.
 
 ## CI and release safety
 

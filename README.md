@@ -36,6 +36,7 @@ Read more at [avpr.nfdi4plants.org/about](https://avpr.nfdi4plants.org/about)
     - [Triggering a image release](#triggering-a-image-release)
     - [OpenAPI endpoint documentation via Swagger UI](#openapi-endpoint-documentation-via-swagger-ui)
   - [Testing](#testing)
+    - [In-process API and client contract tests](#in-process-api-and-client-contract-tests)
     - [Testing metadata model changes](#testing-metadata-model-changes)
   - [Release packages to production](#release-packages-to-production)
 
@@ -430,6 +431,21 @@ There are 2 solutions that contain test projects:
 
 Run the tests with `dotnet test` in the respective test project folders or on the respective solution.
 
+### In-process API and client contract tests
+
+`tests/PackageRegistryTestHost` is a shared test-infrastructure project, not a test suite. Its `PackageRegistryWebApplicationFactory` starts the real `PackageRegistryService` application through `WebApplicationFactory<Program>`. Requests therefore pass through the production endpoint mappings, handlers, filters, and System.Text.Json configuration rather than a hand-written HTTP stub.
+
+The factory runs the application in the `Testing` environment. This avoids development-time migrations and staging-data initialization, the external PostgreSQL health check, and HTTPS redirection. It replaces the registered Npgsql context with an EF in-memory database whose randomly generated name is unique to that factory. Create and dispose one factory per test or test fixture; do not depend on state from another factory.
+
+Seed data through `SeedPackageAsync` or `SeedPackagesAsync`. These helpers add each `ValidationPackage` together with the matching content-hash and zero-download records required by the real handlers. Do not insert only a package when testing a GET endpoint: the service deliberately rejects packages whose integrity record is missing or inconsistent.
+
+Use the host at two distinct boundaries:
+
+- API tests create an `HttpClient` with `factory.CreateClient()` and assert status codes and the raw JSON contract. This is where exact property names and converter-backed wire values such as `"type": "boolean?"` should be checked.
+- Generated-client tests pass that same `HttpClient` to `AVPRClient.Client`, set `BaseUrl` to `httpClient.BaseAddress.ToString()`, call the generated operation, and assert the typed result. This catches route, status-code, and deserialization drift between the service and generated client.
+
+The in-memory provider is intentional for fast, isolated contract tests, but it is not a PostgreSQL substitute. These tests do not prove migrations, `jsonb` layout, backfills, Npgsql value conversion, or relational query behavior. Keep focused EF model tests for mapping metadata and use a real PostgreSQL instance for migration and persisted-JSON verification.
+
 ### Testing metadata model changes
 
 A validation-package metadata field crosses the index model, frontmatter parser, generated API client, registry service, and sometimes the website. Test a new or changed field at each representation it affects:
@@ -439,7 +455,7 @@ A validation-package metadata field crosses the index model, frontmatter parser,
 3. **Hashes and package indexes:** changing fixture bytes changes content hashes. Recompute the affected MD5 reference constants and update the expected `ValidationPackageIndex` values in `ValidationPackageIndexTests.fs`; do not copy an old hash forward. Check both parsed metadata and the content hash.
 4. **Generated-client round trips:** regenerate `src/AVPRClient/AVPRClient.cs`, add equivalent client and index reference objects in `tests/ClientTests/ReferenceObjects.fs`, and exercise the mappings in `TypeExtensionsTests.fs`. Cover index-to-client and client-to-index conversion, including nested collections and null/empty handling. Add a dedicated fixture under `tests/ClientTests/fixtures/` when serialized package content is part of the behavior, while retaining older fixtures without the optional field.
 5. **Staging compatibility:** run the staging solution whenever the new syntax can occur in a submitted package. Prefer the focused index fixtures above for parser behavior. Add a new semantically versioned package under `StagingArea/` only when the real staging layout or sanity checker itself needs coverage; never alter an already published package version, and read a package before invoking it.
-6. **Service boundaries:** build the main solution to catch API schema, Entity Framework ownership, seeding, handler, and generated-client drift. Use `tests/PackageRegistryTestHost` from API or client tests when behavior should pass through the real in-process ASP.NET pipeline. Each factory uses an isolated EF in-memory database; seed packages through `SeedPackageAsync` or `SeedPackagesAsync`, which also creates the required hash and download records. This covers routing and public serialization, but not PostgreSQL JSON persistence or migrations. For database or rendered-page behavior not covered by an existing automated test, run the local stack, apply the migration, inspect old and newly seeded rows, and check both the present and absent rendering cases.
+6. **Service boundaries:** build the main solution to catch API schema, Entity Framework ownership, seeding, handler, and generated-client drift. Use the shared in-process test host described above when behavior should pass through the real ASP.NET pipeline. For database or rendered-page behavior not covered by an existing automated test, run the local stack, apply the migration, inspect old and newly seeded rows, and check both the present and absent rendering cases.
 
 Run focused suites while iterating, followed by both affected solutions:
 
