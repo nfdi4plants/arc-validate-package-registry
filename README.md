@@ -425,7 +425,7 @@ The `PackageRegistryService` has a built-in Swagger UI endpoint for API document
 
 There are 2 solutions that contain test projects:
 
-- `arc-validate-package-registry.sln` contains the test projects for the `AVPRIndex` and `AVPRClient` libraries, as well as future API and integration tests located in `/tests`.
+- `arc-validate-package-registry.sln` contains the test projects for the `AVPRIndex` and `AVPRClient` libraries and the registry API/integration tests located in `/tests`.
 - `PackageStagingArea.sln` contains the tests and sanity checks for all packages in the staging area.
 
 Run the tests with `dotnet test` in the respective test project folders or on the respective solution.
@@ -439,13 +439,14 @@ A validation-package metadata field crosses the index model, frontmatter parser,
 3. **Hashes and package indexes:** changing fixture bytes changes content hashes. Recompute the affected MD5 reference constants and update the expected `ValidationPackageIndex` values in `ValidationPackageIndexTests.fs`; do not copy an old hash forward. Check both parsed metadata and the content hash.
 4. **Generated-client round trips:** regenerate `src/AVPRClient/AVPRClient.cs`, add equivalent client and index reference objects in `tests/ClientTests/ReferenceObjects.fs`, and exercise the mappings in `TypeExtensionsTests.fs`. Cover index-to-client and client-to-index conversion, including nested collections and null/empty handling. Add a dedicated fixture under `tests/ClientTests/fixtures/` when serialized package content is part of the behavior, while retaining older fixtures without the optional field.
 5. **Staging compatibility:** run the staging solution whenever the new syntax can occur in a submitted package. Prefer the focused index fixtures above for parser behavior. Add a new semantically versioned package under `StagingArea/` only when the real staging layout or sanity checker itself needs coverage; never alter an already published package version, and read a package before invoking it.
-6. **Service boundaries:** build the main solution to catch API schema, Entity Framework ownership, seeding, handler, and generated-client drift. For database or rendered-page behavior not covered by an existing automated test, run the local stack, apply the migration, inspect old and newly seeded rows, and check both the present and absent rendering cases. Add a focused API/component test when introducing reusable service behavior rather than relying on the placeholder API test.
+6. **Service boundaries:** build the main solution to catch API schema, Entity Framework ownership, seeding, handler, and generated-client drift. Use `tests/PackageRegistryTestHost` from API or client tests when behavior should pass through the real in-process ASP.NET pipeline. Each factory uses an isolated EF in-memory database; seed packages through `SeedPackageAsync` or `SeedPackagesAsync`, which also creates the required hash and download records. This covers routing and public serialization, but not PostgreSQL JSON persistence or migrations. For database or rendered-page behavior not covered by an existing automated test, run the local stack, apply the migration, inspect old and newly seeded rows, and check both the present and absent rendering cases.
 
 Run focused suites while iterating, followed by both affected solutions:
 
 ```shell
 dotnet test tests/IndexTests/IndexTests.fsproj --configuration Release
 dotnet test tests/ClientTests/ClientTests.fsproj --configuration Release
+dotnet test tests/APITests/APITests.csproj --configuration Release
 dotnet build arc-validate-package-registry.sln --configuration Release
 dotnet test arc-validate-package-registry.sln --configuration Release --no-build
 dotnet build PackageStagingArea.sln --configuration Release

@@ -52,9 +52,14 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 builder.Services.Configure<JsonOptions>(options => options.SerializerOptions.PropertyNamingPolicy = null);
 
-builder.Services.AddHealthChecks()
-    //.AddCheck<DatabaseHealthCheck>("Database");
-    .AddNpgSql(builder.Configuration.GetConnectionString("PostgressConnectionString"));
+var healthChecks = builder.Services.AddHealthChecks();
+
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    healthChecks
+        //.AddCheck<DatabaseHealthCheck>("Database");
+        .AddNpgSql(builder.Configuration.GetConnectionString("PostgressConnectionString")!);
+}
 
 // ------------------------- WebApplication -------------------------
 // in this section, we will add the necessary code to configure the WebApplication,
@@ -85,7 +90,7 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-if (!app.Environment.IsProduction())
+if (!app.Environment.IsProduction() && !app.Environment.IsEnvironment("Testing"))
 {
     app.UseHttpsRedirection();
 
@@ -116,3 +121,7 @@ app.MapGroup("/")
     .MapPageEndpoints();
 
 app.Run();
+
+// Expose the top-level entry point to WebApplicationFactory without changing
+// the production startup path.
+public partial class Program { }

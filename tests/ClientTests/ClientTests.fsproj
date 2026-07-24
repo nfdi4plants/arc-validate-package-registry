@@ -12,6 +12,7 @@
     <Compile Include="Utils.fs" />
     <Compile Include="ReferenceObjects.fs" />
     <Compile Include="TypeExtensionsTests.fs" />
+    <Compile Include="ClientContractTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -31,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AVPRClient\AVPRClient.csproj" />
     <ProjectReference Include="..\..\src\AVPRIndex\AVPRIndex.fsproj" />
+    <ProjectReference Include="..\PackageRegistryTestHost\PackageRegistryTestHost.csproj" />
   </ItemGroup>
 
   <ItemGroup>

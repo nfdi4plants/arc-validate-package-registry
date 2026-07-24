@@ -34,6 +34,7 @@ dotnet test PackageStagingArea.sln --configuration Release --no-build
 # Focused test projects
 dotnet test tests/IndexTests/IndexTests.fsproj
 dotnet test tests/ClientTests/ClientTests.fsproj
+dotnet test tests/APITests/APITests.csproj
 dotnet test StagingAreaTests/StagingAreaTests.fsproj
 
 # Inspect a publication without pushing
@@ -99,7 +100,7 @@ Trace a metadata field through every representation it affects; a green build al
 - Fixture byte changes require recomputing the corresponding MD5 values and updating expected packages in `ValidationPackageIndexTests.fs`. Verify both metadata and hashes.
 - In `tests/ClientTests/`, keep equivalent index and generated-client reference objects. Test index-to-client and client-to-index mappings, nested collection conversion, and null/empty behavior in `TypeExtensionsTests.fs`. Add a dedicated serialized-content fixture when needed, but retain older fixtures without a new optional field.
 - Run `PackageStagingArea.sln` when submitted-package syntax or sanity checks are affected. Prefer small index/staging-test fixtures; add a real staged package only when the real layout must be exercised, always as a new semantic version and only after reading it.
-- The API test project is currently a placeholder. For service behavior, add focused API/component tests where practical; otherwise explicitly verify generated OpenAPI/client changes, EF migrations and backfills against Postgres, seeded JSON persistence, and both present/absent website rendering cases.
+- For service/client contract behavior, reuse `tests/PackageRegistryTestHost/PackageRegistryWebApplicationFactory`. It runs the real ASP.NET pipeline in the `Testing` environment with a unique EF in-memory database per factory; seed packages through `SeedPackageAsync` or `SeedPackagesAsync` so their integrity hashes and download rows are created consistently. These tests cover routing and public serialization, not PostgreSQL JSON persistence or migrations. Explicitly verify migrations and backfills against Postgres, along with seeded JSON persistence and both present/absent website rendering cases when those behaviors change.
 
 Use focused index/client tests while iterating, then run the main solution and, when package syntax is affected, the staging solution. Recompute expected values from actual fixture content instead of weakening assertions.
 
