@@ -162,17 +162,6 @@ module OntologyAnnotation =
         TermAccessionNumber = "TAN"
     )
 
-module CLIArgument =
-
-    let mandatoryFields = CLIArgument(Flags = [| "-i" |])
-
-    let allFields =
-        CLIArgument(
-            Flags = [| "-i"; "--input" |],
-            Description = "Input ARC path",
-            Example = "./my-arc"
-        )
-
 module CommandInputType =
 
     let requiredString =

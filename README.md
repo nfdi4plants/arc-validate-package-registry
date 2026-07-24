@@ -28,7 +28,7 @@ Read more at [avpr.nfdi4plants.org/about](https://avpr.nfdi4plants.org/about)
     - [Objects](#objects)
       - [Author](#author)
       - [Tag](#tag)
-      - [CLIArgument](#cliargument)
+      - [CWL command inputs](#cwl-command-inputs)
 - [Development](#development)
   - [AVPRIndex and AVPRClient libraries](#avprindex-and-avprclient-libraries)
     - [Triggering a nuget release](#triggering-a-nuget-release)
@@ -271,7 +271,7 @@ doSomeValidation ()
 | Tags | string[] | a list of tags with optional ontology annotations that describe the package. For more information about mandatory and optional fields in this object, see [Objects > Tag](#tag)  |
 | ReleaseNotes | string[] | a list of release notes for the package indicating changes from previous versions |
 | CQCHookEndpoint | string | an optional URL to a CQC Hook endpoint that can be used for continuous quality control (CQC) integration. If provided, this endpoint will be called with validation results after each package execution. |
-| CLIArguments | CLIArgument[] | a list of command line arguments the package accepts. Rendered on the package page under "Available Commands". For more information about the fields in this object, see [Objects > CLIArgument](#cliargument) |
+| Inputs | CommandInputParameter[] | package-specific configurable inputs using the supported scalar subset of CWL v1.2 `CommandLineTool.inputs`. See [CWL command inputs](#cwl-command-inputs). |
 
 <details>
 <summary>Example: all fields</summary>
@@ -308,17 +308,20 @@ ReleaseNotes: |
     - does the thing
     - does it well
 CQCHookEndpoint: https://some-url.xd
-CLIArguments:
-  - Flags:
-      - -i
-      - --input
-    Description: Path to the input ARC
-    Example: ./my-arc
-  - Flags:
-      - -v
-      - --verbose
-    Description: Enable verbose logging
-    Example: enabled
+Inputs:
+  - id: verbose
+    type: boolean?
+    label: Verbose logging
+    doc: Enable verbose logging
+    inputBinding:
+      prefix: --verbose
+  - id: output
+    type: string?
+    doc: Write output to this file
+    inputBinding:
+      position: 2
+      prefix: --output=
+      separate: false
 ---
 *)
 let doSomeValidation () = ()
@@ -350,15 +353,53 @@ Tags can be any string with an optional ontology annotation from a controlled vo
 | TermSourceREF | string | Reference to a controlled vocabulary source | no |
 | TermAccessionNumber | string | Accession in the referenced controlled vocabulary source | no |
 
-#### CLIArgument
+#### CWL command inputs
 
-A command line argument that the package accepts. Declared arguments are listed on the package page under an "Available Commands" section (the section is omitted when a package declares none). Declaring them here does not wire up parsing — the package script is still responsible for reading and acting on the arguments — but it documents the supported configuration for users and consuming tools.
+`Inputs` declares package-specific configurable inputs using an actual subset of
+[CWL v1.2 `CommandLineTool.inputs`](https://www.commonwl.org/v1.2/CommandLineTool.html).
+The surrounding AVPR metadata field remains PascalCase as `Inputs`, consistently
+with the other frontmatter fields. Its array value uses CWL's array form and can
+be copied under the lowercase `inputs` field of a complete CWL
+`CommandLineTool`. The package frontmatter itself is not a complete CWL document.
 
-| Field | Type | Description | Mandatory |
-| --- | --- | --- | --- |
-| Flags | string[] | the accepted flag(s) for this argument. Multiple entries denote aliases for the same argument (e.g. `-i` and `--input`) | yes |
-| Description | string | a description of what the argument does | no |
-| Example | string | an example value for the argument | no |
+Supported input fields:
+
+| CWL field | Supported value | Mandatory |
+| --- | --- | --- |
+| `id` | non-empty string, unique within the package | yes |
+| `type` | `boolean`, `int`, `long`, `float`, `double`, or `string`, optionally followed by one `?` | yes |
+| `label` | string | no |
+| `doc` | string | no |
+| `inputBinding` | the supported binding object described below | yes |
+
+Supported `inputBinding` fields:
+
+| CWL field | Supported value | Default |
+| --- | --- | --- |
+| `prefix` | one canonical string prefix; omission makes the input positional | no prefix |
+| `position` | integer | `0` |
+| `separate` | boolean | `true` |
+
+The `?` shorthand is the only supported nullable representation. For example,
+`string` requires a value while `string?` permits omission. A boolean input is a
+value-less flag: `true` emits its prefix, while `false` (and `null` for
+`boolean?`) emits nothing. It never emits a trailing `true` or `false` value.
+For non-boolean values, the default `separate: true` emits prefix and value as
+separate argv elements. `separate: false` concatenates them, and omitting
+`prefix` emits only the positional value. Position defaults to `0`.
+
+CWL has no prefix-alias field, so metadata declares exactly one canonical
+prefix. A script can still accept aliases such as `-v`, but they are not part of
+the published structured contract. Declaring `Inputs` also does not install an
+argument parser: package scripts remain responsible for interpreting argv until
+downstream execution support is available.
+
+This first subset does not support `File`, `Directory`, `stdin`, arrays,
+records, enums, user-defined types, or union-array syntax such as
+`type: ["null", string]`; use `string?` instead. Additional CWL parameter and
+binding fields such as `default`, `secondaryFiles`, `valueFrom`,
+`itemSeparator`, and `shellQuote` are tolerated but ignored and discarded. An
+invalid supported field or unsupported `type` value/shape is still rejected.
 
 [🔼 Back to top](#table-of-contents)
 

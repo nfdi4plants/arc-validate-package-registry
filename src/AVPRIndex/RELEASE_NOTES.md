@@ -1,6 +1,6 @@
 ## v0.5.0
 
-- Add optional `CLIArguments` metadata field (declares the command-line arguments a package accepts: `Flags`, `Description`, `Example`)
+- Add the `Inputs` metadata field with the supported CWL v1.2 scalar command-input subset.
 - Ignore unmatched frontmatter properties on deserialization (forward-compat for fields added in newer releases)
 
 ## v0.4.0

@@ -7,17 +7,17 @@ PatchVersion: 0
 Publish: true
 Summary: this package is here for testing purposes only.
 Description: this package is here for testing purposes only - now with payload in json output.
-CLIArguments:
-  - Flags: 
-      - "-t"
-      - "--test"
-    Description: use to do some testing idk
-    Example: --test
-  - Flags: 
-      - "-e"
-      - "--echo"
-    Description: print the arg given
-    Example: --echo "yo whadup"
+Inputs:
+  - id: test
+    type: boolean?
+    doc: Enable test mode
+    inputBinding:
+      prefix: --test
+  - id: echo
+    type: string?
+    doc: Print the supplied text
+    inputBinding:
+      prefix: --echo
 Authors:
   - FullName: John Doe
     Email: j@d.com
@@ -31,7 +31,7 @@ Tags:
   - Name: validation
   - Name: my-package
   - Name: thing
-ReleaseNotes: add cli args
+ReleaseNotes: add CWL command inputs
 CQCHookEndpoint: https://archigator-beta.nfdi4plants.org
 ---
 *)"""
@@ -62,10 +62,8 @@ module CLIArgs =
 
     let rec parseArgs args state =
         match args with
-        | "-t" :: next :: rest when next.StartsWith("-") ->
-            parseArgs (next :: rest) { state with Test = true }
-        | "--test" :: next :: rest when next.StartsWith("-") ->
-            parseArgs (next :: rest) { state with Test = true }
+        | ("-t" | "--test") :: rest ->
+            parseArgs rest { state with Test = true }
         | "-e" :: value :: rest ->
             parseArgs rest { state with Echo = value }
         | "--echo" :: value :: rest ->
@@ -121,4 +119,4 @@ test_package
     ])
 )
 
-printfn "If you can read this in your console, you successfully executed test package v7.0.0!" 
+printfn "If you can read this in your console, you successfully executed test package v7.0.0!"

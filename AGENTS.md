@@ -91,6 +91,13 @@ Validation package metadata changes commonly require coordinated edits in:
 
 Search for every use of the changed field before editing. Do not hand-author a migration unless the existing migration workflow requires it.
 
+## CWL input contract
+
+- Keep the AVPR metadata wrapper as PascalCase `Inputs`. Inside it, preserve the exact lower-camel-case CWL names (`id`, `type`, `label`, `doc`, `inputBinding`, `prefix`, `position`, and `separate`) through frontmatter, public JSON, OpenAPI, and generated-client code.
+- Public YAML/JSON and the generated client expose `CommandInputType` as one scalar CWL string such as `boolean?`. Only the database uses the normalized object with a lowercase primitive string and boolean nullability; never leak that storage shape through the API.
+- Additional unsupported parameter or binding fields are intentionally ignored and discarded. Unsupported or malformed `type` values and shapes must still fail conversion with an actionable diagnostic.
+- Do not add custom aliases or requiredness fields. CWL has one canonical binding prefix, and requiredness is represented by the scalar type with or without `?`.
+
 ## Test coverage for metadata model changes
 
 Trace a metadata field through every representation it affects; a green build alone does not prove parsing or mapping behavior.

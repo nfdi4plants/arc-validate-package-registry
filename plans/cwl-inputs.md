@@ -4,9 +4,11 @@
 
 Implementation status as of 2026-07-24:
 
-**Current stage: implementation.** The index/domain/frontmatter,
-registry-service/persistence, OpenAPI, generated-client, and website-rendering
-slices are complete; the staging package and documentation are next.
+**Current stage: implementation and automated verification complete.** All
+planned implementation, staging-package, cleanup, release-note, and
+documentation slices are complete. The production-connected AVPRCI dry-run and
+real PostgreSQL migration/backfill inspection remain environment-dependent
+manual checks.
 
 - [x] `AVPRIndex` domain model (`CwlPrimitive`, `CommandInputType`,
   `CommandInputBinding`, `CommandInputParameter`, and
@@ -18,7 +20,7 @@ slices are complete; the staging package and documentation are next.
 - [x] Registry service, EF JSON mapping, migration, and focused model/wire tests
 - [x] Website rendering
 - [x] generated client and bidirectional mappings
-- [ ] staging package, release notes, README, and `AGENTS.md`
+- [x] staging package, release notes, README, and `AGENTS.md`
 
 This plan supersedes only the configurable-command-line-input portion of [`cli-args.md`](cli-args.md). The dev-branch/container work in that plan remains unchanged.
 
@@ -652,11 +654,14 @@ Package-specific aliases are intentionally unavailable through the structured co
 5. **Completed:** update website rendering.
 6. **Completed:** add the converter-aware OpenAPI schema, regenerate the client,
    and update both `CommandInputType` mapping directions.
-7. **Client fixtures/tests completed; staging package pending:** convert client
-   fixtures/tests and the staging test package.
-8. Replace README/release-note documentation.
-9. Run focused tests, both solutions, and the manual DB/OpenAPI/page checks.
-10. Search the implementation, tests, fixtures, and current documentation for superseded `CLIArguments`, `CLIArgument`, `Flags`, and `PackageCLIArguments` references; only historical/superseded plan text may remain.
+7. **Completed:** convert client fixtures/tests and the staging test package.
+8. **Completed:** replace README/release-note documentation.
+9. **Automated checks completed; environment-dependent checks pending:** run
+   focused tests, both solutions, and the manual DB/OpenAPI/page checks.
+10. **Completed:** search the implementation, tests, fixtures, and current
+    documentation for superseded `CLIArguments`, `CLIArgument`, `Flags`, and
+    `PackageCLIArguments` references; only historical/superseded plan text may
+    remain.
 
 Do not regenerate the client or migration until the domain and service wire schema is final; otherwise generated churn will need to be repeated.
 

@@ -375,43 +375,6 @@ module Domain =
 
             tmp
 
-    type CLIArgument() =
-
-        member val Flags: string [] = Array.empty<string> with get,set
-        member val Description = "" with get,set
-        member val Example = "" with get,set
-
-        override this.GetHashCode() =
-            hash (
-                this.Flags,
-                this.Description,
-                this.Example
-            )
-
-        override this.Equals(other) =
-            match other with
-            | :? CLIArgument as cli ->
-                (
-                    this.Flags,
-                    this.Description,
-                    this.Example
-                ) = (
-                    cli.Flags,
-                    cli.Description,
-                    cli.Example
-                )
-            | _ -> false
-
-        static member create (
-            flags: string [],
-            ?Description: string,
-            ?Example: string
-        ) =
-            let tmp = CLIArgument(Flags = flags)
-            Description |> Option.iter (fun x -> tmp.Description <- x)
-            Example |> Option.iter (fun x -> tmp.Example <- x)
-            tmp
-
     type ValidationPackageMetadata() =
         // mandatory fields
         member val Name = "" with get,set

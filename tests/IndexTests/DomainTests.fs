@@ -134,22 +134,6 @@ module OntologyAnnotation =
         )
         Assert.Equivalent(OntologyAnnotation.allFields, actual)
 
-module CLIArgument =
-
-    [<Fact>]
-    let ``create function for mandatory fields``() =
-        let actual = CLIArgument.create(flags = [| "-i" |])
-        Assert.Equivalent(CLIArgument.mandatoryFields, actual)
-
-    [<Fact>]
-    let ``create function for all fields``() =
-        let actual = CLIArgument.create(
-            flags = [| "-i"; "--input" |],
-            Description = "Input ARC path",
-            Example = "./my-arc"
-        )
-        Assert.Equivalent(CLIArgument.allFields, actual)
-
 module CommandInputType =
 
     [<Fact>]
