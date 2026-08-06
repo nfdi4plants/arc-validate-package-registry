@@ -70,6 +70,7 @@ open ARCtrl.CWL
 open ARCExpect
 open Expecto
 open System.IO
+open System.Runtime.ExceptionServices
 
 
 // Input:
@@ -105,22 +106,30 @@ let license =
 
 // Helper types:
 
-/// A single named requirement. `Run` raises with an explanatory message when the requirement is
-/// not met, so the same value can be turned into an Expecto test case and be evaluated up front
-/// to count the items that are ready for deposition.
+/// The outcome of a single named requirement. It is evaluated once, when the requirement list of a
+/// workflow or run is built, and only the outcome is kept: the ARC-wide readiness case and the
+/// reported test case both read it, so no requirement is ever checked twice.
 type Requirement = {
-    Name : string
-    Run  : unit -> unit
+    Name    : string
+    Failure : exn option
 }
 
-let requirement name run = { Name = name; Run = run }
+/// Evaluates `run` immediately. It raises with an explanatory message when the requirement is not
+/// met, and that exception is what gets recorded.
+let requirement name (run : unit -> unit) =
+    try run (); { Name = name; Failure = None }
+    with e -> { Name = name; Failure = Some e }
 
-let holds (r : Requirement) =
-    try r.Run(); true
-    with _ -> false
+let holds (r : Requirement) = r.Failure.IsNone
 
+/// Replays the recorded outcome. Rethrowing the original exception with its original stack trace
+/// keeps Expecto's distinction between a failed requirement and an unexpected error.
 let toTestCase (r : Requirement) =
-    testCase r.Name (fun () -> r.Run())
+    testCase r.Name (fun () ->
+        match r.Failure with
+        | Some e -> ExceptionDispatchInfo.Capture(e).Throw()
+        | None -> ()
+    )
 
 /// Reports a validation failure without an F# stack trace, so the JUnit report and the console
 /// show the explanation instead of script internals.
@@ -387,7 +396,8 @@ let runRequirements (run : ArcRun) =
     ]
 
 
-// Evaluate up front so the badge and the ARC-wide case can report how many items are ready.
+// Building the lists is what evaluates the requirements, once. The badge, the ARC-wide readiness
+// case and the reported test cases all read these same outcomes.
 let workflowResults = workflows |> List.map (fun w -> w, workflowRequirements w)
 let runResults = runs |> List.map (fun r -> r, runRequirements r)
 
