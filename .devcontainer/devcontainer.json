@@ -1,0 +1,100 @@
+{
+  "name": "ARC validation package registry",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "24",
+      "pnpmVersion": "none"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12",
+      "installTools": false
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {
+      "dockerDashComposeVersion": "v2"
+    }
+  },
+  "mounts": [
+    "source=avpr-devcontainer-data,target=/home/vscode/.devcontainer-data,type=volume"
+  ],
+  "remoteEnv": {
+    "APPDATA": "/home/vscode/.devcontainer-data/aspnet",
+    "GH_CONFIG_DIR": "/home/vscode/.devcontainer-data/gh",
+    "XDG_CACHE_HOME": "/home/vscode/.devcontainer-data/cache",
+    "XDG_CONFIG_HOME": "/home/vscode/.devcontainer-data/config",
+    "XDG_DATA_HOME": "/home/vscode/.devcontainer-data/share",
+    "UV_PROJECT_ENVIRONMENT": "/home/vscode/.devcontainer-data/venvs/arc-validate-package-registry",
+    "PATH": "/home/vscode/.local/bin:${containerEnv:PATH}"
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "forwardPorts": [
+    5099,
+    5432,
+    8080
+  ],
+  "portsAttributes": {
+    "5099": {
+      "label": "Package registry (dotnet watch)",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
+    },
+    "8080": {
+      "label": "Adminer / package registry",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "dotnet.defaultSolution": "arc-validate-package-registry.sln",
+        "python.defaultInterpreterPath": "/home/vscode/.devcontainer-data/venvs/arc-validate-package-registry/bin/python",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "openai.chatgpt",
+        "anthropic.claude-code",
+
+        "ionide.ionide-fsharp",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.dotnet-interactive-vscode",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "tintoy.msbuild-project-tools",
+
+        "ms-python.python",
+        "ms-python.debugpy",
+        "ms-python.isort",
+        "ms-python.vscode-pylance",
+        "ms-python.vscode-python-envs",
+
+        "bierner.github-markdown-preview",
+        "bierner.markdown-emoji",
+        "bierner.markdown-footnotes",
+        "bierner.markdown-mermaid",
+        "bierner.markdown-preview-github-styles",
+        "bierner.markdown-yaml-preamble",
+        "davidanson.vscode-markdownlint",
+        "yzhang.markdown-all-in-one",
+
+        "editorconfig.editorconfig",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+        "mhutchie.git-graph",
+        "ms-azuretools.vscode-containers",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "sbg-rabix.benten-cwl",
+        "streetsidesoftware.code-spell-checker",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
+}

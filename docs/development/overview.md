@@ -3,6 +3,7 @@
 ## Contents
 
 - [Prerequisites](#prerequisites)
+- [Development container](#development-container)
 - [Documentation](#documentation)
 - [Libraries](#libraries)
 - [Registry service with Docker Compose](#registry-service-with-docker-compose)
@@ -19,6 +20,43 @@
 The main solution contains the registry service, portable model/codecs,
 generated client and interop, staging infrastructure, CLI, and their tests.
 `PackageStagingArea.sln` contains the staging-area checks.
+
+## Development container
+
+The repository includes a VS Code development container with the complete
+cross-platform toolchain: .NET 10 and F# Interactive, Node.js 24, Python 3.12,
+`uv`, the repository-local .NET tools, Docker Compose, GitHub CLI, and OpenCode.
+It also installs the Codex and Claude Code extensions, the locally used
+Markdown extension set, and focused extensions for the languages and file
+formats in this repository.
+
+In VS Code, install the Dev Containers extension, open the repository, and run
+**Dev Containers: Reopen in Container**. The first creation restores the .NET
+tool manifest and locked Python environment. Confirm the main tools with:
+
+```shell
+dotnet --version
+dotnet fsi --version
+node --version
+python --version
+uv --version
+docker compose version
+gh --version
+opencode --version
+```
+
+Run `gh auth login` to authenticate GitHub CLI. Start `opencode` and use
+`/connect` to configure a model provider. Codex and Claude Code prompt for their
+own sign-in when first opened in VS Code. CLI configuration, authentication,
+Python environments, and caches are kept in the `avpr-devcontainer-data`
+Docker volume so they survive a container rebuild without copying host
+credentials into the container.
+
+Docker runs inside the development container so that the existing Compose
+files and their bind mounts behave consistently on Windows, Linux, and macOS.
+This daemon is isolated from the host Docker daemon, and its child containers,
+images, and volumes are separate. Docker-in-Docker requires the development
+container to run with elevated container privileges.
 
 ## Documentation
 
