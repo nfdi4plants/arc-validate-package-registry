@@ -87,6 +87,6 @@ tests/AVPR.Staging.Tests/
 
 - Run focused `AVPR.Staging.Tests`.
 - Run the existing index tests during parity migration.
-- Run `PackageStagingArea.sln` when staging checks change.
+- Run `PackageStagingArea.slnx` when staging checks change.
 - Run the main solution after every consumer migration.
 - Before removal, verify no production project references `AVPRIndex`.

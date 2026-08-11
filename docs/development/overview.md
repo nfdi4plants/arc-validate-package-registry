@@ -19,7 +19,7 @@
 
 The main solution contains the registry service, portable model/codecs,
 generated client and interop, staging infrastructure, CLI, and their tests.
-`PackageStagingArea.sln` contains the staging-area checks.
+`PackageStagingArea.slnx` contains the staging-area checks.
 
 ## Development container
 

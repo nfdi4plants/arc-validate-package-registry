@@ -86,8 +86,8 @@ script before invoking it locally.
 Run the staging checks with:
 
 ```shell
-dotnet build PackageStagingArea.sln --configuration Release
-dotnet test PackageStagingArea.sln --configuration Release --no-build
+dotnet build PackageStagingArea.slnx --configuration Release
+dotnet test PackageStagingArea.slnx --configuration Release --no-build
 ```
 
 See [validation package metadata](metadata.md) for the required script header.

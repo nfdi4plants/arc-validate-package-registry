@@ -10,7 +10,6 @@ on:
       - build/**
       - build.cmd
       - build.sh
-      - "*.sln"
       - "*.slnx"
       - global.json
       - Directory.Build.props
@@ -37,7 +36,6 @@ on:
       - build/**
       - build.cmd
       - build.sh
-      - "*.sln"
       - "*.slnx"
       - global.json
       - Directory.Build.props

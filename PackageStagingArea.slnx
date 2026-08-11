@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/AVPRCI/AVPRCI.fsproj" />
+  <Project Path="StagingAreaTests/StagingAreaTests.fsproj" />
+</Solution>

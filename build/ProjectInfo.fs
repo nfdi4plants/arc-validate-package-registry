@@ -4,8 +4,8 @@ open System.IO
 
 let configuration = "Release"
 
-let mainSolution = "arc-validate-package-registry.sln"
-let stagingSolution = "PackageStagingArea.sln"
+let mainSolution = "arc-validate-package-registry.slnx"
+let stagingSolution = "PackageStagingArea.slnx"
 
 let modelProject = "src/ValidationPackage.Model/ValidationPackage.Model.fsproj"
 let codecsProject = "src/ValidationPackage.Codecs/ValidationPackage.Codecs.fsproj"

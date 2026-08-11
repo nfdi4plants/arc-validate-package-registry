@@ -131,9 +131,9 @@ Copy this plan over and draft there. Expected work:
 
 ## Verification
 
-1. **Build + unit tests (main solution):** `dotnet build arc-validate-package-registry.sln -c Release` then `dotnet test …`. Focused: `dotnet test tests/IndexTests/IndexTests.fsproj`, `tests/ClientTests/ClientTests.fsproj`, `tests/APITests/APITests.csproj`.
+1. **Build + unit tests (main solution):** `dotnet build arc-validate-package-registry.slnx -c Release` then `dotnet test …`. Focused: `dotnet test tests/IndexTests/IndexTests.fsproj`, `tests/ClientTests/ClientTests.fsproj`, `tests/APITests/APITests.csproj`.
 2. **Frontmatter round-trip:** IndexTests confirm `CLIArguments` parses from both comment & binding frontmatter (F# + Python) and survives `create`/equality; add an explicit unknown-key test proving `IgnoreUnmatchedProperties()` works.
-3. **Staging solution:** `dotnet build PackageStagingArea.sln -c Release` + `dotnet test … --no-build` — ensure a package carrying a `CLIArguments:` section passes sanity checks.
+3. **Staging solution:** `dotnet build PackageStagingArea.slnx -c Release` + `dotnet test … --no-build` — ensure a package carrying a `CLIArguments:` section passes sanity checks.
 4. **DB migration end-to-end:** run the stack ([`docker-compose.yml`](docker-compose.yml) postgres); apply migrations; verify (via adminer) that pre-existing rows show `CLIArguments = []` and a newly seeded package with args persists them as `jsonb`.
 5. **Website:** load a package page locally — confirm the **"Available Commands"** table renders for a package with args and is **absent** for one without.
 6. **Client regen:** confirm regenerated `AVPRClient.cs` contains `CLIArgument` + `CLIArguments`, and an AVPRCI dry-run (`dotnet run --project src/AVPRCI/AVPRCI.fsproj -- publish --api-key <key> --dry-run`) shows the field in the emitted JSON.

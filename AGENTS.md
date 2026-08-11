@@ -185,7 +185,7 @@ Trace a metadata field through every representation it affects; a green build al
 - In `tests/ValidationPackage.Codecs.Tests/`, cover full and mandatory metadata, comment/binding frontmatter, F#/Python forms, optional-field backwards compatibility, malformed values, and unknown-key policy.
 - In `tests/AVPR.Staging.Tests/`, verify normalized content and hashes. Fixture byte changes require recomputing expected hashes from the actual content.
 - In `tests/ClientTests/`, keep equivalent portable-model and generated-client reference objects. Test both mapping directions, nested collection conversion, null/empty behavior, CWL scalar variants, and full SemVer suffixes in `TypeExtensionsTests.fs`.
-- Run `PackageStagingArea.sln` when submitted-package syntax or sanity checks are affected. Prefer small codec/staging fixtures; add a real staged package only when the real layout must be exercised, always as a new semantic version and only after reading it.
+- Run `PackageStagingArea.slnx` when submitted-package syntax or sanity checks are affected. Prefer small codec/staging fixtures; add a real staged package only when the real layout must be exercised, always as a new semantic version and only after reading it.
 - For service/client contract behavior, follow the shared in-process test-host design below. Explicitly verify migrations and backfills against Postgres, along with seeded JSON persistence and both present/absent website rendering cases when those behaviors change.
 
 Use focused model/codec/staging/client tests while iterating, then run the main solution and, when package syntax is affected, the staging solution. Recompute expected values from actual fixture content instead of weakening assertions.

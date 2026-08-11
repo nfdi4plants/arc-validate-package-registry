@@ -674,10 +674,10 @@ Automated:
 ```shell
 dotnet test tests/IndexTests/IndexTests.fsproj --configuration Release
 dotnet test tests/ClientTests/ClientTests.fsproj --configuration Release
-dotnet build arc-validate-package-registry.sln --configuration Release
-dotnet test arc-validate-package-registry.sln --configuration Release --no-build
-dotnet build PackageStagingArea.sln --configuration Release
-dotnet test PackageStagingArea.sln --configuration Release --no-build
+dotnet build arc-validate-package-registry.slnx --configuration Release
+dotnet test arc-validate-package-registry.slnx --configuration Release --no-build
+dotnet build PackageStagingArea.slnx --configuration Release
+dotnet test PackageStagingArea.slnx --configuration Release --no-build
 ```
 
 Contract checks:

@@ -6,7 +6,7 @@ on:
     paths:
       - StagingArea/**
       - StagingAreaTests/**
-      - PackageStagingArea.sln
+      - PackageStagingArea.slnx
       - src/ValidationPackage.Model/**
       - src/ValidationPackage.Codecs/**
       - src/AVPR.Staging/**
@@ -24,7 +24,7 @@ on:
     paths:
       - StagingArea/**
       - StagingAreaTests/**
-      - PackageStagingArea.sln
+      - PackageStagingArea.slnx
       - src/ValidationPackage.Model/**
       - src/ValidationPackage.Codecs/**
       - src/AVPR.Staging/**

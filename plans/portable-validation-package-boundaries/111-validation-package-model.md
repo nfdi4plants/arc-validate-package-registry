@@ -195,7 +195,7 @@ attributes as part of the new model.
 - Add package metadata, README, release notes, license metadata, and an initial
   package version.
 - Configure Fable package metadata and source packing.
-- Add the project to `arc-validate-package-registry.sln`.
+- Add the project to `arc-validate-package-registry.slnx`.
 - Add the project path to CI change detection so model-only changes run the
   relevant build and tests.
 
@@ -300,11 +300,11 @@ dotnet fable tests/ValidationPackage.Model.Tests/ValidationPackage.Model.Tests.f
 uv run --locked python artifacts/model-tests/py/main.py
 
 dotnet pack src/ValidationPackage.Model/ValidationPackage.Model.fsproj --configuration Release --output artifacts/packages
-dotnet build arc-validate-package-registry.sln --configuration Release
-dotnet test arc-validate-package-registry.sln --configuration Release --no-build
+dotnet build arc-validate-package-registry.slnx --configuration Release
+dotnet test arc-validate-package-registry.slnx --configuration Release --no-build
 ```
 
-`PackageStagingArea.sln` is not required for this additive phase because staged
+`PackageStagingArea.slnx` is not required for this additive phase because staged
 package parsing and sanity checks remain on `AVPRIndex`. It becomes required
 when the codecs or staging consumers switch to the new model.
 

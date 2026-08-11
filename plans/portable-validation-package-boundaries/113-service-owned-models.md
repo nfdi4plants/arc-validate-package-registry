@@ -46,7 +46,7 @@ persistence, while the portable model remains free of STJ and EF concerns.
 
 - `dotnet test tests/APITests/APITests.csproj --configuration Release`
 - `dotnet ef migrations has-pending-model-changes` for the service project
-- `dotnet test arc-validate-package-registry.sln --configuration Release`
+- `dotnet test arc-validate-package-registry.slnx --configuration Release`
 
 PostgreSQL migration/backfill verification is required only if EF reports an
 intentional relational change. This implementation is designed to preserve

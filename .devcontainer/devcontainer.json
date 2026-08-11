@@ -53,7 +53,7 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "dotnet.defaultSolution": "arc-validate-package-registry.sln",
+        "dotnet.defaultSolution": "arc-validate-package-registry.slnx",
         "python.defaultInterpreterPath": "/home/vscode/.devcontainer-data/venvs/arc-validate-package-registry/bin/python",
         "terminal.integrated.defaultProfile.linux": "bash"
       },

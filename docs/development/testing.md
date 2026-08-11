@@ -98,7 +98,7 @@ not prove parsing or wire behavior.
    maintain equivalent client/model reference objects, and test both mapping
    directions, nested collections, null/empty behavior, CWL scalars, and full
    semantic-version suffixes.
-5. **Staging compatibility:** run `PackageStagingArea.sln` when submitted script
+5. **Staging compatibility:** run `PackageStagingArea.slnx` when submitted script
    syntax or checks are affected. Add a real staged package only when layout
    itself must be exercised, always under a new semantic version.
 6. **Service boundaries:** test exact raw JSON and generated-client

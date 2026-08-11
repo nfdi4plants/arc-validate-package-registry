@@ -1,0 +1,46 @@
+<Solution>
+  <Folder Name="/.ci/">
+    <File Path=".github/workflows/add-issues-to-project.yml" />
+    <File Path=".github/workflows/pipeline.yml" />
+    <File Path=".github/workflows/release-package.yml" />
+    <File Path=".github/workflows/run-build-target.yml" />
+    <Project Path="src/AVPRCI/AVPRCI.fsproj" />
+  </Folder>
+  <Folder Name="/.ci/scripts/">
+    <File Path="scripts/domain.fsx" />
+    <File Path="scripts/generate-preview-index.fsx" />
+    <File Path="scripts/pre-publish-checks.fsx" />
+    <File Path="scripts/publish-pending-packages.fsx" />
+    <File Path="scripts/update-index.fsx" />
+  </Folder>
+  <Folder Name="/sln/">
+    <File Path=".gitignore" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="pre-commit.sh" />
+    <File Path="README.md" />
+    <File Path="setup.cmd" />
+    <File Path="setup.sh" />
+  </Folder>
+  <Folder Name="/src/">
+    <File Path=".github/workflows/pipeline.yml" />
+    <Project Path="src/AVPR.Staging/AVPR.Staging.fsproj" />
+    <Project Path="src/AVPRClient.Interop/AVPRClient.Interop.csproj" />
+    <Project Path="src/AVPRClient/AVPRClient.csproj" />
+    <Project Path="src/PackageRegistryService/PackageRegistryService.csproj" />
+    <Project Path="src/ValidationPackage.Codecs/ValidationPackage.Codecs.fsproj" />
+    <Project Path="src/ValidationPackage.Model/ValidationPackage.Model.fsproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/APITests/APITests.csproj" />
+    <Project Path="tests/AVPR.Staging.Tests/AVPR.Staging.Tests.fsproj" />
+    <Project Path="tests/AVPRCI.Tests/AVPRCI.Tests.fsproj" />
+    <Project Path="tests/ClientTests/ClientTests.fsproj" />
+    <Project Path="tests/PackageRegistryTestHost/PackageRegistryTestHost.csproj" />
+    <Project Path="tests/ValidationPackage.Codecs.Tests/ValidationPackage.Codecs.Tests.fsproj" />
+    <Project Path="tests/ValidationPackage.Model.Tests/ValidationPackage.Model.Tests.fsproj" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>
