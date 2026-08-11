@@ -58,11 +58,7 @@ let emailIsValid (email: string) =
 
 // Input:
 
-// let arcDir = Directory.GetCurrentDirectory()
-
-//// TODO: remove ////////////////////
-// Local Test
-let arcDir = fsi.CommandLineArgs.[1]
+let arcDir = Directory.GetCurrentDirectory()
 
 
 ////////////////////////

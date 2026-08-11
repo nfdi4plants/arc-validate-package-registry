@@ -50,10 +50,7 @@ type ArcTable with
 
 // Input:
 
-// let arcDir = Directory.GetCurrentDirectory()
-
-// Local Test
-let arcDir = fsi.CommandLineArgs.[1]
+let arcDir = Directory.GetCurrentDirectory()
 
 ////////////////////////
 
