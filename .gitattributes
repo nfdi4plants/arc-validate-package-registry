@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+# Validation packages are content-hashed and must retain their exact bytes.
+StagingArea/** -text !eol
