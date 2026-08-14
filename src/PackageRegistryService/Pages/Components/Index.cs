@@ -1,7 +1,12 @@
 ﻿namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders the registry website's landing-page content.
+    /// </summary>
     public class Index
     {
+        /// <summary>Renders the landing-page HTML.</summary>
+        /// <returns>The landing-page content.</returns>
         public static string Render()
         {
             return @"<section>

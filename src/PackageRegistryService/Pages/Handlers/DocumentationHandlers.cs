@@ -4,11 +4,21 @@ using PackageRegistryService.Services;
 
 namespace PackageRegistryService.Pages.Handlers;
 
+/// <summary>
+/// Handles documentation index and document-page requests.
+/// </summary>
 public static class DocumentationHandlers
 {
+    /// <summary>Redirects the documentation root to its canonical index document.</summary>
     public static RedirectHttpResult RenderIndex() =>
         TypedResults.Redirect("/docs/index.md", permanent: false);
 
+    /// <summary>
+    /// Loads and renders one repository documentation page.
+    /// </summary>
+    /// <param name="document">The documentation-relative path.</param>
+    /// <param name="documentation">The documentation content provider.</param>
+    /// <returns>The rendered HTML page, or a not-found result.</returns>
     public static Results<ContentHttpResult, NotFound> Render(
         string document,
         IDocumentationProvider documentation

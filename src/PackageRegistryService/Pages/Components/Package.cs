@@ -3,8 +3,15 @@ using System.Text;
 
 namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders the complete detail view for one validation-package version.
+    /// </summary>
     public class Package
     {
+        /// <summary>
+        /// Renders package identity, installation guidance, metadata, source, and version history.
+        /// </summary>
+        /// <returns>The package detail HTML.</returns>
         public static string Render(
             string packageName,
             string packageVersion,

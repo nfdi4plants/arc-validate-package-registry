@@ -2,8 +2,12 @@
 
 namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders the shared website footer and its navigation links.
+    /// </summary>
     public class Footer
     {
+        /// <summary>Renders one footer navigation item and marks it when active.</summary>
         static string RenderFooterItem(string active, string item, string link)
         {
             if (active == item)
@@ -16,6 +20,11 @@ namespace PackageRegistryService.Pages.Components
             }
         }
 
+        /// <summary>
+        /// Renders the complete website footer.
+        /// </summary>
+        /// <param name="active">The label of the active navigation item.</param>
+        /// <returns>The footer HTML.</returns>
         public static string Render(string active) 
         {
             return $@"<footer style=""margin-top: 200px"" class=""container"">

@@ -7,7 +7,7 @@ using PortableSemVer = global::ValidationPackage.Model.SemVer;
 namespace PackageRegistryService.Models
 {
     /// <summary>
-    /// 
+    /// Represents one published validation-package version as persisted by the registry service.
     /// </summary>
     [PrimaryKey(nameof(Name), nameof(MajorVersion), nameof(MinorVersion), nameof(PatchVersion), nameof(PreReleaseVersionSuffix), nameof(BuildMetadataVersionSuffix))]
     public class ValidationPackage
@@ -71,32 +71,32 @@ namespace PackageRegistryService.Models
         public required byte[] PackageContent { get; set; }
 
         /// <summary>
-        ///
+        /// The date on which this package version was released.
         /// </summary>
         public required DateOnly ReleaseDate { get; set; }
 
         /// <summary>
-        /// 
+        /// Ontology annotations used to categorize the package.
         /// </summary>
         public ICollection<OntologyAnnotation> Tags { get; set; } = [];
 
         /// <summary>
-        /// 
+        /// Release notes for this package version.
         /// </summary>
         public string ReleaseNotes { get; set; } = "";
 
         /// <summary>
-        /// 
+        /// The optional endpoint used for continuous-quality-control integration.
         /// </summary>
         public string CQCHookEndpoint { get; set; } = "";
 
         /// <summary>
-        /// 
+        /// The package authors.
         /// </summary>
         public ICollection<Author> Authors { get; set; } = [];
 
         /// <summary>
-        ///
+        /// The language used by the executable validation package.
         /// </summary>
         public string ProgrammingLanguage { get; set; } = "";
 
@@ -106,9 +106,9 @@ namespace PackageRegistryService.Models
         public ICollection<CommandInputParameter> Inputs { get; set; } = [];
 
         /// <summary>
-        /// 
+        /// Formats the package's complete semantic version.
         /// </summary>
-        /// <returns>A string containing the semantic version of the validation package</returns>
+        /// <returns>The canonical semantic version of the validation package.</returns>
         public string GetSemanticVersionString()
         {
             PortableSemVer semVer = new PortableSemVer {
@@ -122,24 +122,24 @@ namespace PackageRegistryService.Models
         }
 
         /// <summary>
-        /// Converts the binary content of the validation package to a string by converting it to base64 and then decoding it as UTF8.
+        /// Decodes the package content as UTF-8 text.
         /// </summary>
-        /// <returns>A string containing the package content</returns>
+        /// <returns>The executable package source.</returns>
         public string GetPackageScriptContent() => Encoding.UTF8.GetString(Convert.FromBase64String(Convert.ToBase64String(PackageContent)));
         
         /// <summary>
-        /// Returns the md5 hash of the package content.
+        /// Computes the normalized content fingerprint of the package source.
         /// </summary>
-        /// <returns>A string containing the package content</returns>
+        /// <returns>The package content fingerprint.</returns>
         public string GetPackageContentHash()
         {
             return ContentHash.ofBytes(PackageContent);
         }
         
         /// <summary>
-        /// Returns whether the package content CR characters - meaning its is has not been unified to only use LF.
+        /// Determines whether package source still contains carriage-return characters.
         /// </summary>
-        /// <returns>true or false</returns>
+        /// <returns><see langword="true"/> when the package content is not normalized to LF-only line endings.</returns>
         public bool ContentContainsCarriageReturn()
         {
             return GetPackageScriptContent().Contains("\r");

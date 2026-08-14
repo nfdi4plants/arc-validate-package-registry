@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PackageRegistryService.Models
 {
+    /// <summary>
+    /// Stores the expected content fingerprint for one exact validation-package version.
+    /// </summary>
     [PrimaryKey(nameof(PackageName), nameof(PackageMajorVersion), nameof(PackageMinorVersion), nameof(PackagePatchVersion), nameof(PackagePreReleaseVersionSuffix), nameof(PackageBuildMetadataVersionSuffix))]
     public class PackageContentHash
     {

@@ -7,8 +7,15 @@ using System.Reflection;
 namespace PackageRegistryService.Data
     
 {
+    /// <summary>
+    /// Populates a newly created registry database from validated staged packages.
+    /// </summary>
     public class DataInitializer
     {
+        /// <summary>
+        /// Seeds packages, content hashes, and download counters when the registry is empty.
+        /// </summary>
+        /// <param name="context">The registry database context to initialize.</param>
         public static void SeedData(ValidationPackageDb context)
         {
             if (!context.ValidationPackages.Any())

@@ -155,4 +155,7 @@ app.Run();
 
 // Expose the top-level entry point to WebApplicationFactory without changing
 // the production startup path.
+/// <summary>
+/// Exposes the top-level registry service entry point to integration-test hosts.
+/// </summary>
 public partial class Program { }

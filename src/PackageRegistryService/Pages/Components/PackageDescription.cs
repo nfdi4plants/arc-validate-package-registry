@@ -1,7 +1,11 @@
 ﻿namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders multiline package descriptions for detail and summary views.
+    /// </summary>
     public class PackageDescription
     {
+        /// <summary>Renders description lines as block paragraphs.</summary>
         public static string Render(string description)
         {
             return String.Join(
@@ -12,6 +16,7 @@
             );
             
         }
+        /// <summary>Renders description lines using compact text markup.</summary>
         public static string RenderSmall(string description)
         {
             return String.Join(

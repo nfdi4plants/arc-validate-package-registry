@@ -4,8 +4,16 @@ using PackageRegistryService.Services;
 
 namespace PackageRegistryService.Pages.Handlers;
 
+/// <summary>
+/// Handles the service releases page.
+/// </summary>
 public static class ReleaseHandlers
 {
+    /// <summary>
+    /// Renders current build provenance and release notes.
+    /// </summary>
+    /// <param name="releaseInfo">The current service release information.</param>
+    /// <returns>The rendered releases page.</returns>
     public static ContentHttpResult Render(IServiceReleaseInfoProvider releaseInfo)
     {
         var content = Layout.Render(

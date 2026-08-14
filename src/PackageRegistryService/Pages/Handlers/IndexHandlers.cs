@@ -4,8 +4,12 @@ using PackageRegistryService.Pages.Components;
 
 namespace PackageRegistryService.Pages.Handlers
 {
+    /// <summary>
+    /// Handles the registry website's landing page.
+    /// </summary>
     public static class IndexHandlers
     {
+        /// <summary>Renders the landing page within the shared website layout.</summary>
         public static async Task<ContentHttpResult> Render()
         {
 

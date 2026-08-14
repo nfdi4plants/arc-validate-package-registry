@@ -9,8 +9,16 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace PackageRegistryService.Pages.Handlers
 {
+    /// <summary>
+    /// Handles the registry's package-browse page.
+    /// </summary>
     public static class PackagesHandlers
     {
+        /// <summary>
+        /// Builds package summaries and renders the package-browse page.
+        /// </summary>
+        /// <param name="database">The registry database context.</param>
+        /// <returns>The rendered package listing.</returns>
         public static async Task<ContentHttpResult> Render(ValidationPackageDb database)
         {
             var packages = await database.ValidationPackages.ToArrayAsync();

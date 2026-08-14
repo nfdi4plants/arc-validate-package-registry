@@ -1,7 +1,11 @@
 namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders normalized labels for supported package implementation languages.
+    /// </summary>
     public class PackageLanguage
     {
+        /// <summary>Renders a labeled language badge.</summary>
         public static string Render(string language)
         {
             var style = language.ToLower() switch
@@ -21,6 +25,7 @@ namespace PackageRegistryService.Pages.Components
             return $@"Language: <code style='{style}'>{name}</code>";
 
         }
+        /// <summary>Renders only the compact language badge.</summary>
         public static string RenderTagOnly(string language)
         {
             var style = language.ToLower() switch
@@ -42,5 +47,4 @@ namespace PackageRegistryService.Pages.Components
         }
     }
 }
-
 

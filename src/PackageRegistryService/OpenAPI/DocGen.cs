@@ -3,8 +3,15 @@ using NSwag.Generation.Processors;
 
 namespace PackageRegistryService.OpenAPI
 {
+    /// <summary>
+    /// Configures OpenAPI generation for the registry service.
+    /// </summary>
     public class DocGen
     {
+        /// <summary>
+        /// Applies API identity, schema processors, authentication metadata, and operation filters.
+        /// </summary>
+        /// <param name="settings">The NSwag generator settings to configure.</param>
         public static void GeneratorSetup (AspNetCoreOpenApiDocumentGeneratorSettings settings)
         {
             settings.Title = "ARC validation package registry API";

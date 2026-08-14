@@ -3,11 +3,15 @@ using System.Text.Json.Serialization;
 
 namespace PackageRegistryService.Models;
 
+/// <summary>
+/// Represents one supported scalar CWL input type and its nullability.
+/// </summary>
 [JsonConverter(typeof(CommandInputTypeJsonConverter))]
 public sealed class CommandInputType
 {
     private CwlPrimitive primitiveType = CwlPrimitive.String;
 
+    /// <summary>The primitive CWL type.</summary>
     public CwlPrimitive PrimitiveType
     {
         get => primitiveType;
@@ -25,8 +29,15 @@ public sealed class CommandInputType
         }
     }
 
+    /// <summary>Whether the input may be omitted or supplied as null.</summary>
     public bool IsNullable { get; set; }
 
+    /// <summary>
+    /// Parses the compact CWL scalar-type notation used by public JSON contracts.
+    /// </summary>
+    /// <param name="value">A supported CWL type, optionally followed by a nullable marker.</param>
+    /// <returns>The corresponding service input type.</returns>
+    /// <exception cref="ArgumentException">The value does not name a supported scalar type.</exception>
     public static CommandInputType FromCwlString(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -53,6 +64,11 @@ public sealed class CommandInputType
         };
     }
 
+    /// <summary>
+    /// Formats a service input type using compact CWL scalar-type notation.
+    /// </summary>
+    /// <param name="inputType">The input type to format.</param>
+    /// <returns>The CWL scalar type with an optional nullable marker.</returns>
     public static string ToCwlString(CommandInputType inputType)
     {
         ArgumentNullException.ThrowIfNull(inputType);
@@ -75,8 +91,12 @@ public sealed class CommandInputType
     }
 }
 
+/// <summary>
+/// Serializes <see cref="CommandInputType"/> as the compact CWL scalar-type string.
+/// </summary>
 public sealed class CommandInputTypeJsonConverter : JsonConverter<CommandInputType>
 {
+    /// <inheritdoc />
     public override CommandInputType Read(
         ref Utf8JsonReader reader,
         Type typeToConvert,
@@ -100,6 +120,7 @@ public sealed class CommandInputTypeJsonConverter : JsonConverter<CommandInputTy
         }
     }
 
+    /// <inheritdoc />
     public override void Write(
         Utf8JsonWriter writer,
         CommandInputType value,

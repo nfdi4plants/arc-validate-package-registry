@@ -7,9 +7,16 @@ using RegistryValidationPackage = PackageRegistryService.Models.ValidationPackag
 
 namespace PackageRegistryService.API.Handlers
 {
+    /// <summary>
+    /// Handles package-content retrieval and package publication requests.
+    /// </summary>
     public class PackageHandlers
     {
-        // get all validation packages
+        /// <summary>
+        /// Gets every validation package, including executable content, and records downloads.
+        /// </summary>
+        /// <param name="database">The registry database context.</param>
+        /// <returns>All packages, or a conflict when stored metadata or content is invalid.</returns>
         public static async Task<Results<Ok<RegistryValidationPackage[]>, Conflict<string>>> GetAllPackages(ValidationPackageDb database)
         {
             var packages = await database.ValidationPackages.ToArrayAsync();
@@ -35,6 +42,12 @@ namespace PackageRegistryService.API.Handlers
             return TypedResults.Ok(packages);
         }
 
+        /// <summary>
+        /// Gets the latest stable version of a package and records its download.
+        /// </summary>
+        /// <param name="name">The package name.</param>
+        /// <param name="database">The registry database context.</param>
+        /// <returns>The latest stable package, or an error result when unavailable or invalid.</returns>
         public static async Task<Results<Ok<RegistryValidationPackage>, NotFound<string>, Conflict<string>>> GetLatestPackageByName(string name, ValidationPackageDb database)
         {
             var package = await database.ValidationPackages
@@ -69,6 +82,13 @@ namespace PackageRegistryService.API.Handlers
             return TypedResults.Ok(package);
         }
 
+        /// <summary>
+        /// Gets one exact package version, including executable content, and records its download.
+        /// </summary>
+        /// <param name="name">The package name.</param>
+        /// <param name="version">The full semantic version.</param>
+        /// <param name="database">The registry database context.</param>
+        /// <returns>The matching package, or an error result for an invalid, missing, or inconsistent package.</returns>
         public static async Task<Results<BadRequest<string>, NotFound<string>, Conflict<string>, Ok<RegistryValidationPackage>>> GetPackageByNameAndVersion(string name, string version, ValidationPackageDb database)
         {
             var semVerOpt = PortableSemVer.tryParse(version);
@@ -105,6 +125,12 @@ namespace PackageRegistryService.API.Handlers
             return TypedResults.Ok(package);
         }
 
+        /// <summary>
+        /// Publishes a new package version after validating its metadata and normalized content.
+        /// </summary>
+        /// <param name="package">The package to publish.</param>
+        /// <param name="database">The registry database context.</param>
+        /// <returns>The published package, or an error result when it conflicts with existing or invalid state.</returns>
         public static async Task<Results<Ok<RegistryValidationPackage>, Conflict, UnauthorizedHttpResult, UnprocessableEntity<string>>> CreatePackage(RegistryValidationPackage package, ValidationPackageDb database)
         {
             var existing = await database.ValidationPackages.FindAsync(package.Name, package.MajorVersion, package.MinorVersion, package.PatchVersion, package.PreReleaseVersionSuffix, package.BuildMetadataVersionSuffix);

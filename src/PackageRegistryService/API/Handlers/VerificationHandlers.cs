@@ -5,8 +5,17 @@ using System.Xml.Linq;
 
 namespace PackageRegistryService.API.Handlers
 {
+    /// <summary>
+    /// Handles verification of package content against hashes stored by the registry.
+    /// </summary>
     public class VerificationHandlers
     {
+        /// <summary>
+        /// Verifies that a submitted hash matches a stored package version and its hash record.
+        /// </summary>
+        /// <param name="hashedPackage">The package identity and hash supplied by the caller.</param>
+        /// <param name="database">The registry database context.</param>
+        /// <returns>A success, not-found, or hash-mismatch result.</returns>
         public static async Task<Results<Ok, UnprocessableEntity, NotFound>> Verify(PackageContentHash hashedPackage, ValidationPackageDb database)
         {
             var existingHash = await 

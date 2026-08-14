@@ -1,7 +1,11 @@
 ﻿namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders the shared website navigation bar.
+    /// </summary>
     public static class Navbar
     {
+        /// <summary>Renders one navigation item and marks it when active.</summary>
         public static string RenderNavbarItem(string active, string item, string link)
         {
             if (active == item)
@@ -13,6 +17,11 @@
                 return $@"<li><a href=""{link}"">{item}</a></li>";
             }
         }
+        /// <summary>
+        /// Renders the complete website navigation bar.
+        /// </summary>
+        /// <param name="active">The label of the active navigation item.</param>
+        /// <returns>The navigation HTML.</returns>
         public static string Render(string active)
         {
     // this should eventually point to knowledge base articles

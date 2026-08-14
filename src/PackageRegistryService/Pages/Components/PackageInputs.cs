@@ -3,10 +3,15 @@ using System.Text.Encodings.Web;
 
 namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders declared package inputs as an encoded command-line reference table.
+    /// </summary>
     public class PackageInputs
     {
+        /// <summary>HTML-encodes a possibly absent value.</summary>
         private static string Escape(string? value) => HtmlEncoder.Default.Encode(value ?? "");
 
+        /// <summary>Formats an input type for display, including optionality.</summary>
         private static string RenderType(CommandInputType inputType)
         {
             var cwlType = CommandInputType.ToCwlString(inputType);
@@ -15,6 +20,7 @@ namespace PackageRegistryService.Pages.Components
                 : cwlType;
         }
 
+        /// <summary>Renders the optional label and documentation for one input.</summary>
         private static string RenderDocumentation(CommandInputParameter input)
         {
             var label = Escape(input.Label);
@@ -29,6 +35,7 @@ namespace PackageRegistryService.Pages.Components
             };
         }
 
+        /// <summary>Renders an input's command-line prefix and positional details.</summary>
         private static string RenderBinding(CommandInputBinding? binding)
         {
             binding ??= new CommandInputBinding();
@@ -46,6 +53,9 @@ namespace PackageRegistryService.Pages.Components
                 : $"{prefix}<br /><small>{string.Join("; ", details)}</small>";
         }
 
+        /// <summary>
+        /// Renders all declared inputs, or no markup when the package has none.
+        /// </summary>
         public static string Render(CommandInputParameter[]? inputs)
         {
             if (inputs == null || inputs.Length == 0)

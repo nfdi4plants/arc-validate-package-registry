@@ -6,8 +6,12 @@ using PackageRegistryService.Models;
 
 namespace PackageRegistryService.OpenAPI;
 
+/// <summary>
+/// Publishes command-input types as their compact CWL string schema instead of storage objects.
+/// </summary>
 public sealed class CommandInputTypeSchemaProcessor : ISchemaProcessor, IDocumentProcessor
 {
+    /// <summary>The complete set of command-input type strings accepted by the API.</summary>
     public static readonly string[] SupportedValues =
     [
         "boolean",
@@ -24,6 +28,10 @@ public sealed class CommandInputTypeSchemaProcessor : ISchemaProcessor, IDocumen
         "string?"
     ];
 
+    /// <summary>
+    /// Replaces the reflected service-model schema with a constrained string schema.
+    /// </summary>
+    /// <param name="context">The schema generation context.</param>
     public void Process(SchemaProcessorContext context)
     {
         if (context.ContextualType.Type != typeof(CommandInputType))
@@ -50,6 +58,10 @@ public sealed class CommandInputTypeSchemaProcessor : ISchemaProcessor, IDocumen
             "A supported scalar CWL command input type, optionally nullable via a trailing '?'.";
     }
 
+    /// <summary>
+    /// Finalizes command-input requirements and removes storage-only definitions.
+    /// </summary>
+    /// <param name="context">The generated OpenAPI document context.</param>
     public void Process(DocumentProcessorContext context)
     {
         var inputParameter = context.Document.Definitions[nameof(CommandInputParameter)];

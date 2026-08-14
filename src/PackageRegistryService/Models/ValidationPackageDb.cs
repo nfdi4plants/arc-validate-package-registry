@@ -5,14 +5,30 @@
     using Microsoft.Extensions.Hosting;
     using System.Reflection.Metadata;
 
+    /// <summary>
+    /// Provides Entity Framework access to registry packages, hashes, and download counters.
+    /// </summary>
     public class ValidationPackageDb : DbContext
     {
+        /// <summary>
+        /// Creates a registry database context with the supplied Entity Framework options.
+        /// </summary>
+        /// <param name="options">The configured database context options.</param>
         public ValidationPackageDb(DbContextOptions<ValidationPackageDb> options) : base(options) { }
 
+        /// <summary>The published validation-package versions.</summary>
         public DbSet<ValidationPackage> ValidationPackages => Set<ValidationPackage>();
+
+        /// <summary>The expected content hashes for published package versions.</summary>
         public DbSet<PackageContentHash> Hashes => Set<PackageContentHash>();
+
+        /// <summary>The download counters for published package versions.</summary>
         public DbSet<PackageDownloads> Downloads => Set<PackageDownloads>();
 
+        /// <summary>
+        /// Configures JSON-owned package metadata and its stable persistence representation.
+        /// </summary>
+        /// <param name="modelBuilder">The Entity Framework model builder.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var validationPackage = modelBuilder.Entity<ValidationPackage>();
@@ -76,6 +92,12 @@
             });
         }
 
+        /// <summary>
+        /// Checks whether a package's current content matches its stored fingerprint.
+        /// </summary>
+        /// <param name="package">The package whose content should be verified.</param>
+        /// <param name="database">The registry database context.</param>
+        /// <returns><see langword="true"/> when a matching hash exists and equals the computed fingerprint.</returns>
         public static bool ValidatePackageContent(ValidationPackage package, ValidationPackageDb database)
         {
             var hash = database.Hashes.SingleOrDefault(h => h.PackageName == package.Name && h.PackageMajorVersion == package.MajorVersion && h.PackageMinorVersion == package.MinorVersion && h.PackagePatchVersion == package.PatchVersion && h.PackagePreReleaseVersionSuffix == package.PreReleaseVersionSuffix && h.PackageBuildMetadataVersionSuffix == package.BuildMetadataVersionSuffix);
@@ -88,6 +110,12 @@
             var packageHash = package.GetPackageContentHash();
             return hash.Hash == packageHash;
         }
+        /// <summary>
+        /// Adds a content-hash record for a package that does not already have one.
+        /// </summary>
+        /// <param name="package">The package whose fingerprint should be stored.</param>
+        /// <param name="database">The registry database context.</param>
+        /// <returns><see langword="true"/> when a new record was added; otherwise <see langword="false"/>.</returns>
         public static bool CreatePackageContentHash(ValidationPackage package, ValidationPackageDb database)
         {
             var result = database.Hashes.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion && d.PackagePreReleaseVersionSuffix == package.PreReleaseVersionSuffix && d.PackageBuildMetadataVersionSuffix == package.BuildMetadataVersionSuffix);
@@ -112,6 +140,11 @@
                 return true;
             }
         }
+        /// <summary>
+        /// Increments or creates the download counter for one package version.
+        /// </summary>
+        /// <param name="package">The downloaded package.</param>
+        /// <param name="database">The registry database context.</param>
         public static void IncrementDownloadCount(ValidationPackage package, ValidationPackageDb database)
         {
             var result = database.Downloads.SingleOrDefault(d => d.PackageName == package.Name && d.PackageMajorVersion == package.MajorVersion && d.PackageMinorVersion == package.MinorVersion && d.PackagePatchVersion == package.PatchVersion && d.PackagePreReleaseVersionSuffix == package.PreReleaseVersionSuffix && d.PackageBuildMetadataVersionSuffix == package.BuildMetadataVersionSuffix);

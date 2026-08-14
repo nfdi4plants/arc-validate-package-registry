@@ -4,6 +4,9 @@ using System.Reflection.Metadata;
 
 namespace PackageRegistryService.Models
 {
+    /// <summary>
+    /// Stores the download counter for one exact validation-package version.
+    /// </summary>
     [PrimaryKey(nameof(PackageName), nameof(PackageMajorVersion), nameof(PackageMinorVersion), nameof(PackagePatchVersion), nameof(PackagePreReleaseVersionSuffix), nameof(PackageBuildMetadataVersionSuffix))]
     public class PackageDownloads
     {

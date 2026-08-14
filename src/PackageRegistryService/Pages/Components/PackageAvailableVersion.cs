@@ -4,10 +4,15 @@ using RegistryValidationPackage = PackageRegistryService.Models.ValidationPackag
 
 namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders links and tabular history for published package versions.
+    /// </summary>
     public class PackageAvailableVersion
     {
+        /// <summary>Renders a link to one exact package version.</summary>
         public static string Render(string packageName, string version) => $@"<a href=""/package/{packageName}/{version}"">{version}</a>";
 
+        /// <summary>Renders a release-ordered table of available package versions.</summary>
         public static string RenderVersionTable(RegistryValidationPackage[] packages)
         {
 

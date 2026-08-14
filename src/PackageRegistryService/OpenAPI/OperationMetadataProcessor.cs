@@ -4,8 +4,12 @@ using NSwag.Generation.Processors.Contexts;
 
 namespace PackageRegistryService.OpenAPI
 {
+    /// <summary>
+    /// Supplies summaries, descriptions, and deprecation markers for minimal API operations.
+    /// </summary>
     public class OperationMetadataProcessor : IOperationProcessor
     {
+        /// <summary>Human-readable metadata keyed by registered operation identifier.</summary>
         public Dictionary<string, Dictionary<string,string>> EndpointMetadata = new Dictionary<string, Dictionary<string,string>>
         {
             {
@@ -94,6 +98,11 @@ namespace PackageRegistryService.OpenAPI
             }
         };
 
+        /// <summary>
+        /// Applies configured metadata to matching operations in the generated document.
+        /// </summary>
+        /// <param name="operationProcessorContext">The operation generation context.</param>
+        /// <returns><see langword="true"/> so the processed operation remains in the document.</returns>
         public bool Process(OperationProcessorContext operationProcessorContext)
         {
             foreach (OpenApiOperationDescription operationDescription in operationProcessorContext.AllOperationDescriptions)

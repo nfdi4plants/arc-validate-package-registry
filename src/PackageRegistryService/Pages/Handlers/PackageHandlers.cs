@@ -8,8 +8,18 @@ using PortableSemVer = global::ValidationPackage.Model.SemVer;
 
 namespace PackageRegistryService.Pages.Handlers
 {
+    /// <summary>
+    /// Handles package detail pages for exact and latest stable versions.
+    /// </summary>
     public static class PackageHandlers
     {
+        /// <summary>
+        /// Loads and renders one exact package version.
+        /// </summary>
+        /// <param name="packageName">The package name.</param>
+        /// <param name="version">The full semantic version.</param>
+        /// <param name="database">The registry database context.</param>
+        /// <returns>The package page, or an error result for an invalid or unknown version.</returns>
         public static async Task<Results<ContentHttpResult, NotFound, BadRequest<string>>> Render(string packageName, string version, ValidationPackageDb database)
         {
             var semVerOpt = PortableSemVer.tryParse(version);
@@ -54,6 +64,12 @@ namespace PackageRegistryService.Pages.Handlers
 
             return TypedResults.Text(content: page, contentType: "text/html");
         }
+        /// <summary>
+        /// Loads and renders the latest stable version of a package.
+        /// </summary>
+        /// <param name="packageName">The package name.</param>
+        /// <param name="database">The registry database context.</param>
+        /// <returns>The latest package page, or a not-found result.</returns>
         public static async Task<Results<ContentHttpResult, NotFound>> RenderLatest(string packageName, ValidationPackageDb database)
         {
             var packages = await

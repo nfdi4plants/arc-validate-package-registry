@@ -3,8 +3,14 @@ using Portable = global::ValidationPackage.Model;
 
 namespace PackageRegistryService.Models;
 
+/// <summary>
+/// Converts between registry persistence models, portable domain models, and staged packages.
+/// </summary>
 public static class ValidationPackageModelMappings
 {
+    /// <summary>Converts a portable author to the registry service model.</summary>
+    /// <param name="author">The portable author.</param>
+    /// <returns>The equivalent service author.</returns>
     public static Author ToServiceModel(this Portable.Author author) => new()
     {
         FullName = author.FullName,
@@ -13,6 +19,9 @@ public static class ValidationPackageModelMappings
         AffiliationLink = author.AffiliationLink
     };
 
+    /// <summary>Converts a registry author to the portable domain model.</summary>
+    /// <param name="author">The service author.</param>
+    /// <returns>The equivalent portable author.</returns>
     public static Portable.Author ToPortableModel(this Author author) => new()
     {
         FullName = author.FullName,
@@ -21,6 +30,7 @@ public static class ValidationPackageModelMappings
         AffiliationLink = author.AffiliationLink
     };
 
+    /// <summary>Converts a portable ontology annotation to the registry service model.</summary>
     public static OntologyAnnotation ToServiceModel(
         this Portable.OntologyAnnotation annotation) => new()
     {
@@ -29,6 +39,7 @@ public static class ValidationPackageModelMappings
         TermAccessionNumber = annotation.TermAccessionNumber
     };
 
+    /// <summary>Converts a registry ontology annotation to the portable domain model.</summary>
     public static Portable.OntologyAnnotation ToPortableModel(
         this OntologyAnnotation annotation) => new()
     {
@@ -37,6 +48,7 @@ public static class ValidationPackageModelMappings
         TermAccessionNumber = annotation.TermAccessionNumber
     };
 
+    /// <summary>Converts a portable command-input type to the registry service model.</summary>
     public static CommandInputType ToServiceModel(
         this Portable.CommandInputType inputType) => new()
     {
@@ -56,6 +68,7 @@ public static class ValidationPackageModelMappings
         IsNullable = inputType.IsNullable
     };
 
+    /// <summary>Converts a registry command-input type to the portable domain model.</summary>
     public static Portable.CommandInputType ToPortableModel(
         this CommandInputType inputType) => new()
     {
@@ -75,6 +88,7 @@ public static class ValidationPackageModelMappings
         IsNullable = inputType.IsNullable
     };
 
+    /// <summary>Converts a portable command-line binding to the registry service model.</summary>
     public static CommandInputBinding ToServiceModel(
         this Portable.CommandInputBinding binding) => new()
     {
@@ -82,6 +96,7 @@ public static class ValidationPackageModelMappings
         Prefix = binding.Prefix
     };
 
+    /// <summary>Converts a registry command-line binding to the portable domain model.</summary>
     public static Portable.CommandInputBinding ToPortableModel(
         this CommandInputBinding binding) => new()
     {
@@ -89,6 +104,7 @@ public static class ValidationPackageModelMappings
         Prefix = binding.Prefix
     };
 
+    /// <summary>Converts a portable command-input declaration to the registry service model.</summary>
     public static CommandInputParameter ToServiceModel(
         this Portable.CommandInputParameter input) => new()
     {
@@ -99,6 +115,7 @@ public static class ValidationPackageModelMappings
         InputBinding = input.InputBinding.ToServiceModel()
     };
 
+    /// <summary>Converts a registry command-input declaration to the portable domain model.</summary>
     public static Portable.CommandInputParameter ToPortableModel(
         this CommandInputParameter input) => new()
     {
@@ -109,6 +126,13 @@ public static class ValidationPackageModelMappings
         InputBinding = input.InputBinding.ToPortableModel()
     };
 
+    /// <summary>
+    /// Combines portable metadata with executable content and release provenance for persistence.
+    /// </summary>
+    /// <param name="metadata">The validated portable metadata.</param>
+    /// <param name="packageContent">The normalized executable package content.</param>
+    /// <param name="releaseDate">The package release date.</param>
+    /// <returns>The equivalent registry package.</returns>
     public static ValidationPackage ToServiceModel(
         this Portable.ValidationPackageMetadata metadata,
         byte[] packageContent,
@@ -139,6 +163,11 @@ public static class ValidationPackageModelMappings
         };
     }
 
+    /// <summary>
+    /// Converts a persisted registry package to portable metadata and validates its inputs.
+    /// </summary>
+    /// <param name="package">The registry package.</param>
+    /// <returns>The equivalent portable metadata.</returns>
     public static Portable.ValidationPackageMetadata ToPortableModel(
         this ValidationPackage package)
     {
@@ -166,6 +195,11 @@ public static class ValidationPackageModelMappings
         return metadata;
     }
 
+    /// <summary>
+    /// Converts a staged package and its normalized source into a registry package.
+    /// </summary>
+    /// <param name="stagedPackage">The discovered staged package.</param>
+    /// <returns>The equivalent registry package.</returns>
     public static ValidationPackage ToServiceModel(
         this StagedValidationPackage stagedPackage)
     {

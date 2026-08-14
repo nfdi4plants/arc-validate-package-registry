@@ -1,7 +1,18 @@
 ﻿namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders the common HTML document shell used by website pages.
+    /// </summary>
     public static class Layout
     {
+        /// <summary>
+        /// Wraps page content with shared metadata, assets, navigation, and footer markup.
+        /// </summary>
+        /// <param name="activeNavbarItem">The label of the active navigation item.</param>
+        /// <param name="title">The HTML document title.</param>
+        /// <param name="content">The page-specific body content.</param>
+        /// <param name="additionalHeadContent">Optional page-specific markup for the document head.</param>
+        /// <returns>A complete HTML document.</returns>
         public static string Render(
             string activeNavbarItem,
             string title,

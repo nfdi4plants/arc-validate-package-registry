@@ -3,11 +3,20 @@ using PackageRegistryService.Models;
 
 namespace PackageRegistryService.Pages.Components;
 
+/// <summary>
+/// Renders the running build identity and service release notes.
+/// </summary>
 public static class Releases
 {
     private const string RepositoryUrl =
         "https://github.com/nfdi4plants/arc-validate-package-registry";
 
+    /// <summary>
+    /// Renders current release provenance followed by the complete release notes.
+    /// </summary>
+    /// <param name="current">The running service's release identity.</param>
+    /// <param name="releaseNotesHtml">The rendered service release notes.</param>
+    /// <returns>The releases page content.</returns>
     public static string Render(
         ServiceVersionDocument current,
         string releaseNotesHtml

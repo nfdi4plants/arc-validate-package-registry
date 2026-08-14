@@ -1,7 +1,11 @@
 ﻿namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Renders multiline package release notes for detail and summary views.
+    /// </summary>
     public class PackageReleaseNotes
     {
+        /// <summary>Renders release-note lines as block paragraphs.</summary>
         public static string Render(string? releaseNotes)
         {
             if (releaseNotes == null)
@@ -18,6 +22,7 @@
                 );
             }
         }
+        /// <summary>Renders release-note lines using compact text markup.</summary>
         public static string RenderSmall(string? releaseNotes)
         {
             if (releaseNotes == null)

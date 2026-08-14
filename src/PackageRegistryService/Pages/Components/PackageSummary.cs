@@ -2,8 +2,19 @@
 
 namespace PackageRegistryService.Pages.Components
 {
+    /// <summary>
+    /// Contains the package fields needed by the registry browse page.
+    /// </summary>
+    /// <param name="Name">The package name.</param>
+    /// <param name="Summary">The short package description.</param>
+    /// <param name="Language">The package implementation language.</param>
+    /// <param name="Tags">The package's display tags.</param>
+    /// <param name="LatestVersion">The latest stable version.</param>
+    /// <param name="ReleaseDate">The latest stable release date.</param>
+    /// <param name="TotalDownloads">The aggregate download count.</param>
     public record PackageSummary(string Name, string Summary, string Language, string [] Tags, string LatestVersion, DateOnly ReleaseDate, int TotalDownloads)
     {
+        /// <summary>Renders one package-summary table row.</summary>
         public static string Render(PackageSummary summary)
         {
             return $@"<tr>
@@ -17,6 +28,7 @@ namespace PackageRegistryService.Pages.Components
 </tr>";
         }
 
+        /// <summary>Renders a titled table of package summaries.</summary>
         public static string RenderTable(string headerText, string DescriptionText, IEnumerable<PackageSummary> summaries)
         {
             return @$"<h1>{headerText}</h1><br>
@@ -39,6 +51,7 @@ namespace PackageRegistryService.Pages.Components
 </div>";
         }
 
+        /// <summary>Partitions and renders production and test package summaries.</summary>
         public static string RenderList(IEnumerable<PackageSummary> summaries)
         {
             var testPackages =

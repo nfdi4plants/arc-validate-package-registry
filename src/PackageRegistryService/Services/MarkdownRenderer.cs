@@ -5,13 +5,18 @@ using PackageRegistryService.Models;
 
 namespace PackageRegistryService.Services;
 
+/// <summary>
+/// Renders Markdown with the service's shared Markdig feature set.
+/// </summary>
 public sealed class MarkdownRenderer : IMarkdownRenderer
 {
     private readonly MarkdownPipeline _pipeline =
         new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
+    /// <inheritdoc />
     public string Render(string markdown) => Markdown.ToHtml(markdown, _pipeline);
 
+    /// <inheritdoc />
     public RenderedMarkdown RenderDocumentation(string markdown)
     {
         var document = Markdown.Parse(markdown, _pipeline);
@@ -35,6 +40,7 @@ public sealed class MarkdownRenderer : IMarkdownRenderer
         );
     }
 
+    /// <summary>Extracts the plain-text label from one parsed heading.</summary>
     private string GetHeadingText(string markdown, HeadingBlock heading)
     {
         var span = heading.Inline!.Span;
@@ -42,6 +48,9 @@ public sealed class MarkdownRenderer : IMarkdownRenderer
         return Markdown.ToPlainText(headingMarkdown, _pipeline).Trim();
     }
 
+    /// <summary>
+    /// Removes a source document's inline contents list because page navigation replaces it.
+    /// </summary>
     private static string RemoveInlineContents(
         string markdown,
         MarkdownDocument document

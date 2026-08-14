@@ -4,10 +4,18 @@ using PackageRegistryService.Models;
 
 namespace PackageRegistryService.Services;
 
+/// <summary>
+/// Derives current release identity from assembly metadata, configuration, and release notes.
+/// </summary>
 public sealed partial class ServiceReleaseInfoProvider : IServiceReleaseInfoProvider
 {
     private const string ReleaseNotesFileName = "RELEASE_NOTES.md";
     private const string ReleaseNotesUrl = "/releases";
+    /// <summary>
+    /// Creates release information for the running service build.
+    /// </summary>
+    /// <param name="configuration">Build provenance supplied by the host environment.</param>
+    /// <param name="markdownRenderer">The renderer for the complete release notes.</param>
     public ServiceReleaseInfoProvider(
         IConfiguration configuration,
         IMarkdownRenderer markdownRenderer
@@ -42,10 +50,13 @@ public sealed partial class ServiceReleaseInfoProvider : IServiceReleaseInfoProv
         ReleaseNotesHtml = markdownRenderer.Render(releaseNotesMarkdown);
     }
 
+    /// <inheritdoc />
     public ServiceVersionDocument Current { get; }
 
+    /// <inheritdoc />
     public string ReleaseNotesHtml { get; }
 
+    /// <summary>Extracts a source revision from assembly informational-version metadata.</summary>
     private static string? RevisionFromInformationalVersion(string informationalVersion)
     {
         var separator = informationalVersion.IndexOf('+');
@@ -54,9 +65,11 @@ public sealed partial class ServiceReleaseInfoProvider : IServiceReleaseInfoProv
             : null;
     }
 
+    /// <summary>Parses an optional build creation timestamp.</summary>
     private static DateTimeOffset? ParseCreated(string? value) =>
         DateTimeOffset.TryParse(value, out var created) ? created : null;
 
+    /// <summary>Finds the named release and introductory summary for a service version.</summary>
     private static (string Name, string Summary) FindRelease(string markdown, string version)
     {
         var lines = markdown.ReplaceLineEndings("\n").Split('\n');
@@ -91,6 +104,7 @@ public sealed partial class ServiceReleaseInfoProvider : IServiceReleaseInfoProv
         return ($"Version {version}", $"See the release notes for version {version}.");
     }
 
+    /// <summary>Matches versioned headings in the service release notes.</summary>
     [GeneratedRegex(
         @"^##\s+(?<version>\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\s+-\s+\d{4}-\d{2}-\d{2}\s+-\s+(?<name>.+?)\s*$"
     )]
