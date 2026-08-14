@@ -7,8 +7,8 @@ Description: |
     - ARC contains 'raw' data (e.g. raw dataset file or URL)
     - ARC assay dataset file exists
     // - ARC run data file exists
-    - Every data entity should be derived from a Source or Sample
-    - Every data entity should be annotated with at least one of Characteristic, Parameter, Factor
+    - Every data entity derives from a Source or Sample
+    - Every data entity is annotated with at least one of Characteristic, Parameter, Factor
 MajorVersion: 1
 MinorVersion: 0
 PatchVersion: 0
@@ -48,25 +48,33 @@ open Fable.SimpleHttp
 let pathIsUrl (p: string) =
     p.StartsWith("http:") || p.StartsWith("https:")
 
-type URLStatus =
-    | Malformed
-    | Resolves
-    | Fails
+type UrlResolution =
+    | Resolves of statusCode: int
+    | HttpError of statusCode: int
+    | Malformed of error: string
+    | Unreachable of error: string
 
 let urlResolves (url: string) =
-
     async {
-        try
-            let! (statusCode, responseText) = Http.get url
+        match System.Uri.TryCreate(url, System.UriKind.Absolute) with
+        | false, _ ->
+            return Malformed "Invalid URL"
 
-            match statusCode with
-            | 200 -> return Resolves
-            | _ -> return Fails
+        | true, uri when uri.Scheme <> "http" && uri.Scheme <> "https" ->
+            return Malformed $"Unsupported URL scheme: {uri.Scheme}"
 
-        with
-            | _ -> return Malformed
+        | true, _ ->
+            try
+                let! statusCode, _responseText = Http.get url
+
+                if statusCode >= 200 && statusCode < 300 then
+                    return Resolves statusCode
+                else
+                    return HttpError statusCode
+
+            with ex ->
+                return Unreachable ex.Message
     }
-    |> Async.RunSynchronously
 
 
 // Input:
@@ -91,8 +99,9 @@ let criticalCases =
         // This includes any I/ONode of type Data (i.e. in study, assay or run)
 
         testCase "ARC contains data entities" <| fun _ ->
-            if arc.ArcTables.Data.Count = 0 then
-                failwith "ARC contains no data entities"
+            
+            Expect.isGreaterThan arc.ArcTables.Data.Count 0
+                "ARC contains no data entities"
 
         // data entity should resolve
             // 1. annotation resolves local file
@@ -103,83 +112,66 @@ let criticalCases =
         for a in arc.Assays do
             for d in a.Data |> Seq.distinctBy (fun d -> d.Name) do
 
-                let filePath = if d.FilePath = "" then d.Name else d.FilePath 
+                let filePath = if d.FilePath = "" then d.Name else d.FilePath
 
-                testCase $"Data path {filePath} of assay {a.Identifier} resolves to local file or folder or a URL" <| fun _ ->
-
-                    // Check whether path (i.e. Output [Data]) resolves to URL
-
+                testCaseAsync $"Data path {filePath} of assay {a.Identifier} resolves to local file or folder or a URL" <| async {
                     if pathIsUrl filePath then
-                        match urlResolves filePath with
-                        | Resolves -> ()
-                        | Fails -> failwith $"Url {filePath} in assay {a.Identifier} could not be resolved"
-                        | Malformed -> failwith $"Url {filePath} in assay {a.Identifier} is malformed"
+                        let! result = urlResolves filePath
+
+                        match result with
+                        | Resolves _ ->
+                            ()
+
+                        | HttpError statusCode ->
+                            Expect.isLessThan statusCode 300
+                                $"Url {filePath} in assay {a.Identifier} returned an unsuccessful HTTP status"
+
+                        | Malformed error ->
+                            Expect.isTrue false
+                                $"Url {filePath} in assay {a.Identifier} is malformed: {error}"
+
+                        | Unreachable error ->
+                            Expect.isTrue false
+                                $"Url {filePath} in assay {a.Identifier} could not be reached: {error}"
 
                     else
-
-                    // Check whether path (i.e. Output [Data]) resolves to local file / folder
-
                         let p = d.DataContext.Value.GetAbsolutePathForAssay(a.Identifier)
                         let fullPath = Path.Combine(arcDir, p)
 
-                        if (File.Exists fullPath || Directory.Exists fullPath) |> not then
-                                failwith $"Data path {filePath} does not resolve to existing local file or folder and was not identified as URL"
-        
+                        Expect.isTrue (File.Exists fullPath || Directory.Exists fullPath)
+                            $"Data path {filePath} does not resolve to existing local file or folder and was not identified as URL"
+                }
 
         // TestCase Critical: ARC run data file exists
         // TODO: currently not fully possible, since `GetAbsolutePathForRun` does not exist https://github.com/nfdi4plants/ARCtrl/issues/629
 
-        // for r in arc.Runs do
-        //     for d in r.Data |> Seq.distinctBy (fun d -> d.Name) do
-
-        //         let filePath = if d.FilePath = "" then d.Name else d.FilePath 
-
-        //         testCase $"Data path {filePath} of run {r.Identifier} resolves to local file or folder or a URL" <| fun _ ->
-
-        //             // Check whether path (i.e. Output [Data]) resolves to URL
-
-        //             if pathIsUrl filePath then
-        //                 match urlResolves filePath with
-        //                 | Resolves -> ()
-        //                 | Fails -> failwith $"Url {filePath} in run {r.Identifier} could not be resolved"
-        //                 | Malformed -> failwith $"Url {filePath} in run {r.Identifier} is malformed"
-
-        //             else
-
-        //             // Check whether path (i.e. Output [Data]) resolves to local file / folder
-
-        //                 let p = d.DataContext.Value.GetAbsolutePathForRun(r.Identifier)
-        //                 let fullPath = Path.Combine(arcDir, p)
-
-        //                 if (File.Exists fullPath || Directory.Exists fullPath) |> not then
-        //                         failwith $"Data path {filePath} does not resolve to existing local file or folder and was not identified as URL"
 
         for d in arc.ArcTables.Data do
 
-        // TestCase Critical: Every data entity should be derived from a Source or Sample
+        // TestCase Critical: Every data entity derives from a Source or Sample
 
             testCase $"Data entity {d.Name} derives from a Source or Sample"  <| fun _ ->
 
                 let firstSamplesContainBlank =  d.FirstSamples |> List.exists (fun q -> q.Name = "")
                 
-                if (d.FirstSamples.IsEmpty || firstSamplesContainBlank) && d.Sources.Count = 0 then
-                    failwith $"Data entity {d.Name} does not derive from a Source or Sample"
+                Expect.isFalse ((d.FirstSamples.IsEmpty || firstSamplesContainBlank) && d.Sources.Count = 0)
+                    $"Data entity {d.Name} does not derive from a Source or Sample"
         
-        // TestCase Critical: Every data entity should be annotated with at least one of Characteristic, Parameter, Factor
+        // TestCase Critical: Every data entity is annotated with at least one of Characteristic, Parameter, Factor
             
             testCase $"Data entity {d.Name} contains at least one of Characteristic, Parameter, Factor"  <| fun _ ->
-                if d.PreviousValues.IsEmpty then
-                    failwith $"Data entity {d.Name} is not associated with any annotation value"
+                Expect.isNonEmpty d.PreviousValues
+                    $"Data entity {d.Name} is not associated with any annotation value"
 
     ]
 
 
-let nonCriticalCases =
-    testList "nonCriticalCases" [
+// let nonCriticalCases =
+//     testList "nonCriticalCases" [
 
 
 
-    ]
+//     ]
 
 // Execution:
 Setup.ValidationPackage(
@@ -188,7 +180,7 @@ Setup.ValidationPackage(
         AVPRIndex.Frontmatter.FrontmatterLanguage.FSharpFrontmatter
         ),
     CriticalValidationCases = [criticalCases],
-    NonCriticalValidationCases = [nonCriticalCases]
+    NonCriticalValidationCases = []
 )
 |> Execute.ValidationPipeline(
     basePath = arcDir

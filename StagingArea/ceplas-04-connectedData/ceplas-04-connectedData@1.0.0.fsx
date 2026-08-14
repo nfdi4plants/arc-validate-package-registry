@@ -108,30 +108,29 @@ let criticalCases =
         
         testCase $"Table {t.Name} contains `Input`" <| fun _ ->
                 
-                if t.InputNames.Length < 1 then
-                    failwith $"Table {t.Name} contains no Input"
+            Expect.isGreaterThanOrEqual t.InputNames.Length 1
+                $"Table {t.Name} contains no Input"
 
         // TestCase Critical: Every annotation table contains an Output
         
         testCase $"Table {t.Name} contains `Output`" <| fun _ ->
                 
-                if t.OutputNames.Length < 1 then
-                    failwith $"Table {t.Name} contains no Output"
+                Expect.isGreaterThanOrEqual t.OutputNames.Length 1
+                    $"Table {t.Name} contains no Output"
 
         // TestCase Critical: Every annotation table contains a Protocol reference
-                    
-        testCase $"Table {t.Name} contains `Protocol`" <| fun _ ->
-            
-            if t.TryGetProtocolUriColumn().IsNone && t.TryGetProtocolNameColumn().IsNone then
-                failwith $"Table {t.Name} contains no 'Protocol Uri' nor 'Protocol REF' Column"
 
+        testCase $"Table {t.Name} contains `Protocol`" <| fun _ ->
+            Expect.isTrue
+                (t.TryGetProtocolUriColumn().IsSome || t.TryGetProtocolNameColumn().IsSome)
+                $"Table {t.Name} contains no 'Protocol Uri' nor 'Protocol REF' column"
     
     /////////////////////////////////////////////////////////////////
 
     // TestCase Critical: ARC annotation tables are connected
     for name, nodes in tableNodes do    
         
-        testCase $"ARC annotation tables are connected"  <| fun _ ->
+        testCase $"ARC annotation table ({name}) is connected"  <| fun _ ->
 
             let tableConnection = tableNodes |> Seq.exists (fun (n, nds) ->
                     if n <> name then
@@ -142,16 +141,16 @@ let criticalCases =
                         false
                 )
             
-            if not tableConnection then
-                failwith $"Annotation table {name} is not connected to any other annotation table"
+            Expect.isTrue tableConnection
+                $"Annotation table {name} is not connected to any other annotation table"
     ]
     
 
-let nonCriticalCases =
-    testList "nonCriticalCases" [
+// let nonCriticalCases =
+//     testList "nonCriticalCases" [
                 
 
-    ]
+//     ]
 
 // Execution:
 Setup.ValidationPackage(
@@ -160,7 +159,7 @@ Setup.ValidationPackage(
         AVPRIndex.Frontmatter.FrontmatterLanguage.FSharpFrontmatter
         ),
     CriticalValidationCases = [criticalCases],
-    NonCriticalValidationCases = [nonCriticalCases]
+    NonCriticalValidationCases = []
 )
 |> Execute.ValidationPipeline(
     basePath = arcDir

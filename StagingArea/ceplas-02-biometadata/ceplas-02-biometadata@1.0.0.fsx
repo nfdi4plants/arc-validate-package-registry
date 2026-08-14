@@ -122,22 +122,22 @@ let criticalCases =
 
     testCase "ARC contains at least one study or assay or workflow or run" <| fun _ ->
 
-        if arc.StudyCount + arc.AssayCount + arc.WorkflowCount + arc.RunCount = 0 then
-            failwith "ARC does not contain any study or assay or workflow or run"
+        Expect.isGreaterThan (arc.StudyCount + arc.AssayCount + arc.WorkflowCount + arc.RunCount) 0
+            "ARC does not contain any study or assay or workflow or run"
 
     // TestCase Critical: ARC contains any annotation column (Characteristic, Parameter, Factor)
 
     testCase "ARC contains any annotation column (Characteristic, Parameter, Factor)" <| fun _ ->
-
-        if not (hasAnnotationColumns arc) then
-            failwith "ARC contains no annotation column (Characteristic, Parameter, Factor)"
+        Expect.isTrue (hasAnnotationColumns arc)
+            "ARC contains no annotation column (Characteristic, Parameter, Factor)"
 
     for s in arc.Studies do
         
         // TestCase Critical: Every study contains at least one annotation table
         testCase $"Study {s.Identifier} contains annotation table" <| fun _ ->
-            if s.TableCount = 0 then
-                failwith $"Study {s.Identifier} contains no annotation table"
+            
+            Expect.isGreaterThan s.TableCount 0 
+                $"Study {s.Identifier} contains no annotation table"
         
         // TestCase Critical: Every study annotation table contains basic information
         // (more than 2 columns and 0 rows)
@@ -145,17 +145,18 @@ let criticalCases =
         for t in s.Tables do
             testCase $"Table {t.Name} of study {s.Identifier} contains basic information" <| fun _ ->
                 
-                if t.ColumnCount < 2 then
-                    failwith $"Table {t.Name} contains less than 2 columns"
-                if t.RowCount = 0 then
-                    failwith $"Table {t.Name} contains no rows"
+                Expect.isGreaterThanOrEqual t.ColumnCount 2
+                    $"Table {t.Name} contains less than 2 columns"
+                Expect.isGreaterThan t.RowCount 0
+                    $"Table {t.Name} contains no rows"
 
     for a in arc.Assays do
         
         // TestCase Critical: Every assay contains at least one annotation table
         testCase $"Assay {a.Identifier} contains annotation table" <| fun _ ->
-            if a.TableCount = 0 then
-                failwith $"Assay {a.Identifier} contains no annotation table"
+            
+            Expect.isGreaterThan a.TableCount 0
+                $"Assay {a.Identifier} contains no annotation table"
         
         // TestCase Critical: Every assay annotation table contains basic information
         // (more than 2 columns and 0 rows)
@@ -163,17 +164,17 @@ let criticalCases =
         for t in a.Tables do
             testCase $"Table {t.Name} of assay {a.Identifier} contains basic information" <| fun _ ->
                 
-                if t.ColumnCount < 2 then
-                    failwith $"Table {t.Name} contains less than 2 columns"
-                if t.RowCount = 0 then
-                    failwith $"Table {t.Name} contains no rows"
+                Expect.isGreaterThanOrEqual t.ColumnCount 2
+                    $"Table {t.Name} contains less than 2 columns"
+                Expect.isGreaterThan t.RowCount 0
+                    $"Table {t.Name} contains no rows"
                     
     for r in arc.Runs do
         
         // TestCase Critical: Every run contains at least one annotation table
         testCase $"Run {r.Identifier} contains annotation table" <| fun _ ->
-            if r.TableCount = 0 then
-                failwith $"Run {r.Identifier} contains no annotation table"
+            Expect.isGreaterThan r.TableCount 0
+                $"Run {r.Identifier} contains no annotation table"
         
         // TestCase Critical: Every run annotation table contains basic information
         // (more than 2 columns and 0 rows)
@@ -181,11 +182,10 @@ let criticalCases =
         for t in r.Tables do
             testCase $"Table {t.Name} of run {r.Identifier} contains basic information" <| fun _ ->
                 
-                if t.ColumnCount < 2 then
-                    failwith $"Table {t.Name} contains less than 2 columns"
-                if t.RowCount = 0 then
-                    failwith $"Table {t.Name} contains no rows"
-
+                Expect.isGreaterThanOrEqual t.ColumnCount 2
+                    $"Table {t.Name} contains less than 2 columns"
+                Expect.isGreaterThan t.RowCount 0
+                    $"Table {t.Name} contains no rows"
 
     ]
     
@@ -202,25 +202,25 @@ let nonCriticalCases =
         // TestCase Non-critical: Every study contains a title
         testCase $"Study {s.Identifier} contains title" <| fun _ ->
             // Study title exists
-            if s.Title.IsNone then
-                failwith $"Study {s.Identifier} contains no title"
+            Expect.isSome s.Title
+                $"Study {s.Identifier} contains no title"
             // Study title is longer than 3 characters
-            if s.Title.Value.Length < 4 then
-                failwith $"Study {s.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{s.Title.Value}\""
+            Expect.isGreaterThan s.Title.Value.Length 4
+                $"Study {s.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{s.Title.Value}\""
         
         // TestCase Non-critical: Every study contains a description
         testCase $"Study {s.Identifier} contains description" <| fun _ ->
             // Study description exists
-            if s.Description.IsNone then
-                failwith $"Study {s.Identifier} contains no description"
+            Expect.isSome s.Description
+                $"Study {s.Identifier} contains no description"
             // Study description is longer than 30 characters
-            if s.Description.Value.Length < 31 then
-                failwith $"Study {s.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{s.Description.Value}\""
+            Expect.isGreaterThan s.Description.Value.Length 30
+                $"Study {s.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{s.Description.Value}\""
 
         // TestCase Non-critical: Every study contains contacts
         testCase $"Study {s.Identifier} contains contacts" <| fun _ ->
-            if s.Contacts.Count < 1 then
-                failwith $"Study {s.Identifier} contains no contacts"
+            Expect.isGreaterThan s.Contacts.Count 0
+                $"Study {s.Identifier} contains no contacts"
     
     /////////////////////////////////////////////////////////////////
     ////// ARC Assay top level metadata
@@ -231,40 +231,40 @@ let nonCriticalCases =
         // TestCase Non-critical: Every assay contains a title
         testCase $"Assay {a.Identifier} contains title" <| fun _ ->
             // Assay title exists
-            if a.Title.IsNone then
-                failwith $"Assay {a.Identifier} contains no title"
+            Expect.isSome a.Title
+                $"Assay {a.Identifier} contains no title"
             // Assay title is longer than 4 characters
-            if a.Title.Value.Length < 4 then
-                failwith $"Assay {a.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{a.Title.Value}\""
+            Expect.isGreaterThan a.Title.Value.Length 4
+                $"Assay {a.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{a.Title.Value}\""
         
         // TestCase Non-critical: Every assay contains a description
         testCase $"Assay {a.Identifier} contains description" <| fun _ ->
             // Assay description exists
-            if a.Description.IsNone then
-                failwith $"Assay {a.Identifier} contains no description"
+            Expect.isSome a.Description
+                $"Assay {a.Identifier} contains no description"
             // Assay description is longer than 30 characters
-            if a.Description.Value.Length < 31 then
-                failwith $"Assay {a.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{a.Description.Value}\""
+            Expect.isGreaterThan a.Description.Value.Length  30
+                $"Assay {a.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{a.Description.Value}\""
 
         // TestCase Non-critical: Every assay contains performers
         testCase $"Study {a.Identifier} contains contacts" <| fun _ ->
-            if a.Performers.Count < 1 then
-                failwith $"Study {a.Identifier} contains no performers"
+            Expect.isGreaterThan a.Performers.Count 0
+                $"Study {a.Identifier} contains no performers"
 
         // TestCase Non-critical: Every assay contains a measurement type
         testCase $"Assay {a.Identifier} contains top-level metadata measurement type" <| fun _ ->
-            if a.MeasurementType.IsNone then
-                failwith $"Assay {a.Identifier} contains no top-level metadata measurement type"
+            Expect.isSome a.MeasurementType
+                $"Assay {a.Identifier} contains no top-level metadata measurement type"
         
         // TestCase Non-critical: Every assay contains a technology type
         testCase $"Assay {a.Identifier} contains top-level metadata technology type" <| fun _ ->
-            if a.TechnologyType.IsNone then
-                failwith $"Assay {a.Identifier} contains no top-level metadata technology type"
+            Expect.isSome a.TechnologyType
+                $"Assay {a.Identifier} contains no top-level metadata technology type"
         
         // TestCase Non-critical: Every assay contains a technology platform
         testCase $"Assay {a.Identifier} contains top-level metadata technology platform" <| fun _ ->
-            if a.TechnologyPlatform.IsNone then
-                failwith $"Assay {a.Identifier} contains no top-level metadata technology platform"
+            Expect.isSome a.TechnologyPlatform
+                $"Assay {a.Identifier} contains no top-level metadata technology platform"
 
     /////////////////////////////////////////////////////////////////
     ////// ARC Workflow top level metadata
@@ -275,25 +275,25 @@ let nonCriticalCases =
         // TestCase Non-critical: Every workflow contains a title
         testCase $"Workflow {w.Identifier} contains title" <| fun _ ->
             // Workflow title exists
-            if w.Title.IsNone then
-                failwith $"Workflow {w.Identifier} contains no title"
+            Expect.isSome w.Title
+                $"Workflow {w.Identifier} contains no title"
             // Workflow title is longer than 4 characters
-            if w.Title.Value.Length < 4 then
-                failwith $"Workflow {w.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{w.Title.Value}\""
+            Expect.isGreaterThan w.Title.Value.Length 3
+                $"Workflow {w.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{w.Title.Value}\""
         
         // TestCase Non-critical: Every workflow contains a description
         testCase $"Workflow {w.Identifier} contains description" <| fun _ ->
             // Workflow description exists
-            if w.Description.IsNone then
-                failwith $"Workflow {w.Identifier} contains no description"
+            Expect.isSome w.Description
+                $"Workflow {w.Identifier} contains no description"
             // Workflow description is longer than 30 characters
-            if w.Description.Value.Length < 31 then
-                failwith $"Workflow {w.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{w.Description.Value}\""
+            Expect.isGreaterThan w.Description.Value.Length 30
+                $"Workflow {w.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{w.Description.Value}\""
         
         // TestCase Non-critical: Every workflow contains contacts
         testCase $"Workflow {w.Identifier} contains contacts" <| fun _ ->
-            if w.Contacts.Count < 1 then
-                failwith $"Workflow {w.Identifier} contains no contacts"
+            Expect.isGreaterThan w.Contacts.Count 0
+                $"Workflow {w.Identifier} contains no contacts"
 
     /////////////////////////////////////////////////////////////////
     ////// ARC Run top level metadata
@@ -304,40 +304,40 @@ let nonCriticalCases =
         // TestCase Non-critical: Every run contains a title
         testCase $"Run {r.Identifier} contains title" <| fun _ ->
             // Run title exists
-            if r.Title.IsNone then
-                failwith $"Run {r.Identifier} contains no title"
+            Expect.isSome r.Title
+                $"Run {r.Identifier} contains no title"
             // Run title is longer than 4 characters
-            if r.Title.Value.Length < 4 then
-                failwith $"Run {r.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{r.Title.Value}\""
+            Expect.isGreaterThan r.Title.Value.Length 3
+                $"Run {r.Identifier} contains no meaningful title (i.e. longer than 3 characters):\"{r.Title.Value}\""
         
         // TestCase Non-critical: Every run contains a description
         testCase $"Run {r.Identifier} contains description" <| fun _ ->
             // Run description exists
-            if r.Description.IsNone then
-                failwith $"Run {r.Identifier} contains no description"
+            Expect.isSome r.Description
+                $"Run {r.Identifier} contains no description"
             // Run description is longer than 30 characters
-            if r.Description.Value.Length < 31 then
-                failwith $"Run {r.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{r.Description.Value}\""
+            Expect.isGreaterThan r.Description.Value.Length 30
+                $"Run {r.Identifier} contains no meaningful description (i.e. longer than 30 characters):\"{r.Description.Value}\""
 
         // TestCase Non-critical: Every run contains performers
         testCase $"Study {r.Identifier} contains contacts" <| fun _ ->
-            if r.Performers.Count < 1 then
-                failwith $"Study {r.Identifier} contains no performers"
+            Expect.isGreaterThan r.Performers.Count 0
+                $"Study {r.Identifier} contains no performers"
 
         // TestCase Non-critical: Every run contains a measurement type
         testCase $"Run {r.Identifier} contains top-level metadata measurement type" <| fun _ ->
-            if r.MeasurementType.IsNone then
-                failwith $"Run {r.Identifier} contains no top-level metadata measurement type"
+            Expect.isSome r.MeasurementType
+                $"Run {r.Identifier} contains no top-level metadata measurement type"
         
         // TestCase Non-critical: Every run contains a technology type
         testCase $"Run {r.Identifier} contains top-level metadata technology type" <| fun _ ->
-            if r.TechnologyType.IsNone then
-                failwith $"Run {r.Identifier} contains no top-level metadata technology type"
+            Expect.isSome r.TechnologyType
+                $"Run {r.Identifier} contains no top-level metadata technology type"
         
         // TestCase Non-critical: Every run contains a technology platform
         testCase $"Run {r.Identifier} contains top-level metadata technology platform" <| fun _ ->
-            if r.TechnologyPlatform.IsNone then
-                failwith $"Run {r.Identifier} contains no top-level metadata technology platform"
+            Expect.isSome r.TechnologyPlatform
+                $"Run {r.Identifier} contains no top-level metadata technology platform"
 
 
         // TestCase Non-critical: Every annotation table contains some annotation column
@@ -347,9 +347,10 @@ let nonCriticalCases =
             for t in arc.ArcTables do
                 testCase $"Table {t.Name} contains annotation column" <| fun _ ->
                 
-                let annoColCount = characteristicCount t + parameterCount t + factorCount t
-                if annoColCount = 0 then
-                    failwith $"Table {t.Name} contains no annotation column"  
+                    let annoColCount = characteristicCount t + parameterCount t + factorCount t
+                
+                    Expect.isGreaterThan annoColCount 0
+                        $"Table {t.Name} contains no annotation column"
 
     ]
 
