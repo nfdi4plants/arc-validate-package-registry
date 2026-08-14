@@ -14,6 +14,15 @@ namespace PackageRegistryService.API.Handlers
         {
             var packages = await database.ValidationPackages.ToArrayAsync();
 
+            try
+            {
+                Array.ForEach(packages, package => package.ToPortableModel());
+            }
+            catch (ArgumentException error)
+            {
+                return TypedResults.Conflict($"Internal package metadata is invalid: {error.Message}");
+            }
+
             // Hash validation
             if (packages.Any(p => !ValidationPackageDb.ValidatePackageContent(p, database)))
             {
@@ -29,7 +38,7 @@ namespace PackageRegistryService.API.Handlers
         public static async Task<Results<Ok<RegistryValidationPackage>, NotFound<string>, Conflict<string>>> GetLatestPackageByName(string name, ValidationPackageDb database)
         {
             var package = await database.ValidationPackages
-                .Where(p => p.Name == name && p.BuildMetadataVersionSuffix == "" && p.BuildMetadataVersionSuffix == "") // only serve stable package versions here
+                .Where(p => p.Name == name && p.PreReleaseVersionSuffix == "" && p.BuildMetadataVersionSuffix == "") // only serve stable package versions here
                 .OrderByDescending(p => p.MajorVersion)
                 .ThenByDescending(p => p.MinorVersion)
                 .ThenByDescending(p => p.PatchVersion)
@@ -38,6 +47,15 @@ namespace PackageRegistryService.API.Handlers
             if (package is null)
             {                 
                 return TypedResults.NotFound($"No package '{name}' available.");
+            }
+
+            try
+            {
+                package.ToPortableModel();
+            }
+            catch (ArgumentException error)
+            {
+                return TypedResults.Conflict($"Internal package metadata is invalid: {error.Message}");
             }
 
             if (!ValidationPackageDb.ValidatePackageContent(package, database))
@@ -67,6 +85,15 @@ namespace PackageRegistryService.API.Handlers
                 return TypedResults.NotFound($"No package '{name}' @ {version} available.");
             }
 
+            try
+            {
+                package.ToPortableModel();
+            }
+            catch (ArgumentException error)
+            {
+                return TypedResults.Conflict($"Internal package metadata is invalid: {error.Message}");
+            }
+
             if (!ValidationPackageDb.ValidatePackageContent(package, database))
             {
                 return TypedResults.Conflict("Internal package hash collision");
@@ -84,6 +111,16 @@ namespace PackageRegistryService.API.Handlers
             if (existing != null)
             {
                 return TypedResults.Conflict();
+            }
+
+            try
+            {
+                package.ToPortableModel();
+            }
+            catch (ArgumentException error)
+            {
+                return TypedResults.UnprocessableEntity(
+                    $"Package metadata is invalid: {error.Message}");
             }
 
             if (package.ContentContainsCarriageReturn())

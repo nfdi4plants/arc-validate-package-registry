@@ -101,6 +101,38 @@ module Metadata =
             Inputs = [| CommandInput.allFieldsModel |]
         )
 
+module Identity =
+
+    let model =
+        ValidationPackage.Model.ValidationPackageIdentity.create(
+            "portable-package",
+            ValidationPackage.Model.SemVer.tryParse("1.2.3-rc.1+build.7")
+            |> Option.get
+        )
+
+    let client =
+        AVPRClient.ValidationPackageIdentity(
+            Name = "portable-package",
+            Version = "1.2.3-rc.1+build.7"
+        )
+
+module MetadataEndpoint =
+
+    let allFields =
+        AVPRClient.ValidationPackageMetadata(
+            Name = "portable-package",
+            Version = "1.2.3-rc.1+build.7",
+            Summary = "Portable package",
+            Description = "Exercises the full model/client contract.",
+            ReleaseDate = releaseDate,
+            ProgrammingLanguage = "FSharp",
+            Authors = [| Author.allFieldsClient |],
+            Tags = [| OntologyAnnotation.allFieldsClient |],
+            ReleaseNotes = "First portable interop release.",
+            CQCHookEndpoint = "https://example.org/hooks/cqc",
+            Inputs = ResizeArray [ CommandInput.allFieldsClient ]
+        )
+
 module ValidationPackage =
 
     let allFields =

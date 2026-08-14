@@ -140,8 +140,9 @@ The extracted metadata mapping carries
 `$schema: https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json`.
 The schema is also shipped as
 `schemas/validation-package-frontmatter.schema.json` in every
-`ValidationPackage.Codecs` artifact. Runtime parsing selects its decoder from
-an offline allowlist and never fetches the URI.
+`ValidationPackage.Codecs` artifact and served byte-for-byte at its `$schema`
+URL. Runtime parsing selects its decoder from an offline allowlist and never
+fetches the URI.
 
 ## Representation boundaries
 

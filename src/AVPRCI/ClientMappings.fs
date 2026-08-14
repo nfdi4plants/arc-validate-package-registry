@@ -54,18 +54,13 @@ let private toClientTag (tag: OntologyAnnotation) =
     )
 
 let identityEquals
-    (publishedPackage: AVPRClient.ValidationPackage)
+    (publishedPackage: AVPRClient.ValidationPackageIdentity)
     (stagedPackage: StagedValidationPackage)
     =
     let metadata = stagedPackage.Metadata
 
     publishedPackage.Name = metadata.Name
-    && publishedPackage.MajorVersion = metadata.MajorVersion
-    && publishedPackage.MinorVersion = metadata.MinorVersion
-    && publishedPackage.PatchVersion = metadata.PatchVersion
-    && publishedPackage.PreReleaseVersionSuffix = metadata.PreReleaseVersionSuffix
-    && publishedPackage.BuildMetadataVersionSuffix = metadata.BuildMetadataVersionSuffix
-    && publishedPackage.ProgrammingLanguage = metadata.ProgrammingLanguage
+    && publishedPackage.Version = StagedValidationPackage.getSemanticVersionString stagedPackage
 
 let toValidationPackage
     (releaseDate: DateTimeOffset)

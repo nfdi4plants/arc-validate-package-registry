@@ -8,6 +8,40 @@ namespace AVPRClient.Interop;
 
 public static class Mappings
 {
+    public static Model.ValidationPackageIdentity ToModel(
+        this Avpr.ValidationPackageIdentity identity)
+    {
+        ArgumentNullException.ThrowIfNull(identity);
+
+        return Model.ValidationPackageIdentity.create(
+            ValueOrEmpty(identity.Name),
+            ParseCanonicalVersion(identity.Version, nameof(identity)));
+    }
+
+    public static Avpr.ValidationPackageIdentity ToClient(
+        this Model.ValidationPackageIdentity identity)
+    {
+        ArgumentNullException.ThrowIfNull(identity);
+
+        return new Avpr.ValidationPackageIdentity
+        {
+            Name = identity.Name,
+            Version = Model.SemVer.toString(identity.Version)
+        };
+    }
+
+    public static Model.ValidationPackageIdentity[] ToModel(
+        this ICollection<Avpr.ValidationPackageIdentity>? identities) =>
+        (identities ?? Array.Empty<Avpr.ValidationPackageIdentity>())
+            .Select(ToModel)
+            .ToArray();
+
+    public static ICollection<Avpr.ValidationPackageIdentity> ToClient(
+        this Model.ValidationPackageIdentity[]? identities) =>
+        (identities ?? Array.Empty<Model.ValidationPackageIdentity>())
+            .Select(ToClient)
+            .ToArray();
+
     public static bool IdentityEquals(
         this Avpr.ValidationPackage package,
         Avpr.ValidationPackage other)
@@ -66,6 +100,57 @@ public static class Mappings
             ReleaseNotes = ValueOrEmpty(package.ReleaseNotes),
             CQCHookEndpoint = ValueOrEmpty(package.CQCHookEndpoint),
             Inputs = package.Inputs.ToModel()
+        };
+    }
+
+    public static Model.ValidationPackageMetadata ToModel(
+        this Avpr.ValidationPackageMetadata metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+        var version = ParseCanonicalVersion(metadata.Version, nameof(metadata));
+        var mapped = new Model.ValidationPackageMetadata
+        {
+            Name = ValueOrEmpty(metadata.Name),
+            Summary = ValueOrEmpty(metadata.Summary),
+            Description = ValueOrEmpty(metadata.Description),
+            MajorVersion = version.Major,
+            MinorVersion = version.Minor,
+            PatchVersion = version.Patch,
+            PreReleaseVersionSuffix = version.PreRelease,
+            BuildMetadataVersionSuffix = version.BuildMetadata,
+            ProgrammingLanguage = ValueOrEmpty(metadata.ProgrammingLanguage),
+            Authors = metadata.Authors.ToModel(),
+            Tags = metadata.Tags.ToModel(),
+            ReleaseNotes = ValueOrEmpty(metadata.ReleaseNotes),
+            CQCHookEndpoint = ValueOrEmpty(metadata.CQCHookEndpoint),
+            Inputs = metadata.Inputs.ToModel()
+        };
+
+        Model.CommandInputParameter.validate(mapped.Inputs);
+        return mapped;
+    }
+
+    public static Avpr.ValidationPackageMetadata ToClientMetadata(
+        this Model.ValidationPackageMetadata metadata,
+        DateTimeOffset releaseDate)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+        var version = Model.ValidationPackageMetadata.getSemanticVersion(metadata);
+        Model.CommandInputParameter.validate(metadata.Inputs ?? []);
+
+        return new Avpr.ValidationPackageMetadata
+        {
+            Name = ValueOrEmpty(metadata.Name),
+            Version = Model.SemVer.toString(version),
+            Summary = ValueOrEmpty(metadata.Summary),
+            Description = ValueOrEmpty(metadata.Description),
+            ReleaseDate = releaseDate,
+            ProgrammingLanguage = ValueOrEmpty(metadata.ProgrammingLanguage),
+            Authors = metadata.Authors.ToClient(),
+            Tags = metadata.Tags.ToClient(),
+            ReleaseNotes = ValueOrEmpty(metadata.ReleaseNotes),
+            CQCHookEndpoint = ValueOrEmpty(metadata.CQCHookEndpoint),
+            Inputs = metadata.Inputs.ToClient()
         };
     }
 
@@ -289,4 +374,19 @@ public static class Mappings
         };
 
     private static string ValueOrEmpty(string? value) => value ?? string.Empty;
+
+    private static Model.SemVer ParseCanonicalVersion(string? value, string parameterName)
+    {
+        var canonical = ValueOrEmpty(value);
+        var parsed = Model.SemVer.tryParse(canonical);
+
+        if (parsed is null || Model.SemVer.toString(parsed.Value) != canonical)
+        {
+            throw new ArgumentException(
+                $"'{canonical}' is not a canonical semantic version.",
+                parameterName);
+        }
+
+        return parsed.Value;
+    }
 }

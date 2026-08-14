@@ -7,6 +7,11 @@ only generated transport code and its JSON dependency. Applications that need
 portable validation-package types should reference `AVPRClient.Interop`
 explicitly.
 
+Use `GetPackageIndexAsync`, `GetPackageVersionsAsync`, and
+`GetPackageMetadataAsync` for discovery and preflight. The legacy
+`GetAllPackagesAsync` method downloads every executable package and is retained
+only for compatibility.
+
 ## Usage
 
 ### fsharp

@@ -4,6 +4,17 @@ All notable changes to the package registry service are documented here. The
 service follows semantic versioning independently of the `/api/v1` compatibility
 contract.
 
+## 1.2.0 - 2026-08-14 - Lightweight package discovery
+
+Adds content-free package-index, version-list, and exact-version metadata
+endpoints for resolver preflight. These queries use no-tracking projections,
+do not validate artifact hashes, and do not increment download statistics.
+The legacy all-content collection remains compatible but is deprecated.
+
+The service now exposes the immutable v1 frontmatter and validation-package
+configuration schemas at their canonical URLs. It also corrects latest-stable
+selection to exclude both prerelease and build-qualified versions.
+
 ## 1.1.0 - 2026-07-28 - CWL command inputs
 
 Adds a deliberately scoped CWL v1.2 command-input contract throughout the

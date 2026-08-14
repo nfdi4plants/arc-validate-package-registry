@@ -62,6 +62,13 @@ endpoint-level API reference. The website's
 [service release history](https://avpr.nfdi4plants.org/releases) shows which
 service version and source revision are currently running.
 
+Resolver and publication clients should use the lightweight
+`/api/v1/package-index`, `/api/v1/packages/{name}/versions`, and
+`/api/v1/packages/{name}/{version}/metadata` routes. They expose identities and
+metadata without transferring executable package content or incrementing
+download statistics. The legacy all-content package collection remains
+available for compatibility and is deprecated.
+
 Published package versions are immutable. Endpoints that modify registry data
 therefore require authorization and are not intended for user-facing tools. If
 you have a valid integration use case that requires an API key, open an issue

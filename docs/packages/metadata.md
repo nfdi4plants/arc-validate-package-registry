@@ -4,6 +4,7 @@
 
 - [F# frontmatter](#f-frontmatter)
 - [Python frontmatter](#python-frontmatter)
+- [Schema and editor association](#schema-and-editor-association)
 - [Mandatory fields](#mandatory-fields)
 - [Optional fields](#optional-fields)
 - [Nested objects](#nested-objects)
@@ -15,6 +16,9 @@ Every validation package starts with YAML frontmatter. The script language
 determines how that YAML is enclosed; the metadata contract is otherwise the
 same. New canonical frontmatter carries the immutable v1 schema URI. Readers
 select that schema entirely offline; the URI is not fetched during parsing.
+
+The versioned schema is also served directly by AVPR at
+[`/schemas/v1/validation-package-frontmatter.schema.json`](https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json).
 
 ## F# frontmatter
 
@@ -102,6 +106,32 @@ Description: A longer explanation of the validation behavior.
 ---
 """
 ```
+
+## Schema and editor association
+
+The schema describes the extracted YAML metadata mapping, not the surrounding
+F# multiline comment or Python string. Frontmatter extraction and package
+publication checks remain separate stages: a schema-valid mapping can still
+fail language-specific extraction, filename/identity checks, or publication
+policy.
+
+YAML-aware editors can validate an extracted mapping by associating the
+versioned AVPR route with a local YAML file. For example, VS Code with the YAML
+extension accepts:
+
+```json
+{
+  "yaml.schemas": {
+    "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json": [
+      "**/*.validation-package.yml"
+    ]
+  }
+}
+```
+
+Copy only the YAML between the frontmatter delimiters into a matching
+`*.validation-package.yml` editor buffer. Canonical mappings also retain their
+top-level `$schema` field when copied.
 
 ## Mandatory fields
 
@@ -191,4 +221,5 @@ Wrap this YAML using the F# or Python form above. See
 [submitting a validation package](submission.md) for naming, versioning, and
 publication rules. The standalone Draft 2020-12 schema is shipped at
 `schemas/validation-package-frontmatter.schema.json` in every
-`ValidationPackage.Codecs` package.
+`ValidationPackage.Codecs` package and is byte-identical to the versioned AVPR
+schema route.

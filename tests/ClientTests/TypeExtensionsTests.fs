@@ -5,6 +5,35 @@ open Xunit
 open AVPRClient.Interop
 open Newtonsoft.Json.Linq
 
+module Discovery =
+
+    [<Fact>]
+    let ``package identities map canonical full SemVer in both directions`` () =
+        let model = ReferenceObjects.Identity.client.ToModel()
+        Assert.Equal(ReferenceObjects.Identity.model, model)
+        Assert.Equivalent(ReferenceObjects.Identity.client, model.ToClient())
+
+    [<Fact>]
+    let ``identity mapping rejects noncanonical semantic versions`` () =
+        let invalid =
+            AVPRClient.ValidationPackageIdentity(
+                Name = "portable-package",
+                Version = "01.2.3"
+            )
+
+        Assert.Throws<ArgumentException>(fun () -> invalid.ToModel() |> ignore)
+        |> ignore
+
+    [<Fact>]
+    let ``metadata endpoint DTO maps every portable field and back`` () =
+        let model = ReferenceObjects.MetadataEndpoint.allFields.ToModel()
+        Assert.Equivalent(ReferenceObjects.Metadata.allFields, model)
+
+        let roundTripped =
+            model.ToClientMetadata(ReferenceObjects.releaseDate)
+
+        Assert.Equivalent(ReferenceObjects.MetadataEndpoint.allFields, roundTripped)
+
 module ValidationPackage =
 
     [<Fact>]

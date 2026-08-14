@@ -211,6 +211,26 @@ When adding tests:
 - For a cross-cutting wire-model change, prefer both a raw API assertion and a generated-client assertion. The former identifies service serialization errors; the latter identifies generated-client route or deserialization drift.
 - Do not treat the in-memory host as database integration coverage. It does not verify PostgreSQL migrations, `jsonb` storage, backfills, Npgsql conversions, or relational behavior. Retain EF model assertions and perform focused PostgreSQL verification when persistence changes.
 
+## Registry discovery APIs
+
+- Use `GET /api/v1/package-index`, `GET /api/v1/packages/{name}/versions`, and
+  `GET /api/v1/packages/{name}/{version}/metadata` for discovery and resolver
+  preflight. The legacy `GET /api/v1/packages` collection is deprecated and
+  retains its all-content/download-count behavior only for compatibility.
+- Keep discovery queries as no-tracking projections that exclude
+  `PackageContent`. They must not validate content hashes or increment download
+  statistics; only artifact/content endpoints own those side effects.
+- Return canonical full-SemVer strings and order the package index by ordinal
+  name ascending, then deterministic semantic-version identity descending.
+  Reuse portable SemVer comparison instead of implementing service-specific
+  ordering.
+- Serve the committed v1 JSON Schemas byte-for-byte at `/schemas/v1/`. Include
+  those same source files in service output/container publishing; do not turn
+  them into generated OpenAPI component schemas.
+- Regenerate `AVPRClient` only from the final local OpenAPI document. Map its
+  lightweight identity and metadata DTOs through `AVPRClient.Interop`, and use
+  package-index identities for AVPRCI publication discovery.
+
 ## CI and release safety
 
 - Each published library and the registry service owns its version in its

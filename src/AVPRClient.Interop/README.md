@@ -3,6 +3,11 @@
 `AVPRClient.Interop` maps between the generated `AVPRClient` transport types
 and the portable types in `ValidationPackage.Model`.
 
+The lightweight `ValidationPackageIdentity` and `ValidationPackageMetadata`
+transport DTOs map to the portable identity and metadata types. Identity and
+metadata conversions parse the endpoint's canonical full-SemVer string rather
+than duplicating semantic-version logic in the client boundary.
+
 The generated client deliberately has no dependency on the portable model,
 YAML codecs, or AVPR staging infrastructure. Applications that need model
 conversion can reference this package explicitly and import

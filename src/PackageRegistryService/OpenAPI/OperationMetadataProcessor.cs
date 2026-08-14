@@ -19,7 +19,28 @@ namespace PackageRegistryService.OpenAPI
                 "GetAllPackages", new Dictionary<string, string>
                 {
                     { "Summary", "Get all validation packages" },
-                    { "Description", "Get all validation packages from the package registry. Note that this endpoint returns all versions of each package. Package content is a base64 encoded byte array containing the package executable." }
+                    { "Description", "Deprecated. Get all validation packages, including base64-encoded executable content. Use the package-index and metadata endpoints for discovery." }
+                }
+            },
+            {
+                "GetPackageIndex", new Dictionary<string, string>
+                {
+                    { "Summary", "Get the lightweight validation-package index" },
+                    { "Description", "Get every published package identity without loading package content or incrementing download statistics." }
+                }
+            },
+            {
+                "GetPackageVersions", new Dictionary<string, string>
+                {
+                    { "Summary", "Get all versions of a validation package" },
+                    { "Description", "Get canonical full semantic versions in deterministic descending order without loading package content." }
+                }
+            },
+            {
+                "GetPackageMetadata", new Dictionary<string, string>
+                {
+                    { "Summary", "Get validation-package metadata" },
+                    { "Description", "Get metadata for one exact validation-package version without executable package content or download side effects." }
                 }
             },
             {
@@ -81,6 +102,11 @@ namespace PackageRegistryService.OpenAPI
                 if (EndpointMetadata.ContainsKey(op.OperationId)) {
                     op.Summary = EndpointMetadata[op.OperationId]["Summary"];
                     op.Description = EndpointMetadata[op.OperationId]["Description"];
+                }
+
+                if (op.OperationId == "GetAllPackages")
+                {
+                    op.IsDeprecated = true;
                 }
             }
 

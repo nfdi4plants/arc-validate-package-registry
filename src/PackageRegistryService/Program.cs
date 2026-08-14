@@ -137,6 +137,9 @@ app.MapGet("/_version", PackageRegistryService.API.Handlers.ServiceVersionHandle
 app.MapGroup("/api/v1/packages")
     .MapPackagesApiV1();
 
+app.MapGroup("/api/v1")
+    .MapDiscoveryApiV1();
+
 app.MapGroup("/api/v1/verify")
     .MapVerificationApiV1();
 
@@ -145,6 +148,8 @@ app.MapGroup("/api/v1/statistics")
 
 app.MapGroup("/")
     .MapPageEndpoints();
+
+app.MapSchemaEndpointsV1();
 
 app.Run();
 

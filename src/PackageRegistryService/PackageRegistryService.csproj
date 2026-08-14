@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
@@ -20,6 +20,7 @@
   <ItemGroup>
     <Content Include="..\..\StagingArea\**" CopyToOutputDirectory="Always" LinkBase="StagingArea" />
     <Content Include="..\..\docs\**\*.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" LinkBase="docs" />
+    <Content Include="..\..\schemas\*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" LinkBase="schemas" />
   </ItemGroup>
 
   <ItemGroup>

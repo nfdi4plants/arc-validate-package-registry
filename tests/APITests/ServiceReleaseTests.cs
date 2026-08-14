@@ -29,7 +29,7 @@ public class ServiceReleaseTests
         Assert.Equal("no-store", response.Headers.CacheControl?.ToString());
         var root = document.RootElement;
         Assert.Equal("avpr", root.GetProperty("service").GetProperty("name").GetString());
-        Assert.Equal("1.1.0", root.GetProperty("service").GetProperty("version").GetString());
+        Assert.Equal("1.2.0", root.GetProperty("service").GetProperty("version").GetString());
         Assert.Equal(
             ["v1"],
             root.GetProperty("api")
@@ -44,9 +44,9 @@ public class ServiceReleaseTests
         Assert.Equal("2026-07-27T12:34:56+00:00", build.GetProperty("created").GetString());
 
         var release = root.GetProperty("release");
-        Assert.Equal("CWL command inputs", release.GetProperty("name").GetString());
+        Assert.Equal("Lightweight package discovery", release.GetProperty("name").GetString());
         Assert.EndsWith(
-            "without introducing an AVPR-specific command-line schema.",
+            "remains compatible but is deprecated.",
             release.GetProperty("summary").GetString()
         );
         Assert.Equal("/releases", release.GetProperty("notesUrl").GetString());
@@ -63,10 +63,11 @@ public class ServiceReleaseTests
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("text/html", response.Content.Headers.ContentType?.MediaType);
-        Assert.Contains("Currently running: 1.1.0 - CWL command inputs", html);
+        Assert.Contains("Currently running: 1.2.0 - Lightweight package discovery", html);
         Assert.Contains("<code>dev</code>", html);
         Assert.Contains($"/commit/{Revision}", html);
         Assert.Contains("20260724094518_AddCWLInputs", html);
+        Assert.Contains("content-free package-index", html);
         Assert.Contains("Why the first release supports a scalar subset", html);
         Assert.Contains("File</code>, <code>Directory", html);
         Assert.Contains("href=\"https://avpr.nfdi4plants.org/swagger\"", html);

@@ -80,6 +80,25 @@ module CanonicalFixture =
 
         let client = AVPRClient.Client(httpClient)
         client.BaseUrl <- httpClient.BaseAddress.ToString()
+
+        let! index = client.GetPackageIndexAsync()
+        let generatedIdentity = Assert.Single(index)
+        let modelIdentity = generatedIdentity.ToModel()
+        Assert.Equal(
+            ValidationPackage.Model.ValidationPackageMetadata.getIdentity expectedMetadata,
+            modelIdentity
+        )
+
+        let! versions = client.GetPackageVersionsAsync("canonical-contract")
+        Assert.Equal<string>([| "1.2.3-rc.1+build.7" |], versions)
+
+        let! generatedMetadata =
+            client.GetPackageMetadataAsync(
+                "canonical-contract",
+                "1.2.3-rc.1+build.7"
+            )
+        Assert.Equal(expectedMetadata, generatedMetadata.ToModel())
+
         let! generated =
             client.GetPackageByNameAndVersionAsync(
                 "canonical-contract",

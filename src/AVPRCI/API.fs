@@ -9,6 +9,14 @@ open Domain
 
 open AVPRClient
 
+module PublishedPackageDiscovery =
+
+    let get (client: AVPRClient.Client) =
+        client.GetPackageIndexAsync()
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
+        |> Array.ofSeq
+
 type PublishAPI =
     static member publishPendingPackages (verbose: bool) (repo_root: string) (args: ParseResults<PublishArgs>) = 
     
@@ -32,11 +40,7 @@ type PublishAPI =
             client.BaseUrl <- baseUrl
             client
 
-        let published_packages = 
-            client.GetAllPackagesAsync()
-            |> Async.AwaitTask
-            |> Async.RunSynchronously
-            |> Array.ofSeq
+        let published_packages = PublishedPackageDiscovery.get client
 
         //! Paths are relative to the root of the project, since the script is executed from the repo root in CI
         let all_staged_packages = 

@@ -1,4 +1,7 @@
-## 0.3.0-preview.3 - 2026-08-07
+## 0.3.0-preview.4 - 2026-08-14
+- Add generated clients for package-index, version-list, and metadata-only
+  discovery endpoints.
+- Mark the legacy all-content package collection operation as deprecated.
 - Regenerate the client for the supported CWL v1.2 scalar `Inputs` contract.
 - Move all handwritten model and staging mappings to `AVPRClient.Interop` and `AVPRCI`, leaving this package generated-only.
 - Replace token-based publication with a manually approved, retry-safe NuGet
