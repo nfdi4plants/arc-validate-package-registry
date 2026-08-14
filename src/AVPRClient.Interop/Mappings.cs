@@ -216,23 +216,21 @@ public static class Mappings
         new()
         {
             Position = binding?.Position ?? 0,
-            Prefix = ValueOrEmpty(binding?.Prefix),
-            Separate = binding?.Separate ?? true
+            Prefix = ValueOrEmpty(binding?.Prefix)
         };
 
     public static Avpr.CommandInputBinding ToClient(this Model.CommandInputBinding? binding) =>
         new()
         {
             Position = binding?.Position ?? 0,
-            Prefix = ValueOrEmpty(binding?.Prefix),
-            Separate = binding?.Separate ?? true
+            Prefix = ValueOrEmpty(binding?.Prefix)
         };
 
     public static Model.CommandInputParameter ToModel(this Avpr.CommandInputParameter input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        return new Model.CommandInputParameter
+        var mapped = new Model.CommandInputParameter
         {
             Id = ValueOrEmpty(input.Id),
             Type = input.Type.ToModel(),
@@ -240,11 +238,15 @@ public static class Mappings
             Doc = ValueOrEmpty(input.Doc),
             InputBinding = input.InputBinding.ToModel()
         };
+
+        Model.CommandInputParameter.validate([mapped]);
+        return mapped;
     }
 
     public static Avpr.CommandInputParameter ToClient(this Model.CommandInputParameter input)
     {
         ArgumentNullException.ThrowIfNull(input);
+        Model.CommandInputParameter.validate([input]);
 
         return new Avpr.CommandInputParameter
         {
@@ -257,16 +259,25 @@ public static class Mappings
     }
 
     public static Model.CommandInputParameter[] ToModel(
-        this ICollection<Avpr.CommandInputParameter>? inputs) =>
-        (inputs ?? Array.Empty<Avpr.CommandInputParameter>())
+        this ICollection<Avpr.CommandInputParameter>? inputs)
+    {
+        var mapped = (inputs ?? Array.Empty<Avpr.CommandInputParameter>())
             .Select(ToModel)
             .ToArray();
 
+        Model.CommandInputParameter.validate(mapped);
+        return mapped;
+    }
+
     public static ICollection<Avpr.CommandInputParameter> ToClient(
-        this Model.CommandInputParameter[]? inputs) =>
-        (inputs ?? Array.Empty<Model.CommandInputParameter>())
+        this Model.CommandInputParameter[]? inputs)
+    {
+        var declarations = inputs ?? Array.Empty<Model.CommandInputParameter>();
+        Model.CommandInputParameter.validate(declarations);
+        return declarations
             .Select(ToClient)
             .ToArray();
+    }
 
     private static Model.CommandInputType NewInputType(
         Model.CwlPrimitive primitive,

@@ -5,6 +5,8 @@ open Fake.DotNet
 
 open System
 open System.IO
+open System.IO.Compression
+open System.Formats.Tar
 open System.Text.RegularExpressions
 
 open Helpers
@@ -131,6 +133,25 @@ let private deleteDirectoryIfPresent path =
     if Directory.Exists path then
         Directory.Delete(path, true)
 
+let private codecsSchemaFiles =
+    [|
+        "validation-package-frontmatter.schema.json"
+        "validation-packages.schema.json"
+    |]
+
+let private copyCodecsSchemas outputDirectory =
+    let schemaDirectory = Path.Combine(outputDirectory, "schemas")
+    ensureDirectory schemaDirectory
+
+    codecsSchemaFiles
+    |> Array.iter (fun fileName ->
+        File.Copy(
+            Path.Combine("schemas", fileName),
+            Path.Combine(schemaDirectory, fileName),
+            true
+        )
+    )
+
 let private packModelJavaScript () =
     let outputDirectory = Path.Combine(portableArtifactsDir, "validationpackage-model", "javascript")
     transpile modelProject "javascript" outputDirectory
@@ -170,7 +191,7 @@ let private externalizeCodecsModelJavaScript outputDirectory =
 let private externalizeCodecsModelPython packageDirectory =
     rewriteFiles
         packageDirectory
-        @"from \.{2,}ValidationPackage_Model\."
+        @"from \.{1,}ValidationPackage_Model\."
         "from validation_package_model."
     deleteDirectoryIfPresent (Path.Combine(packageDirectory, "ValidationPackage_Model"))
 
@@ -178,6 +199,7 @@ let private packCodecsJavaScript () =
     let outputDirectory = Path.Combine(portableArtifactsDir, "validationpackage-codecs", "javascript")
     transpile codecsProject "javascript" outputDirectory
     externalizeCodecsModelJavaScript outputDirectory
+    copyCodecsSchemas outputDirectory
     writeVersionedJavaScriptManifest (Path.Combine("src", "ValidationPackage.Codecs")) codecsVersion outputDirectory
     runNpm [ "pack"; Path.GetFullPath outputDirectory; "--pack-destination"; Path.GetFullPath packageDir ] "."
 
@@ -191,6 +213,7 @@ let private packCodecsPython () =
         "."
     removeFableModulesGitIgnore packageDirectory
     externalizeCodecsModelPython packageDirectory
+    copyCodecsSchemas packageDirectory
     File.Copy(
         Path.Combine("src", "ValidationPackage.Codecs", "__init__.py"),
         Path.Combine(packageDirectory, "__init__.py"),
@@ -207,6 +230,77 @@ let private packCodecsPython () =
             $"validationpackage-model=={pythonPackageVersion modelVersion}"
         ]
     runUv [ "build"; "--wheel"; "--out-dir"; Path.GetFullPath packageDir; Path.GetFullPath outputDirectory ] "."
+
+let private exactlyOneArtifact pattern =
+    match Directory.GetFiles(Path.GetFullPath packageDir, pattern) with
+    | [| artifact |] -> artifact
+    | artifacts -> failwithf "Expected one %s artifact, found %i" pattern artifacts.Length
+
+let private expectedSchemaBytes fileName =
+    File.ReadAllBytes(Path.Combine("schemas", fileName))
+
+let private verifyBytes artifact entryName actual expected =
+    if actual <> expected then
+        failwithf "Schema %s in %s is not byte-identical to the committed file" entryName artifact
+
+let private verifyZipSchemas artifact prefix =
+    use archive = ZipFile.OpenRead artifact
+
+    codecsSchemaFiles
+    |> Array.iter (fun fileName ->
+        let entryName = prefix + fileName
+        let entry = archive.GetEntry(entryName)
+
+        if isNull entry then
+            failwithf "Schema %s is missing from %s" entryName artifact
+
+        use stream = entry.Open()
+        use bytes = new MemoryStream()
+        stream.CopyTo bytes
+        verifyBytes artifact entryName (bytes.ToArray()) (expectedSchemaBytes fileName)
+    )
+
+let private verifyTarSchemas artifact =
+    let expected =
+        codecsSchemaFiles
+        |> Array.map (fun fileName -> "package/schemas/" + fileName, expectedSchemaBytes fileName)
+        |> Map.ofArray
+
+    let mutable found = Set.empty
+    use file = File.OpenRead artifact
+    use gzip = new GZipStream(file, CompressionMode.Decompress)
+    use reader = new TarReader(gzip)
+    let mutable entry = reader.GetNextEntry()
+
+    while not (isNull entry) do
+        match Map.tryFind entry.Name expected with
+        | Some expectedBytes ->
+            if isNull entry.DataStream then
+                failwithf "Schema %s has no content in %s" entry.Name artifact
+
+            use bytes = new MemoryStream()
+            entry.DataStream.CopyTo bytes
+            verifyBytes artifact entry.Name (bytes.ToArray()) expectedBytes
+            found <- Set.add entry.Name found
+        | None -> ()
+
+        entry <- reader.GetNextEntry()
+
+    expected
+    |> Map.iter (fun entryName _ ->
+        if not (Set.contains entryName found) then
+            failwithf "Schema %s is missing from %s" entryName artifact
+    )
+
+let private verifyCodecsSchemas () =
+    exactlyOneArtifact "ValidationPackage.Codecs.*.nupkg"
+    |> fun artifact -> verifyZipSchemas artifact "schemas/"
+
+    exactlyOneArtifact "nfdi4plants-validationpackage-codecs-*.tgz"
+    |> verifyTarSchemas
+
+    exactlyOneArtifact "validationpackage_codecs-*.whl"
+    |> fun artifact -> verifyZipSchemas artifact "validation_package_codecs/schemas/"
 
 let packClient = BuildTask.create "PackClient" [ cleanPackages; validateReleaseMetadata ] {
     packProject clientProject
@@ -226,6 +320,7 @@ let packCodecs = BuildTask.create "PackCodecs" [ cleanPackages; preparePortableT
     packProject codecsProject
     packCodecsJavaScript ()
     packCodecsPython ()
+    verifyCodecsSchemas ()
 }
 
 let packPortablePackages =

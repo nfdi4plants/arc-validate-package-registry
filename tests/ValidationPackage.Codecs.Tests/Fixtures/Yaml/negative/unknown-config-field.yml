@@ -1,0 +1,3 @@
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-packages.schema.json"
+validation_packages: []
+unexpected: true

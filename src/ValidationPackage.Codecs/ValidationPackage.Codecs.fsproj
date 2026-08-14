@@ -17,26 +17,32 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/RELEASE_NOTES.md"))</PackageReleaseNotes>
-    <PackageVersion>0.1.0-preview.3</PackageVersion>
+    <PackageVersion>0.1.0-preview.4</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="SchemaUris.fs" />
+    <Compile Include="DecodedValidationPackagesConfig.fs" />
     <Compile Include="FrontmatterLanguage.fs" />
     <Compile Include="Frontmatter.fs" />
     <Compile Include="Yaml\Encoding.fs" />
+    <Compile Include="Yaml\Strict.fs" />
     <Compile Include="Yaml\CwlValidation.fs" />
     <Compile Include="Yaml\Encoders\Cwl.fs" />
     <Compile Include="Yaml\Encoders\Author.fs" />
     <Compile Include="Yaml\Encoders\OntologyAnnotation.fs" />
     <Compile Include="Yaml\Encoders\ValidationPackage.fs" />
+    <Compile Include="Yaml\Encoders\ValidationPackagesConfig.fs" />
     <Compile Include="Yaml\Decoders\Cwl.fs" />
     <Compile Include="Yaml\Decoders\Author.fs" />
     <Compile Include="Yaml\Decoders\OntologyAnnotation.fs" />
     <Compile Include="Yaml\Decoders\ValidationPackage.fs" />
+    <Compile Include="Yaml\Decoders\ValidationPackagesConfig.fs" />
     <Compile Include="Yaml\CwlYaml.fs" />
     <Compile Include="Yaml\AuthorYaml.fs" />
     <Compile Include="Yaml\OntologyAnnotationYaml.fs" />
     <Compile Include="Yaml\ValidationPackageYaml.fs" />
+    <Compile Include="Yaml\ValidationPackagesConfigYaml.fs" />
     <Compile Include="Json\Runtime.fs" />
     <Compile Include="Json\Encoders\Cwl.fs" />
     <Compile Include="Json\Encoders\Author.fs" />
@@ -66,6 +72,8 @@
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="RELEASE_NOTES.md" />
+    <None Include="..\..\schemas\validation-package-frontmatter.schema.json" Link="schemas\validation-package-frontmatter.schema.json" Pack="true" PackagePath="schemas\" />
+    <None Include="..\..\schemas\validation-packages.schema.json" Link="schemas\validation-packages.schema.json" Pack="true" PackagePath="schemas\" />
   </ItemGroup>
 
 </Project>

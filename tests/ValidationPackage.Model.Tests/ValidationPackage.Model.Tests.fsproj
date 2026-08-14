@@ -11,6 +11,7 @@
     <Compile Include="ReferenceObjects.fs" />
     <Compile Include="SemanticVersionTests.fs" />
     <Compile Include="CwlTests.fs" />
+    <Compile Include="ConfigTests.fs" />
     <Compile Include="DomainTests.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>

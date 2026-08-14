@@ -33,19 +33,12 @@ namespace PackageRegistryService.Pages.Components
         {
             binding ??= new CommandInputBinding();
 
-            var prefix = string.IsNullOrEmpty(binding.Prefix)
-                ? "<em>positional</em>"
-                : $"<code>{Escape(binding.Prefix)}</code>";
+            var prefix = $"<code>{Escape(binding.Prefix)}</code>";
 
             var details = new List<string>();
             if (binding.Position != 0)
             {
                 details.Add($"position: {binding.Position}");
-            }
-
-            if (!binding.Separate)
-            {
-                details.Add("separate: false");
             }
 
             return details.Count == 0

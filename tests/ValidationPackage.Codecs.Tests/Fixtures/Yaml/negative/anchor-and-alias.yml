@@ -1,0 +1,7 @@
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-packages.schema.json"
+validation_packages:
+  - name: fixture-package
+    version: 1.2.3
+    inputs:
+      first: &shared 1
+      second: *shared

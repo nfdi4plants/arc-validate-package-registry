@@ -27,76 +27,43 @@ module internal Cwl =
             invalidArg "element" $"unsupported CWL command input type: {value}"
 
     let commandInputBinding element =
-        match element with
-        | YAMLElement.Object _ ->
-            Decode.object (fun get ->
-                CommandInputBinding.create(
-                    Position = (
-                        get.Optional.Field "position" Decode.int
-                        |> Option.defaultValue 0
-                    ),
-                    Prefix = (
-                        get.Optional.Field "prefix" Decode.string
-                        |> Option.defaultValue ""
-                    ),
-                    Separate = (
-                        get.Optional.Field "separate" Decode.bool
-                        |> Option.defaultValue true
-                    )
-                )
-            ) element
-        | _ ->
-            invalidArg
-                "element"
-                "CWL command input inputBinding must be a mapping"
+        let entries = Strict.mapping "inputBinding" element
+        Strict.validateAllowedFields "inputBinding" [| "prefix"; "position" |] entries
+
+        CommandInputBinding.create(
+            Position = (
+                Strict.tryField "position" entries
+                |> Option.map Decode.int
+                |> Option.defaultValue 0
+            ),
+            Prefix = Strict.requiredScalar "inputBinding" "prefix" entries
+        )
 
     let commandInputParameter element =
-        match element with
-        | YAMLElement.Object _ ->
-            Decode.object (fun get ->
-                let id = get.Optional.Field "id" Decode.string
-                let inputType = get.Optional.Field "type" commandInputType
+        let entries = Strict.mapping "command input" element
 
-                let inputBinding =
-                    get.Optional.Field "inputBinding" commandInputBinding
+        Strict.validateAllowedFields
+            "command input"
+            [| "id"; "type"; "label"; "doc"; "inputBinding" |]
+            entries
 
-                match id, inputType, inputBinding with
-                | Some id, Some inputType, Some inputBinding ->
-                    CommandInputParameter.create(
-                        id,
-                        inputType,
-                        inputBinding,
-                        Label = (
-                            get.Optional.Field "label" Decode.string
-                            |> Option.defaultValue ""
-                        ),
-                        Doc = (
-                            get.Optional.Field "doc" Decode.string
-                            |> Option.defaultValue ""
-                        )
-                    )
-                | _ ->
-                    let missingFields = [
-                        if id.IsNone then
-                            "id"
-
-                        if inputType.IsNone then
-                            "type"
-
-                        if inputBinding.IsNone then
-                            "inputBinding"
-                    ]
-
-                    let missingFieldNames = String.concat ", " missingFields
-
-                    invalidArg
-                        "element"
-                        $"CWL command input parameter is missing required field(s): {missingFieldNames}"
-            ) element
-        | _ ->
-            invalidArg
-                "element"
-                "each CWL command input parameter must be a mapping"
+        CommandInputParameter.create(
+            Strict.requiredScalar "command input" "id" entries,
+            entries
+            |> Strict.requiredField "command input" "type"
+            |> commandInputType,
+            entries
+            |> Strict.requiredField "command input" "inputBinding"
+            |> commandInputBinding,
+            Label = (
+                Strict.optionalScalar "command input" "label" entries
+                |> Option.defaultValue ""
+            ),
+            Doc = (
+                Strict.optionalScalar "command input" "doc" entries
+                |> Option.defaultValue ""
+            )
+        )
 
     let commandInputParameters element =
         match element with

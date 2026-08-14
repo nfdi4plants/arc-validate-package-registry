@@ -31,7 +31,6 @@ let ``publication mapping preserves metadata content and nested CWL values`` () 
     Assert.Equal("input", firstInput.Id)
     Assert.Equal(AVPRClient.CommandInputType.String_, firstInput.Type)
     Assert.Equal("--input", firstInput.InputBinding.Prefix)
-    Assert.True(firstInput.InputBinding.Separate)
 
 [<Fact>]
 let ``published identity comparison retains programming language`` () =

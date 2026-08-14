@@ -60,8 +60,7 @@ module CommandInput =
             InputBinding =
                 AVPRClient.CommandInputBinding(
                     Position = 2,
-                    Prefix = "--output=",
-                    Separate = false
+                    Prefix = "--output"
                 )
         )
 
@@ -78,8 +77,7 @@ module CommandInput =
             InputBinding =
                 ValidationPackage.Model.CommandInputBinding(
                     Position = 2,
-                    Prefix = "--output=",
-                    Separate = false
+                    Prefix = "--output"
                 )
         )
 

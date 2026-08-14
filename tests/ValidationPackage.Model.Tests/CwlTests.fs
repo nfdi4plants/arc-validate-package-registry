@@ -74,14 +74,12 @@ let tests =
             Expect.equal actual CommandInputs.defaultBinding "Default bindings should match"
             Expect.equal actual.Position 0 "Default position"
             Expect.equal actual.Prefix "" "Default prefix"
-            Expect.isTrue actual.Separate "Arguments are separate by default"
 
         testCase "binding equality includes every field" <| fun () ->
             let defaults = CommandInputBinding.create()
             Expect.equal defaults (CommandInputBinding.create()) "Equivalent bindings"
             Expect.isFalse (defaults = CommandInputBinding.create(Position = 1)) "Position participates"
             Expect.isFalse (defaults = CommandInputBinding.create(Prefix = "--value")) "Prefix participates"
-            Expect.isFalse (defaults = CommandInputBinding.create(Separate = false)) "Separate participates"
 
         testCase "parameter factory supports mandatory and optional fields" <| fun () ->
             let mandatory =
@@ -128,4 +126,48 @@ let tests =
             Expect.equal first second "Equivalent parameters"
             Expect.equal (CommandInputParameter.getHashCode first) (CommandInputParameter.getHashCode second) "Equivalent parameters hash equally"
             Expect.isFalse (first = nullable) "Nested input type participates"
+
+        testCase "declaration validation accepts the narrowed binding contract" <| fun () ->
+            let declarations =
+                [|
+                    CommandInputParameter.create(
+                        "strict",
+                        CommandInputType.create(CwlPrimitive.Boolean),
+                        CommandInputBinding.create(Prefix = "--strict")
+                    )
+                    CommandInputParameter.create(
+                        "title",
+                        CommandInputType.create(CwlPrimitive.String, true),
+                        CommandInputBinding.create(Position = 10, Prefix = "--title")
+                    )
+                |]
+
+            Expect.equal
+                (CommandInputParameter.validate declarations)
+                declarations
+                "Valid declarations retain source order"
+
+        testCase "declaration validation rejects positional, duplicate, and reserved prefixes" <| fun () ->
+            let declaration id prefix =
+                CommandInputParameter.create(
+                    id,
+                    CommandInputType.create(CwlPrimitive.String),
+                    CommandInputBinding.create(Prefix = prefix)
+                )
+
+            [
+                [| declaration "value" "" |]
+                [| declaration "value" "--" |]
+                [| declaration "value" "-i" |]
+                [| declaration "value" "-o" |]
+                [| declaration "value" "--source-branch" |]
+                [| declaration "value" "--source-commit-hash" |]
+                [| declaration "same" "--first"; declaration "same" "--second" |]
+                [| declaration "first" "--same"; declaration "second" "--same" |]
+            ]
+            |> List.iteri (fun index declarations ->
+                expectArgumentFailure
+                    (fun () -> CommandInputParameter.validate declarations |> ignore)
+                    $"Invalid declaration case {index} should fail"
+            )
     ]

@@ -44,6 +44,7 @@ its staged source so contributors can propose changes as a new version.
 - [Submit and version a validation package](packages/submission.md)
 - [Validation package metadata](packages/metadata.md)
 - [CWL command inputs](packages/cwl-inputs.md)
+- [Validation-packages configuration contract](packages/validation-packages-config.md)
 
 ## Contributors
 

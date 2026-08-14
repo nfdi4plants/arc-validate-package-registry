@@ -1,5 +1,6 @@
 (*
 ---
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Name: canonical-contract
 Summary: Canonical portable contract
 Description: Exercises every public metadata and CWL boundary.
@@ -29,7 +30,6 @@ Inputs:
     inputBinding:
       position: 1
       prefix: --arc-directory
-      separate: true
   - id: verbose
     type: boolean?
     label: Verbose output
@@ -37,7 +37,6 @@ Inputs:
     inputBinding:
       position: 2
       prefix: --verbose
-      separate: false
 ---
 *)
 printfn "canonical contract"

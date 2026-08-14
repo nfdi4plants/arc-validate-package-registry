@@ -1,0 +1,4 @@
+validation_packages:
+  - name: latest-stable
+  - name: exact
+    version: 1.2.3

@@ -327,3 +327,77 @@ module JsonRuntime =
             match decoder.Decode(decoderHelpers, value) with
             | Ok result -> Ok result
             | Error error -> Error(Decode.errorToString decoderHelpers error)
+
+    let private validateKnownFields path allowed fields =
+        fields
+        |> List.countBy fst
+        |> List.tryFind (fun (_, count) -> count > 1)
+        |> Option.iter (fun (name, _) ->
+            invalidArg "json" $"{path}: duplicate field '{name}'"
+        )
+
+        fields
+        |> List.iter (fun (name, _) ->
+            if allowed |> List.exists (fun expected -> expected = name) |> not then
+                invalidArg "json" $"{path}: unknown field '{name}'"
+        )
+
+    let private requiredField path name fields =
+        match fields |> List.tryPick (fun (key, value) -> if key = name then Some value else None) with
+        | Some value -> value
+        | None -> invalidArg "json" $"{path}: missing required field '{name}'"
+
+    let private validateCommandInputBinding path value =
+        match value with
+        | Json.Object fields ->
+            validateKnownFields path [ "prefix"; "position" ] fields
+            requiredField path "prefix" fields |> ignore
+        | _ -> invalidArg "json" $"{path}: inputBinding must be an object"
+
+    let private validateCommandInput path value =
+        match value with
+        | Json.Object fields ->
+            validateKnownFields path [ "id"; "type"; "label"; "doc"; "inputBinding" ] fields
+            requiredField path "id" fields |> ignore
+            requiredField path "type" fields |> ignore
+
+            fields
+            |> requiredField path "inputBinding"
+            |> validateCommandInputBinding ($"{path}.inputBinding")
+        | _ -> invalidArg "json" $"{path}: command input must be an object"
+
+    let private validateValidationPackageJson value =
+        match value with
+        | Json.Object fields ->
+            fields
+            |> List.countBy fst
+            |> List.tryFind (fun (_, count) -> count > 1)
+            |> Option.iter (fun (name, _) ->
+                invalidArg "json" $"$: duplicate field '{name}'"
+            )
+
+            fields
+            |> List.tryPick (fun (name, value) -> if name = "Inputs" then Some value else None)
+            |> Option.iter (fun inputs ->
+                match inputs with
+                | Json.Array values ->
+                    values
+                    |> List.iteri (fun index value ->
+                        validateCommandInput ($"$.Inputs[{index}]") value
+                    )
+                | _ -> invalidArg "json" "$.Inputs must be an array"
+            )
+        | _ -> ()
+
+    let decodeValidationPackage (decoder: Decoder<'T>) json =
+        match Parser.parse json with
+        | Error message -> Error message
+        | Ok value ->
+            try
+                validateValidationPackageJson value
+
+                match decoder.Decode(decoderHelpers, value) with
+                | Ok result -> Ok result
+                | Error error -> Error(Decode.errorToString decoderHelpers error)
+            with error ->
+                Error error.Message

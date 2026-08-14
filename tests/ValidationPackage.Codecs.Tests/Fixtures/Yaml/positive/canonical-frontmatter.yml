@@ -1,0 +1,12 @@
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: fixture-package
+MajorVersion: 1
+MinorVersion: 2
+PatchVersion: 3
+Summary: Fixture package.
+Description: Exercises strict canonical frontmatter.
+Inputs:
+  - id: strict
+    type: boolean
+    inputBinding:
+      prefix: --strict

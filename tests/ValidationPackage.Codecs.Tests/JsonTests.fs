@@ -42,13 +42,12 @@ let tests =
         testCase "CWL binding fields use documented defaults" <| fun () ->
             let actual =
                 ValidationPackageJson.decodeOrFail
-                    """{"Inputs":[{"id":"value","type":"string?","inputBinding":{}}]}"""
+                    """{"Inputs":[{"id":"value","type":"string?","inputBinding":{"prefix":"--value"}}]}"""
 
             let input = actual.Inputs[0]
             Expect.isTrue input.Type.IsNullable "Nullable scalar"
             Expect.equal input.InputBinding.Position 0 "Position default"
-            Expect.equal input.InputBinding.Prefix "" "Prefix default"
-            Expect.isTrue input.InputBinding.Separate "Separate default"
+            Expect.equal input.InputBinding.Prefix "--value" "Required prefix"
 
         testCase "required CWL JSON fields fail when absent" <| fun () ->
             ValidationPackageJson.decode
@@ -57,10 +56,22 @@ let tests =
 
         testCase "unsupported CWL JSON strings and shapes fail" <| fun () ->
             ValidationPackageJson.decode
-                """{"Inputs":[{"id":"file","type":"File","inputBinding":{}}]}"""
+                """{"Inputs":[{"id":"file","type":"File","inputBinding":{"prefix":"--file"}}]}"""
             |> expectError "Unsupported scalar should fail"
 
             ValidationPackageJson.decode
-                """{"Inputs":[{"id":"value","type":{"primitive":"string"},"inputBinding":{}}]}"""
+                """{"Inputs":[{"id":"value","type":{"primitive":"string"},"inputBinding":{"prefix":"--value"}}]}"""
             |> expectError "Object storage shape should not leak"
+
+        testCase "CWL JSON rejects unknown fields, separate, and positional bindings" <| fun () ->
+            [
+                """{"Inputs":[{"id":"value","type":"string","future":true,"inputBinding":{"prefix":"--value"}}]}"""
+                """{"Inputs":[{"id":"value","type":"string","inputBinding":{"prefix":"--value","future":true}}]}"""
+                """{"Inputs":[{"id":"value","type":"string","inputBinding":{"prefix":"--value","separate":false}}]}"""
+                """{"Inputs":[{"id":"value","type":"string","inputBinding":{"position":1}}]}"""
+            ]
+            |> List.iter (fun json ->
+                ValidationPackageJson.decode json
+                |> expectError "Invalid narrowed JSON declaration should fail"
+            )
     ]

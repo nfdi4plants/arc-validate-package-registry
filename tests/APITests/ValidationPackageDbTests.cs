@@ -90,9 +90,6 @@ public class ValidationPackageDbTests
         Assert.Equal(
             "prefix",
             bindingEntity.FindProperty(nameof(CommandInputBinding.Prefix))?.GetJsonPropertyName());
-        Assert.Equal(
-            "separate",
-            bindingEntity.FindProperty(nameof(CommandInputBinding.Separate))?.GetJsonPropertyName());
     }
 
     [Fact]

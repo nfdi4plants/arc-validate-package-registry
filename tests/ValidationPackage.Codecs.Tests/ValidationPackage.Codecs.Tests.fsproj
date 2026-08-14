@@ -11,13 +11,17 @@
     <Compile Include="ReferenceObjects.fs" />
     <Compile Include="FrontmatterTests.fs" />
     <Compile Include="YamlTests.fs" />
+    <Compile Include="ConfigYamlTests.fs" />
     <Compile Include="JsonTests.fs" />
+    <Compile Include="SchemaTests.fs" />
+    <Compile Include="YamlFixtureTests.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Fable.Python" Version="5.4.0" />
     <PackageReference Include="Fable.Pyxpecto" Version="2.0.0" />
+    <PackageReference Include="JsonSchema.Net" Version="9.4.0" />
     <ProjectReference Include="..\..\src\ValidationPackage.Codecs\ValidationPackage.Codecs.fsproj" />
   </ItemGroup>
 

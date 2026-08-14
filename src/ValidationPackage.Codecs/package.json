@@ -20,6 +20,7 @@
     "*.js",
     "Json/**/*.js",
     "Yaml/**/*.js",
+    "schemas/*.json",
     "fable_modules/**/*.js",
     "fable_modules/**/package.json"
   ]

@@ -12,3 +12,16 @@ export * from "./OntologyAnnotation.js";
 export * from "./SemanticVersion.js";
 export * from "./ValidationPackageIdentity.js";
 export * from "./ValidationPackageMetadata.js";
+export * from "./ValidationPackagesConfig.js";
+export const RollForwardPolicy = Object.freeze({
+  Disable: 0,
+  LatestPatch: 1,
+  LatestMinor: 2
+});
+export const ValidationPackageInputValueKind = Object.freeze({
+  Null: 0,
+  Boolean: 1,
+  Integer: 2,
+  FloatingPoint: 3,
+  String: 4
+});

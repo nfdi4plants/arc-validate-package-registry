@@ -260,10 +260,6 @@ namespace PackageRegistryService.Migrations
                                         .HasColumnType("text")
                                         .HasAnnotation("Relational:JsonPropertyName", "prefix");
 
-                                    b2.Property<bool>("Separate")
-                                        .HasColumnType("boolean")
-                                        .HasAnnotation("Relational:JsonPropertyName", "separate");
-
                                     b2.HasKey("CommandInputParameterValidationPackageName", "CommandInputParameterValidationPackageMajorVersion", "CommandInputParameterValidationPackageMinorVersion", "CommandInputParameterValidationPackagePatchVersion", "CommandInputParameterValidationPackagePreReleaseVersionSuffix", "CommandInputParameterValidationPackageBuildMetadataVersionSuffix", "CommandInputParameter__ordinal");
 
                                     b2.ToTable("ValidationPackages");

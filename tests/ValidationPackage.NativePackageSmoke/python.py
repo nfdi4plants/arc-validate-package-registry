@@ -3,9 +3,17 @@ from validation_package_model import (
     CommandInputParameter,
     CommandInputType,
     CwlPrimitive,
+    RollForwardPolicy,
+    SemVer,
+    ValidationPackageSelection,
+    ValidationPackagesConfig,
     ValidationPackageMetadata,
 )
-from validation_package_codecs import ValidationPackageJson
+from validation_package_codecs import (
+    SchemaUris,
+    ValidationPackageJson,
+    ValidationPackagesConfigYaml,
+)
 
 metadata = ValidationPackageMetadata.create(
     "native-package",
@@ -20,7 +28,7 @@ metadata.Inputs = [
     CommandInputParameter.create(
         "arc-directory",
         CommandInputType.create(CwlPrimitive.String),
-        CommandInputBinding.create(None, "--arc-directory", False),
+        CommandInputBinding.create(None, "--arc-directory"),
     )
 ]
 
@@ -30,3 +38,19 @@ decoded = ValidationPackageJson.decode_or_fail(json)
 assert decoded.Name == "native-package"
 assert decoded.MajorVersion == 1
 assert decoded.Inputs[0].InputBinding.Prefix == "--arc-directory"
+
+config = ValidationPackagesConfig.create(
+    [
+        ValidationPackageSelection.create(
+            "native-package",
+            SemVer.create(1, 2, 3),
+            RollForwardPolicy.LatestPatch,
+        )
+    ]
+)
+config_yaml = ValidationPackagesConfigYaml.encode(config)
+decoded_config = ValidationPackagesConfigYaml.decode_or_fail(config_yaml)
+
+assert not decoded_config.IsLegacy
+assert decoded_config.Canonical.ValidationPackages[0].Name == "native-package"
+assert SchemaUris.ValidationPackagesConfigV1 in config_yaml

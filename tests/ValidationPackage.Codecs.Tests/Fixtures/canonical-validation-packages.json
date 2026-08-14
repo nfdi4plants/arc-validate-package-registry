@@ -1,0 +1,23 @@
+{
+  "$schema": "https://avpr.nfdi4plants.org/schemas/v1/validation-packages.schema.json",
+  "arc_specification": "3.0.0-draft.2",
+  "validation_packages": [
+    {
+      "name": "configurable-validation",
+      "version": "1.2.3",
+      "roll_forward": "latest_patch",
+      "inputs": {
+        "strict": false,
+        "minimum-files": -2147483648,
+        "maximum-files": 9223372036854775807,
+        "ratio": 125.0,
+        "report-title": "release candidate",
+        "optional-note": null
+      }
+    },
+    {
+      "name": "exact-validation",
+      "version": "2.0.0+build.1"
+    }
+  ]
+}

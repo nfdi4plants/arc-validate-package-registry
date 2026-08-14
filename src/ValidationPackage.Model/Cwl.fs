@@ -107,7 +107,6 @@ type CommandInputBinding() =
 
     let mutable _position = 0
     let mutable _prefix = ""
-    let mutable _separate = true
 
     member _.Position
         with get () = _position
@@ -117,10 +116,6 @@ type CommandInputBinding() =
         with get () = _prefix
         and set value = _prefix <- value
 
-    member _.Separate
-        with get () = _separate
-        and set value = _separate <- value
-
     override this.GetHashCode() =
         CommandInputBinding.getHashCode(this)
 
@@ -128,25 +123,22 @@ type CommandInputBinding() =
         PortableHash.combineValues [
             binding.Position
             PortableHash.stringValue binding.Prefix
-            PortableHash.boolValue binding.Separate
         ]
 
     override this.Equals(other) =
         match other with
         | :? CommandInputBinding as binding ->
-            (this.Position, this.Prefix, this.Separate) =
-                (binding.Position, binding.Prefix, binding.Separate)
+            (this.Position, this.Prefix) =
+                (binding.Position, binding.Prefix)
         | _ -> false
 
     static member create (
         ?Position: int,
-        ?Prefix: string,
-        ?Separate: bool
+        ?Prefix: string
     ) =
         let binding = CommandInputBinding()
         Position |> Option.iter (fun value -> binding.Position <- value)
         Prefix |> Option.iter (fun value -> binding.Prefix <- value)
-        Separate |> Option.iter (fun value -> binding.Separate <- value)
         binding
 
 [<AttachMembers>]
@@ -225,3 +217,73 @@ type CommandInputParameter() =
         Label |> Option.iter (fun value -> parameter.Label <- value)
         Doc |> Option.iter (fun value -> parameter.Doc <- value)
         parameter
+
+    static member validate(parameters: CommandInputParameter array) =
+        if isNull parameters then
+            nullArg "parameters"
+
+        let reservedPrefixes =
+            [|
+                "-i"
+                "-o"
+                "--source-branch"
+                "--source-commit-hash"
+                "--"
+            |]
+
+        parameters
+        |> Array.iteri (fun index parameter ->
+            if isNull (box parameter) then
+                invalidArg
+                    "parameters"
+                    $"command input declaration at index {index} must not be null"
+
+            if String.IsNullOrWhiteSpace(parameter.Id) then
+                invalidArg
+                    "parameters"
+                    $"command input declaration at index {index} requires a non-empty id"
+
+            if isNull (box parameter.Type) then
+                invalidArg
+                    "parameters"
+                    $"command input declaration '{parameter.Id}' requires a type"
+
+            CommandInputType.toCwlString parameter.Type |> ignore
+
+            if isNull (box parameter.InputBinding) then
+                invalidArg
+                    "parameters"
+                    $"command input declaration '{parameter.Id}' requires inputBinding"
+
+            let prefix = parameter.InputBinding.Prefix
+
+            if String.IsNullOrWhiteSpace(prefix) then
+                invalidArg
+                    "parameters"
+                    $"command input declaration '{parameter.Id}' requires a non-empty inputBinding.prefix"
+
+            if reservedPrefixes |> Array.exists (fun reserved -> reserved = prefix) then
+                invalidArg
+                    "parameters"
+                    $"command input declaration '{parameter.Id}' uses reserved prefix '{prefix}'"
+        )
+
+        parameters
+        |> Array.countBy (fun parameter -> parameter.Id)
+        |> Array.tryFind (fun (_, count) -> count > 1)
+        |> Option.iter (fun (id, _) ->
+            invalidArg
+                "parameters"
+                $"command input declaration id must be unique, but was duplicated: {id}"
+        )
+
+        parameters
+        |> Array.countBy (fun parameter -> parameter.InputBinding.Prefix)
+        |> Array.tryFind (fun (_, count) -> count > 1)
+        |> Option.iter (fun (prefix, _) ->
+            invalidArg
+                "parameters"
+                $"command input declaration prefix must be unique, but was duplicated: {prefix}"
+        )
+
+        parameters

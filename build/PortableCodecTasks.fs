@@ -130,6 +130,7 @@ let testNativeValidationPackages =
                 "run"
                 "--isolated"
                 "--no-project"
+                "--no-cache"
                 "--with"
                 exactlyOneArtifact "validationpackage_model-*.whl"
                 "--with"

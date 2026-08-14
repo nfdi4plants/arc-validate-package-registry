@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Fable.Python" Version="5.4.0" />
-    <PackageReference Include="ValidationPackage.Codecs" Version="[0.1.0-preview.3]" />
+    <PackageReference Include="ValidationPackage.Codecs" Version="[0.1.0-preview.4]" />
   </ItemGroup>
 
 </Project>

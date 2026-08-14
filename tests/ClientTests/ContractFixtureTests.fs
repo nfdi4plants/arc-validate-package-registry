@@ -47,7 +47,6 @@ module CanonicalFixture =
         )
         Assert.False(arcDirectory.Type.IsNullable)
         Assert.Equal("--arc-directory", arcDirectory.InputBinding.Prefix)
-        Assert.True(arcDirectory.InputBinding.Separate)
 
         let servicePackage =
             ValidationPackageModelMappings.ToServiceModel(staged)

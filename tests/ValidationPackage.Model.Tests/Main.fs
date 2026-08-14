@@ -6,6 +6,7 @@ let all =
     testSequenced <| testList "ValidationPackage.Model" [
         SemanticVersionTests.tests
         CwlTests.tests
+        ConfigTests.tests
         DomainTests.tests
     ]
 

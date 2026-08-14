@@ -1,5 +1,6 @@
 PACKAGE_METADATA = """
 ---
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Name: valid
 MajorVersion: 2
 MinorVersion: 0
@@ -54,11 +55,11 @@ Inputs:
     doc: Write output to this file
     inputBinding:
       position: 2
-      prefix: --output=
-      separate: false
+      prefix: --output
   - id: mode
     type: string?
     inputBinding:
       position: 3
+      prefix: --mode
 ---
 """

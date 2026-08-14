@@ -61,8 +61,7 @@ public class ValidationPackageModelMappingTests
                     InputBinding = new PortableBinding
                     {
                         Position = 2,
-                        Prefix = "--verbose",
-                        Separate = false
+                        Prefix = "--verbose"
                     }
                 }
             ]

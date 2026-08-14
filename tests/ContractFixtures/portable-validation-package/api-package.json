@@ -35,8 +35,7 @@
       "doc": "Path to the ARC.",
       "inputBinding": {
         "position": 1,
-        "prefix": "--arc-directory",
-        "separate": true
+        "prefix": "--arc-directory"
       }
     },
     {
@@ -46,8 +45,7 @@
       "doc": "Enable detailed output.",
       "inputBinding": {
         "position": 2,
-        "prefix": "--verbose",
-        "separate": false
+        "prefix": "--verbose"
       }
     }
   ]

@@ -24,14 +24,7 @@ module internal Cwl =
                     get.Optional.Field "position" Decode.int
                     |> Option.defaultValue 0
                 ),
-                Prefix = (
-                    get.Optional.Field "prefix" Decode.string
-                    |> Option.defaultValue ""
-                ),
-                Separate = (
-                    get.Optional.Field "separate" Decode.bool
-                    |> Option.defaultValue true
-                )
+                Prefix = get.Required.Field "prefix" Decode.string
             )
         )
 

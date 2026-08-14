@@ -79,16 +79,14 @@ public static class ValidationPackageModelMappings
         this Portable.CommandInputBinding binding) => new()
     {
         Position = binding.Position,
-        Prefix = binding.Prefix,
-        Separate = binding.Separate
+        Prefix = binding.Prefix
     };
 
     public static Portable.CommandInputBinding ToPortableModel(
         this CommandInputBinding binding) => new()
     {
         Position = binding.Position,
-        Prefix = binding.Prefix,
-        Separate = binding.Separate
+        Prefix = binding.Prefix
     };
 
     public static CommandInputParameter ToServiceModel(
@@ -118,6 +116,7 @@ public static class ValidationPackageModelMappings
     {
         ArgumentNullException.ThrowIfNull(metadata);
         ArgumentNullException.ThrowIfNull(packageContent);
+        Portable.CommandInputParameter.validate(metadata.Inputs ?? []);
 
         return new ValidationPackage
         {
@@ -145,7 +144,7 @@ public static class ValidationPackageModelMappings
     {
         ArgumentNullException.ThrowIfNull(package);
 
-        return new Portable.ValidationPackageMetadata
+        var metadata = new Portable.ValidationPackageMetadata
         {
             Name = package.Name,
             Summary = package.Summary,
@@ -162,6 +161,9 @@ public static class ValidationPackageModelMappings
             CQCHookEndpoint = package.CQCHookEndpoint,
             Inputs = (package.Inputs ?? []).Select(ToPortableModel).ToArray()
         };
+
+        Portable.CommandInputParameter.validate(metadata.Inputs);
+        return metadata;
     }
 
     public static ValidationPackage ToServiceModel(

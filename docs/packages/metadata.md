@@ -13,7 +13,8 @@
 
 Every validation package starts with YAML frontmatter. The script language
 determines how that YAML is enclosed; the metadata contract is otherwise the
-same.
+same. New canonical frontmatter carries the immutable v1 schema URI. Readers
+select that schema entirely offline; the URI is not fetched during parsing.
 
 ## F# frontmatter
 
@@ -22,6 +23,7 @@ An F# script may place frontmatter in a multiline comment:
 ```fsharp
 (*
 ---
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Name: my-package
 MajorVersion: 1
 MinorVersion: 0
@@ -38,6 +40,7 @@ reuse the same metadata:
 ```fsharp
 let [<Literal>] PACKAGE_METADATA = """(*
 ---
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Name: my-package
 MajorVersion: 1
 MinorVersion: 0
@@ -73,6 +76,7 @@ A Python script uses its initial triple-quoted string:
 ```python
 """
 ---
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Name: my-package
 MajorVersion: 1
 MinorVersion: 0
@@ -88,6 +92,7 @@ Binding the string is likewise recommended:
 ```python
 PACKAGE_METADATA = """
 ---
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Name: my-package
 MajorVersion: 1
 MinorVersion: 0
@@ -99,6 +104,10 @@ Description: A longer explanation of the validation behavior.
 ```
 
 ## Mandatory fields
+
+Canonical documents also require `$schema` with the exact value shown above.
+The codec retains an explicit schema-less legacy reader for immutable published
+packages, but canonical writers always emit `$schema` first.
 
 | Field | Type | Description |
 | --- | --- | --- |
@@ -148,6 +157,7 @@ collection.
 ## Complete example
 
 ```yaml
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Name: my-package
 MajorVersion: 1
 MinorVersion: 0
@@ -179,4 +189,6 @@ Inputs:
 
 Wrap this YAML using the F# or Python form above. See
 [submitting a validation package](submission.md) for naming, versioning, and
-publication rules.
+publication rules. The standalone Draft 2020-12 schema is shipped at
+`schemas/validation-package-frontmatter.schema.json` in every
+`ValidationPackage.Codecs` package.

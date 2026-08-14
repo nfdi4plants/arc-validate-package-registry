@@ -1,6 +1,7 @@
 namespace ValidationPackage.Codecs.Yaml.Encoders
 
 open ValidationPackage.Model
+open ValidationPackage.Codecs
 open ValidationPackage.Codecs.Yaml
 
 [<RequireQualifiedAccess>]
@@ -8,6 +9,7 @@ module internal ValidationPackage =
 
     let encode (metadata: ValidationPackageMetadata) =
         Encoding.object [
+            "$schema", Encoding.string SchemaUris.ValidationPackageFrontmatterV1
             "Name", Encoding.string metadata.Name
             "Summary", Encoding.string metadata.Summary
             "Description", Encoding.string metadata.Description

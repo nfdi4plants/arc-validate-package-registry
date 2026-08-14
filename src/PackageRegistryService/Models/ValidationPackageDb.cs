@@ -71,8 +71,6 @@
                         .HasJsonPropertyName("position");
                     binding.Property(b => b.Prefix)
                         .HasJsonPropertyName("prefix");
-                    binding.Property(b => b.Separate)
-                        .HasJsonPropertyName("separate");
                 });
                 input.Navigation(i => i.InputBinding).IsRequired();
             });

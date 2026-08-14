@@ -9,7 +9,4 @@ public sealed class CommandInputBinding
 
     [JsonPropertyName("prefix")]
     public string Prefix { get; set; } = "";
-
-    [JsonPropertyName("separate")]
-    public bool Separate { get; set; } = true;
 }

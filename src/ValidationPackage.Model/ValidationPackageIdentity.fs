@@ -25,3 +25,17 @@ type ValidationPackageIdentity(name: string, version: SemVer) =
 
     static member create(name: string, version: SemVer) =
         ValidationPackageIdentity(name, version)
+
+    static member compare(first: ValidationPackageIdentity, second: ValidationPackageIdentity) =
+        if isNull (box first) then
+            nullArg "first"
+
+        if isNull (box second) then
+            nullArg "second"
+
+        let nameComparison = PortableString.compareOrdinal first.Name second.Name
+
+        if nameComparison <> 0 then
+            nameComparison
+        else
+            SemVer.compareIdentity(first.Version, second.Version)

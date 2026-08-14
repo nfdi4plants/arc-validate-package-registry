@@ -2,6 +2,12 @@
 
 ## Status and scope
 
+> Superseded for the unreleased command-input contract by
+> [`validation-packages-config.md`](validation-packages-config.md). The current
+> contract requires a unique prefix, does not support positional bindings, and
+> always emits non-boolean prefixes and values as distinct argv elements. This
+> document remains as implementation history for the earlier dev-only shape.
+
 Implementation status as of 2026-07-24:
 
 **Current stage: implementation and automated verification complete.** All

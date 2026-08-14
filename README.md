@@ -34,6 +34,7 @@ readable both on GitHub and through the service's `/docs` pages:
 - [Submit and version a validation package](docs/packages/submission.md)
 - [Validation package metadata](docs/packages/metadata.md)
 - [CWL command inputs](docs/packages/cwl-inputs.md)
+- [Validation-packages configuration](docs/packages/validation-packages-config.md)
 - [Development setup](docs/development/overview.md)
 - [Testing changes](docs/development/testing.md)
 - [CI/CD and releases](docs/operations/releases.md)

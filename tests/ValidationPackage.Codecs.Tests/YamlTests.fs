@@ -22,11 +22,12 @@ let tests =
 
         testCase "CWL names and scalar types remain canonical" <| fun () ->
             let encoded = ValidationPackageYaml.encode metadata
+            Expect.isTrue (encoded.StartsWith("$schema:")) "$schema is first"
             Expect.stringContains encoded "Inputs:" "PascalCase Inputs wrapper"
             Expect.stringContains encoded "id: \"output\"" "lower-camel id"
             Expect.stringContains encoded "type: \"string\"" "scalar CWL type"
             Expect.stringContains encoded "inputBinding:" "canonical binding key"
-            Expect.stringContains encoded "prefix: \"--output=\"" "binding prefix"
+            Expect.stringContains encoded "prefix: \"--output\"" "binding prefix"
 
         testCase "missing optional metadata fields keep model defaults" <| fun () ->
             let actual =
@@ -43,7 +44,7 @@ PatchVersion: 0
             Expect.isEmpty actual.Inputs "Inputs default"
             Expect.isFalse actual.Publish "Publish default"
 
-        testCase "unknown fields are ignored" <| fun () ->
+        testCase "schema-less legacy unknown fields retain historical behavior" <| fun () ->
             let actual =
                 ValidationPackageYaml.decodeOrFail
                     """Name: compatible
@@ -52,6 +53,19 @@ FutureField:
 """
 
             Expect.equal actual.Name "compatible" "Known field"
+
+        testCase "versioned frontmatter rejects unknown fields" <| fun () ->
+            ValidationPackageYaml.decode
+                """$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: compatible
+Summary: summary
+Description: description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+FutureField: value
+"""
+            |> expectErrorContains "unknown field" "Unknown versioned field should fail"
 
         testCase "frontmatter extraction sets the source language" <| fun () ->
             let fsharp =
@@ -69,7 +83,14 @@ FutureField:
 
         testCase "Inputs must use the CWL array form" <| fun () ->
             ValidationPackageYaml.decode
-                """Inputs:
+                """$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: package
+Summary: summary
+Description: description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Inputs:
   value:
     type: string
 """
@@ -79,20 +100,35 @@ FutureField:
 
         testCase "CWL parameters require id, type, and inputBinding" <| fun () ->
             ValidationPackageYaml.decode
-                """Inputs:
+                """$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: package
+Summary: summary
+Description: description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Inputs:
   - id: value
     type: string
 """
             |> expectErrorContains
-                "missing required field(s): inputBinding"
+                "missing required field 'inputBinding'"
                 "Missing inputBinding should fail"
 
         testCase "unsupported CWL scalar types fail" <| fun () ->
             ValidationPackageYaml.decode
-                """Inputs:
+                """$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: package
+Summary: summary
+Description: description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Inputs:
   - id: file
     type: File
-    inputBinding: {}
+    inputBinding:
+      prefix: --file
 """
             |> expectErrorContains
                 "unsupported CWL command input type: File"
@@ -100,15 +136,79 @@ FutureField:
 
         testCase "CWL parameter ids must be non-empty and unique" <| fun () ->
             ValidationPackageYaml.decode
-                """Inputs:
+                """$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: package
+Summary: summary
+Description: description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Inputs:
   - id: duplicate
     type: string
-    inputBinding: {}
+    inputBinding:
+      prefix: --first
   - id: duplicate
     type: string
-    inputBinding: {}
+    inputBinding:
+      prefix: --second
 """
             |> expectErrorContains
                 "id must be unique"
                 "Duplicate id should fail"
+
+        testCase "schema dispatch preserves legacy and rejects unsupported schemas offline" <| fun () ->
+            let legacy =
+                ValidationPackageYaml.decodeOrFail
+                    """Name: historical
+Summary: summary
+Description: description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+"""
+
+            Expect.equal legacy.Name "historical" "Schema-less legacy frontmatter"
+
+            ValidationPackageYaml.decode
+                """$schema: "https://example.org/unknown.schema.json"
+Name: package
+"""
+            |> expectErrorContains "UnsupportedSchema" "Unknown schemas fail without fallback"
+
+            ValidationPackageYaml.decode
+                """Name: historical
+Inputs:
+  - id: value
+    type: string
+    inputBinding:
+      prefix: --value
+"""
+            |> expectErrorContains "cannot declare Inputs" "Legacy Inputs are unavailable"
+
+        testCase "narrowed declarations reject separate, positional, and unknown fields" <| fun () ->
+            let prefix =
+                """$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: package
+Summary: summary
+Description: description
+MajorVersion: 1
+MinorVersion: 0
+PatchVersion: 0
+Inputs:
+  - id: value
+    type: string
+    inputBinding:
+"""
+
+            [
+                prefix + "      separate: false\n"
+                prefix + "      position: 1\n"
+                prefix + "      prefix: --value\n      valueFrom: expression\n"
+                prefix + "      prefix: --value\n    default: x\n"
+            ]
+            |> List.iter (fun invalid ->
+                ValidationPackageYaml.decode invalid
+                |> expectErrorContains "field" "Unsupported declaration field should fail"
+            )
     ]

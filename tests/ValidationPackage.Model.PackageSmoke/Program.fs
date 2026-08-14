@@ -19,4 +19,18 @@ if identity.Name <> "package-smoke" then
 if SemVer.toString identity.Version <> "1.2.3" then
     failwith "Packed model returned the wrong semantic version."
 
+let config =
+    ValidationPackagesConfig.create(
+        [|
+            ValidationPackageSelection.create(
+                "package-smoke",
+                identity.Version,
+                RollForward = RollForwardPolicy.LatestPatch
+            )
+        |]
+    )
+
+if config.ValidationPackages[0].Name <> "package-smoke" then
+    failwith "Packed model returned the wrong validation-packages config."
+
 printfn "ValidationPackage.Model packed-package smoke test passed."

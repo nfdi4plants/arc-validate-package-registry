@@ -16,7 +16,7 @@ module ValidationPackageYaml =
     let decode yaml =
         try
             yaml
-            |> YAMLicious.Reader.read
+            |> Yaml.Strict.read
             |> decoder
             |> Ok
         with error ->
@@ -24,6 +24,34 @@ module ValidationPackageYaml =
 
     let decodeOrFail yaml =
         match decode yaml with
+        | Ok metadata -> metadata
+        | Error message -> invalidArg "yaml" message
+
+    let decodeCurrent yaml =
+        try
+            yaml
+            |> Yaml.Strict.read
+            |> Yaml.Decoders.ValidationPackage.currentDecoder
+            |> Ok
+        with error ->
+            Error error.Message
+
+    let decodeCurrentOrFail yaml =
+        match decodeCurrent yaml with
+        | Ok metadata -> metadata
+        | Error message -> invalidArg "yaml" message
+
+    let decodeLegacy yaml =
+        try
+            yaml
+            |> Yaml.Strict.read
+            |> Yaml.Decoders.ValidationPackage.legacyDecoder
+            |> Ok
+        with error ->
+            Error error.Message
+
+    let decodeLegacyOrFail yaml =
+        match decodeLegacy yaml with
         | Ok metadata -> metadata
         | Error message -> invalidArg "yaml" message
 

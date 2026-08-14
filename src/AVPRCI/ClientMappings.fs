@@ -26,8 +26,7 @@ let private toClientInputType (inputType: CommandInputType) =
 let private toClientInputBinding (binding: CommandInputBinding) =
     AVPRClient.CommandInputBinding(
         Position = binding.Position,
-        Prefix = binding.Prefix,
-        Separate = binding.Separate
+        Prefix = binding.Prefix
     )
 
 let private toClientInput (input: CommandInputParameter) =
@@ -73,6 +72,7 @@ let toValidationPackage
     (stagedPackage: StagedValidationPackage)
     =
     let metadata = stagedPackage.Metadata
+    CommandInputParameter.validate metadata.Inputs |> ignore
 
     AVPRClient.ValidationPackage(
         Name = metadata.Name,

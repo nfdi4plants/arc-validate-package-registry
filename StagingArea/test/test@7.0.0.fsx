@@ -1,5 +1,6 @@
 let [<Literal>]PACKAGE_METADATA = """(*
 ---
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Name: test
 MajorVersion: 7
 MinorVersion: 0

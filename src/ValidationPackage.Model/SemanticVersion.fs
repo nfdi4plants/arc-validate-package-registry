@@ -3,6 +3,38 @@ namespace ValidationPackage.Model
 open System
 open Fable.Core
 
+module internal PortableString =
+
+    let private utf16CodeUnits (value: string) =
+        let units = ResizeArray<int>()
+
+        for character in value do
+            let codePoint = int character
+
+            if codePoint > 0xFFFF then
+                let scalar = codePoint - 0x10000
+                units.Add(0xD800 + (scalar / 0x400))
+                units.Add(0xDC00 + (scalar % 0x400))
+            else
+                units.Add codePoint
+
+        units.ToArray()
+
+    let compareOrdinal (first: string) (second: string) =
+        let firstUnits = utf16CodeUnits first
+        let secondUnits = utf16CodeUnits second
+        let mutable index = 0
+        let mutable comparison = 0
+
+        while comparison = 0 && index < firstUnits.Length && index < secondUnits.Length do
+            comparison <- compare firstUnits[index] secondUnits[index]
+            index <- index + 1
+
+        if comparison <> 0 then
+            comparison
+        else
+            compare firstUnits.Length secondUnits.Length
+
 module private SemanticVersionParsing =
 
     let isAsciiDigit (character: char) =
@@ -69,6 +101,39 @@ module private SemanticVersionParsing =
     let hasValidIdentifiers validator (value: string) =
         value.Split('.')
         |> Array.forall validator
+
+    let compareNumericIdentifiers (first: string) (second: string) =
+        let lengthComparison = compare first.Length second.Length
+
+        if lengthComparison <> 0 then
+            lengthComparison
+        else
+            PortableString.compareOrdinal first second
+
+    let comparePreReleaseIdentifiers (first: string) (second: string) =
+        let firstIsNumeric = first |> Seq.forall isAsciiDigit
+        let secondIsNumeric = second |> Seq.forall isAsciiDigit
+
+        match firstIsNumeric, secondIsNumeric with
+        | true, true -> compareNumericIdentifiers first second
+        | true, false -> -1
+        | false, true -> 1
+        | false, false -> PortableString.compareOrdinal first second
+
+    let rec comparePreReleaseParts index (first: string array) (second: string array) =
+        if index = first.Length && index = second.Length then
+            0
+        elif index = first.Length then
+            -1
+        elif index = second.Length then
+            1
+        else
+            let comparison = comparePreReleaseIdentifiers first[index] second[index]
+
+            if comparison <> 0 then
+                comparison
+            else
+                comparePreReleaseParts (index + 1) first second
 
 [<AttachMembers>]
 type SemVer() =
@@ -207,3 +272,39 @@ type SemVer() =
             $"{semVer.Major}.{semVer.Minor}.{semVer.Patch}+{buildMetadata}"
         | _ ->
             $"{semVer.Major}.{semVer.Minor}.{semVer.Patch}"
+
+    static member comparePrecedence(first: SemVer, second: SemVer) =
+        if isNull (box first) then
+            nullArg "first"
+
+        if isNull (box second) then
+            nullArg "second"
+
+        let coreComparison =
+            if first.Major <> second.Major then
+                compare first.Major second.Major
+            elif first.Minor <> second.Minor then
+                compare first.Minor second.Minor
+            else
+                compare first.Patch second.Patch
+
+        if coreComparison <> 0 then
+            coreComparison
+        else
+            match first.PreRelease, second.PreRelease with
+            | "", "" -> 0
+            | "", _ -> 1
+            | _, "" -> -1
+            | firstPreRelease, secondPreRelease ->
+                SemanticVersionParsing.comparePreReleaseParts
+                    0
+                    (firstPreRelease.Split('.'))
+                    (secondPreRelease.Split('.'))
+
+    static member compareIdentity(first: SemVer, second: SemVer) =
+        let precedenceComparison = SemVer.comparePrecedence(first, second)
+
+        if precedenceComparison <> 0 then
+            precedenceComparison
+        else
+            PortableString.compareOrdinal (SemVer.toString first) (SemVer.toString second)

@@ -55,5 +55,4 @@ module InProcessRegistry =
         Assert.Equal("Enable verbose logging", input.Doc)
         Assert.Equal(0, input.InputBinding.Position)
         Assert.Equal("--verbose", input.InputBinding.Prefix)
-        Assert.True(input.InputBinding.Separate)
     }

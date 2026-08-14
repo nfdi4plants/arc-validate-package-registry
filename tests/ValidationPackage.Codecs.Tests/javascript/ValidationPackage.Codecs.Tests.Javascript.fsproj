@@ -12,6 +12,7 @@
     <Compile Include="..\ReferenceObjects.fs" Link="ReferenceObjects.fs" />
     <Compile Include="..\FrontmatterTests.fs" Link="FrontmatterTests.fs" />
     <Compile Include="..\YamlTests.fs" Link="YamlTests.fs" />
+    <Compile Include="..\ConfigYamlTests.fs" Link="ConfigYamlTests.fs" />
     <Compile Include="..\JsonTests.fs" Link="JsonTests.fs" />
     <Compile Include="..\Main.fs" Link="Main.fs" />
   </ItemGroup>

@@ -17,7 +17,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/RELEASE_NOTES.md"))</PackageReleaseNotes>
-    <PackageVersion>0.1.0-preview.3</PackageVersion>
+    <PackageVersion>0.1.0-preview.4</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +25,7 @@
     <Compile Include="SemanticVersion.fs" />
     <Compile Include="ValidationPackageIdentity.fs" />
     <Compile Include="Cwl.fs" />
+    <Compile Include="ValidationPackagesConfig.fs" />
     <Compile Include="Author.fs" />
     <Compile Include="OntologyAnnotation.fs" />
     <Compile Include="ValidationPackageMetadata.fs" />

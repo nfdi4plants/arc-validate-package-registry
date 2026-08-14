@@ -1,0 +1,42 @@
+{
+  "$schema": "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json",
+  "Name": "test-package",
+  "Summary": "A portable package",
+  "Description": "Validates an ARC.",
+  "MajorVersion": 1,
+  "MinorVersion": 2,
+  "PatchVersion": 3,
+  "PreReleaseVersionSuffix": "beta.1",
+  "BuildMetadataVersionSuffix": "build.5",
+  "ProgrammingLanguage": "FSharp",
+  "Publish": true,
+  "Authors": [
+    {
+      "FullName": "Ada Example",
+      "Email": "ada@example.org",
+      "Affiliation": "DataPLANT",
+      "AffiliationLink": "https://nfdi4plants.org"
+    }
+  ],
+  "Tags": [
+    {
+      "Name": "validation",
+      "TermSourceREF": "AVPR",
+      "TermAccessionNumber": "AVPR:validation"
+    }
+  ],
+  "ReleaseNotes": "Initial portable release",
+  "CQCHookEndpoint": "https://example.org/cqc",
+  "Inputs": [
+    {
+      "id": "output",
+      "type": "string",
+      "label": "Output file",
+      "doc": "Write output to this file",
+      "inputBinding": {
+        "position": 2,
+        "prefix": "--output"
+      }
+    }
+  ]
+}

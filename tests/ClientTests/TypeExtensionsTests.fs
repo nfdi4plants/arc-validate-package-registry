@@ -143,7 +143,7 @@ module CommandInput =
         |> ignore
 
     [<Fact>]
-    let ``null bindings use documented CWL defaults`` () =
+    let ``null bindings are rejected by centralized declaration validation`` () =
         let input =
             AVPRClient.CommandInputParameter(
                 Id = "value",
@@ -151,10 +151,8 @@ module CommandInput =
                 InputBinding = null
             )
 
-        let actual = input.ToModel()
-        Assert.Equal(0, actual.InputBinding.Position)
-        Assert.Equal("", actual.InputBinding.Prefix)
-        Assert.True(actual.InputBinding.Separate)
+        Assert.Throws<ArgumentException>(fun () -> input.ToModel() |> ignore)
+        |> ignore
 
     [<Fact>]
     let ``generated parameter JSON keeps the public CWL wire shape`` () =

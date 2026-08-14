@@ -1,4 +1,6 @@
 export * from "./FrontmatterLanguage.js";
+export * from "./DecodedValidationPackagesConfig.js";
+export * as SchemaUris from "./SchemaUris.js";
 export * as Frontmatter from "./Frontmatter.js";
 export * as AuthorJson from "./Json/AuthorJson.js";
 export * as CwlJson from "./Json/CwlJson.js";
@@ -8,3 +10,4 @@ export * as AuthorYaml from "./Yaml/AuthorYaml.js";
 export * as CwlYaml from "./Yaml/CwlYaml.js";
 export * as OntologyAnnotationYaml from "./Yaml/OntologyAnnotationYaml.js";
 export * as ValidationPackageYaml from "./Yaml/ValidationPackageYaml.js";
+export * as ValidationPackagesConfigYaml from "./Yaml/ValidationPackagesConfigYaml.js";

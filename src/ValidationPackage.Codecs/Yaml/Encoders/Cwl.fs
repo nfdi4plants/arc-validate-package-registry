@@ -18,9 +18,6 @@ module internal Cwl =
 
             if binding.Prefix <> "" then
                 "prefix", Encoding.string binding.Prefix
-
-            if not binding.Separate then
-                "separate", Encoding.bool binding.Separate
         ]
         |> Encoding.object
 

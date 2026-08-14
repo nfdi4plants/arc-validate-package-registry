@@ -15,7 +15,6 @@ module internal Cwl =
         Encode.object [
             "position", Encode.int binding.Position
             "prefix", Encode.string binding.Prefix
-            "separate", Encode.bool binding.Separate
         ]
 
     let commandInputParameter (parameter: CommandInputParameter) =

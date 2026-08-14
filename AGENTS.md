@@ -172,10 +172,18 @@ Search for every use of the changed field before editing. Do not hand-author a m
 
 ## CWL input contract
 
-- Keep the AVPR metadata wrapper as PascalCase `Inputs`. Inside it, preserve the exact lower-camel-case CWL names (`id`, `type`, `label`, `doc`, `inputBinding`, `prefix`, `position`, and `separate`) through frontmatter, public JSON, OpenAPI, and generated-client code.
+- Keep the AVPR metadata wrapper as PascalCase `Inputs`. Inside it, preserve the exact lower-camel-case CWL names (`id`, `type`, `label`, `doc`, `inputBinding`, `prefix`, and `position`) through frontmatter, public JSON, OpenAPI, and generated-client code.
 - Public YAML/JSON and the generated client expose `CommandInputType` as one scalar CWL string such as `boolean?`. Only the database uses the normalized object with a lowercase primitive string and boolean nullability; never leak that storage shape through the API.
-- Additional unsupported parameter or binding fields are intentionally ignored and discarded. Unsupported or malformed `type` values and shapes must still fail conversion with an actionable diagnostic.
+- `inputBinding.prefix` is required, non-empty, exact, and unique. Positional inputs and joined-prefix behavior are unsupported. `position` defaults to `0`; argument materialization orders by position and then ordinal input ID.
+- Reject unknown parameter and binding fields. Validate declaration IDs, types, required bindings, prefix uniqueness, `--`, and collisions with `-i`, `-o`, `--source-branch`, and `--source-commit-hash` through the portable Model validator rather than reimplementing those rules.
 - Do not add custom aliases or requiredness fields. CWL has one canonical binding prefix, and requiredness is represented by the scalar type with or without `?`.
+
+## Validation-package YAML schemas and configuration
+
+- Canonical validation-package frontmatter and `.arc/validation_packages.yml` documents carry the exact immutable v1 `$schema` URI. Dispatch that identifier through the portable offline allowlist; never fetch an unknown schema URI or fall back from one.
+- Keep schema-less frontmatter/config handling in explicit legacy readers. Schema-less frontmatter cannot declare the unreleased `Inputs` shape, and canonical writers never emit legacy documents.
+- Configuration input values use only quoted strings, lowercase `null`/booleans, and finite JSON-form numbers. Preserve numeric lexemes so JavaScript cannot round valid signed 64-bit integers.
+- Keep the reviewed Draft 2020-12 documents under `schemas/` and package them byte-for-byte under `schemas/` in every Codecs artifact. JSON Schema complements rather than replaces the stricter YAMLicious lexical and semantic checks.
 
 ## Test coverage for metadata model changes
 

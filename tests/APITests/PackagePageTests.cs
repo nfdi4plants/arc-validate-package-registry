@@ -25,8 +25,7 @@ public class PackagePageTests
                 InputBinding = new CommandInputBinding
                 {
                     Position = 2,
-                    Prefix = "--output=<",
-                    Separate = false
+                    Prefix = "--output=<"
                 }
             },
             new CommandInputParameter
@@ -47,7 +46,7 @@ public class PackagePageTests
                     PrimitiveType = CwlPrimitive.Int,
                     IsNullable = true
                 },
-                InputBinding = new CommandInputBinding()
+                InputBinding = new CommandInputBinding { Prefix = "--threads" }
             }
         ];
 
@@ -63,14 +62,14 @@ public class PackagePageTests
         Assert.Contains("<code>output&lt;script&gt;</code>", html);
         Assert.Contains("<code>string</code>", html);
         Assert.Contains("<code>--output=&lt;</code>", html);
-        Assert.Contains("position: 2; separate: false", html);
+        Assert.Contains("position: 2", html);
         Assert.Contains("<strong>Output &amp; file</strong>", html);
         Assert.Contains("Write &lt;script&gt;alert(&#x27;x&#x27;)&lt;/script&gt; here", html);
         Assert.Contains("<code>boolean (optional)</code>", html);
         Assert.Contains("<code>int (optional)</code>", html);
         Assert.DoesNotContain("<code>boolean?</code>", html);
         Assert.DoesNotContain("<code>int?</code>", html);
-        Assert.Contains("<em>positional</em>", html);
+        Assert.Contains("<code>--threads</code>", html);
         Assert.DoesNotContain("<script>alert", html);
     }
 

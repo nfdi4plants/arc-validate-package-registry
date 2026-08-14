@@ -26,8 +26,7 @@ module CommandInputs =
     let allFieldsBinding =
         CommandInputBinding.create(
             Position = 2,
-            Prefix = "--output=",
-            Separate = false
+            Prefix = "--output"
         )
 
     let mandatoryParameter =

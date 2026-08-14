@@ -8,8 +8,7 @@ let input =
         CommandInputType.create(CwlPrimitive.String),
         CommandInputBinding.create(
             Position = 2,
-            Prefix = "--output=",
-            Separate = false
+            Prefix = "--output"
         ),
         Label = "Output file",
         Doc = "Write output to this file"
@@ -50,7 +49,8 @@ let metadata =
     )
 
 let yaml =
-    """Name: test-package
+    """$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: test-package
 Summary: A portable package
 Description: Validates an ARC.
 MajorVersion: 1
@@ -78,8 +78,7 @@ Inputs:
     doc: Write output to this file
     inputBinding:
       position: 2
-      prefix: --output=
-      separate: false
+      prefix: --output
 """
 
 let fsharpComment =

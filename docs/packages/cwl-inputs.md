@@ -26,8 +26,7 @@ CWL document, and the registry is not a general CWL runner.
 Package inputs need more than documentation: downstream tools must be able to
 validate values and eventually construct deterministic command lines. Reusing
 CWL provides established names and semantics for types, nullability, prefixes,
-positional values, ordering, and value separation instead of creating an
-AVPR-only schema.
+and ordering instead of creating an AVPR-only schema.
 
 The first release supports the configuration needed by current validation
 scripts while keeping parsing, persistence, OpenAPI, generated clients, and
@@ -35,8 +34,7 @@ future argument construction unambiguous:
 
 - Six scalar primitives map directly to portable command-line values.
 - One nullable shorthand avoids multiple wire shapes for the same meaning.
-- Three binding fields cover flags, options, concatenated values, and
-  positional values.
+- Two binding fields cover flags, options, and deterministic ordering.
 - Array form maps directly to the registry's ordered collection and owned JSON
   model while retaining explicit input IDs.
 
@@ -46,6 +44,7 @@ implement their staging, path, validation, and serialization semantics.
 ## Example
 
 ```yaml
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
 Inputs:
   - id: echo
     type: string?
@@ -66,8 +65,7 @@ Inputs:
     doc: Select the output file
     inputBinding:
       position: 2
-      prefix: --output=
-      separate: false
+      prefix: --output
 ```
 
 ## Supported input fields
@@ -105,21 +103,19 @@ type: `string` requires a value, while `string?` permits omission or null.
 
 | CWL field | Supported value | Default |
 | --- | --- | --- |
-| `prefix` | One canonical string; omission makes the value positional | no prefix |
+| `prefix` | One non-empty canonical string | required |
 | `position` | integer | `0` |
-| `separate` | boolean | `true` |
 
 Binding behavior follows CWL:
 
 - A boolean `true` emits its prefix; `false` emits nothing. A nullable boolean
   also emits nothing for null. Boolean flags never emit a trailing `true` or
   `false` value.
-- A prefixed non-boolean with `separate: true` emits prefix and value as two
-  argv elements.
-- `separate: false` concatenates them, such as `--output=result.txt`.
-- Omitting `prefix` emits a positional value.
+- A non-boolean always emits prefix and value as two argv elements.
 - Missing `position` uses position `0`; equal positions are resolved
   deterministically by input ID.
+- Prefixes are exact and unique. They cannot be `--`, `-i`, `-o`,
+  `--source-branch`, or `--source-commit-hash`.
 
 CWL defines one binding prefix, not aliases. A package script may independently
 accept `-v` as well as `--verbose`, but only one canonical prefix belongs in
@@ -135,11 +131,17 @@ The first subset does not support:
 - user-defined or IRI types;
 - CWL maps keyed by input ID.
 
-Additional fields on otherwise valid parameter or binding objects—such as
-`default`, `secondaryFiles`, `format`, `valueFrom`, `itemSeparator`, and
-`shellQuote`—are tolerated but ignored and discarded. This provides limited
-forward tolerance without claiming support. Malformed known fields and
-unsupported `type` values or shapes still fail with an actionable diagnostic.
+Additional parameter or binding fields such as `default`, `secondaryFiles`,
+`format`, `valueFrom`, `itemSeparator`, `shellQuote`, and `separate` are
+rejected. Positional inputs are likewise rejected. Unsupported `type` values
+and shapes fail with an actionable diagnostic.
+
+The extracted metadata mapping carries
+`$schema: https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json`.
+The schema is also shipped as
+`schemas/validation-package-frontmatter.schema.json` in every
+`ValidationPackage.Codecs` artifact. Runtime parsing selects its decoder from
+an offline allowlist and never fetches the URI.
 
 ## Representation boundaries
 

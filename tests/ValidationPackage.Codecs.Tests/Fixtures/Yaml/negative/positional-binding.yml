@@ -1,0 +1,12 @@
+$schema: "https://avpr.nfdi4plants.org/schemas/v1/validation-package-frontmatter.schema.json"
+Name: fixture-package
+MajorVersion: 1
+MinorVersion: 2
+PatchVersion: 3
+Summary: Fixture package.
+Description: Contains a positional binding.
+Inputs:
+  - id: value
+    type: string
+    inputBinding:
+      prefix: ""
