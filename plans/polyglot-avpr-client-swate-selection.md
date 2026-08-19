@@ -20,6 +20,11 @@ This plan begins only after:
 - `arc-validate`, AVPRCI, and DataHUB are operating with the completed
   configuration flow.
 
+Throughout this document, **post-epic `dev`** means the future state of the
+`dev` branch and deployed `dev` service after every issue in AVPR #119,
+including rollout issue #122, has completed. It does not mean today's `dev`
+state or the production environment.
+
 This plan does not amend, replace, reorder, or add requirements to any
 predecessor step. In particular, generating AVPRClient and publishing Interop
 remain required predecessor deliverables. They provide the functioning baseline
@@ -46,7 +51,7 @@ specification, DataHUB orchestration, and initial rollout.
 
 This follow-up consumes those completed contracts unchanged:
 
-- The deployed `dev` OpenAPI is the HTTP source of truth.
+- The OpenAPI generated from post-epic `dev` is the HTTP source of truth.
 - AVPR Model and Codecs are the canonical portable contract packages.
 - The generated AVPRClient and Interop previews provide a behavior and
   compatibility baseline.
@@ -117,7 +122,7 @@ Relevant locations:
 - `src/PackageRegistryService/OpenAPI`
 - Service contract tests.
 
-The service is read-only scope for this plan. Its completed `dev` OpenAPI
+The service is read-only scope for this plan. Its post-epic `dev` OpenAPI
 defines which client operations must exist, including:
 
 - lightweight discovery and metadata;
@@ -271,7 +276,7 @@ this follow-up.
 
 ### OpenAPI parity
 
-The client targets every operation present in the completed `dev` OpenAPI:
+The client targets every operation present in the post-epic `dev` OpenAPI:
 
 | Resource | Operation |
 | --- | --- |

@@ -5,6 +5,9 @@
     "context": ".."
   },
   "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "10.0"
+    },
     "ghcr.io/devcontainers/features/node:2": {
       "version": "24",
       "pnpmVersion": "none"
@@ -20,6 +23,7 @@
   },
   "mounts": [
     "source=avpr-devcontainer-data,target=/home/vscode/.devcontainer-data,type=volume"
+    // "source=${localEnv:USERPROFILE}\\.codex,target=/home/vscode/.codex,type=bind" does not work
   ],
   "remoteEnv": {
     "APPDATA": "/home/vscode/.devcontainer-data/aspnet",
