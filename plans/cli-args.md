@@ -1,5 +1,14 @@
 # Plan: Configurable validation packages (`CLIArguments`) + dev instance
 
+## Status
+
+**Closed.** The unreleased custom `CLIArguments` contract was superseded first
+by [`cwl-inputs.md`](cwl-inputs.md) and then by the accepted
+[`validation-packages-config.md`](validation-packages-config.md) contract. It
+must not be implemented from this document. The independent `dev` branch,
+`ghcr.io/nfdi4plants/avpr:dev` image, and repository documentation work is
+done.
+
 ## Context
 
 Validation packages already accept ad-hoc command-line arguments — e.g. [`agdafair@0.0.1.fsx`](StagingArea/agdafair/agdafair@0.0.1.fsx) hand-parses `-h`/`-u`/`-i`/`-o` — but there is **no declared, discoverable contract** for them. Consumers (`arc-validate`, the website, package authors) can't know what flags a package supports without reading its source.

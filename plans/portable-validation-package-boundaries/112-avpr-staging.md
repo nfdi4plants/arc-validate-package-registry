@@ -2,12 +2,13 @@
 
 ## Status
 
-Implementation underway for
+**Done.** Implemented for
 [AVPR #112](https://github.com/nfdi4plants/arc-validate-package-registry/issues/112).
 
 The focused staging boundary and migrations of AVPRCI and service
-initialization are implemented. Generated-client interop remains coordinated
-with AVPR #114.
+initialization are implemented. AVPR #114 subsequently moved generated-client
+interop to `AVPRClient.Interop`, and `AVPRIndex` is retired from the current
+project graph.
 
 ## Objective
 

@@ -2,7 +2,7 @@
 
 ## Status and planning policy
 
-**Status:** the five roadmap milestones are implemented. AVPR owns canonical
+**Status: Done.** The five roadmap milestones are implemented. AVPR owns canonical
 cross-boundary fixtures and verifies its NuGet/npm/Python artifacts. Downstream
 ARCExpect compatibility belongs to arc-validate's normal contract, packed-
 consumer, and release checks; AVPR does not clone or rebuild arc-validate.

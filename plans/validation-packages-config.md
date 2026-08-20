@@ -3,7 +3,10 @@
 ## Status
 
 **Accepted in design on 2026-08-13, including the machine-readable schema
-revision. Implementation is in progress as of 2026-08-14.**
+revision. Implementation is in progress as of 2026-08-20: Steps 1–3 are code
+complete in the current AVPR and `arc-validate` workspaces, while Steps 4–7
+have not started. The acceptance sequence remains at Step 2's external
+publication and deployment gate.**
 
 This plan records implementation state but does not itself authorize package
 publication, service deployment, issue closure, or DataHUB changes. Begin each
@@ -23,16 +26,18 @@ GitHub tracking:
 
 Current implementation state:
 
-| Step | State on 2026-08-14 | Evidence and remaining gate |
+| Step | State on 2026-08-20 | Evidence and remaining gate |
 | --- | --- | --- |
-| Step 1 — AVPR #120 | Implemented and committed locally | Commit `c0b9ccb` implements the portable Model/Codecs contracts, schemas, compatibility readers, cross-target tests, and package checks. Its local acceptance gate passed. AVPR #120 is a closure candidate after the commits are pushed and CI evidence is available. |
-| Step 2 — AVPR #121 | Code complete locally; external acceptance pending | Commit `5d3ff2d` implements the service, generated client, Interop, AVPRCI, documentation, and local tests/packs. `TestSolution`, portable/client, release-metadata, and available local checks passed. The focused PostgreSQL check and service-container build remain outstanding because those services were unavailable locally. The coordinated preview artifacts are not indexed and the AVPR dev service is not serving the new routes, so AVPR #121 must remain open. |
-| Step 3 — arc-validate #253 | Code complete locally; live acceptance pending | The CLI now pins the exact preview.4 AVPR artifacts, implements one-index exact/patch/minor/legacy resolution, caps exact metadata preflight at four requests, emits the strict CLI-owned `validation_plan.json`, ships its Draft 2020-12 schema, and returns stable configuration/registry exit codes. Focused tests pass 83/83, `RunAutomatedTests` passes, `TestPortableARCExpect` passes the shared 11/11 contracts on each of .NET, JavaScript, and Python plus all packed-consumer checks, `RunDocsSamples` passes with byte-identical cross-runtime outputs, `BuildDocs` passes, and the schema bytes match both documentation and publish output. The AVPR-dev integration gate remains pending until Step 2 artifacts are published and its discovery routes are deployed. |
-| Steps 4–7 | Not started | These steps remain blocked by the incomplete Step 2 publication and deployment acceptance gate. |
+| Step 1 — AVPR #120 | **Implementation done; issue open** | Commit `c0b9ccb` is on `origin/dev` and implements the portable Model/Codecs contracts, schemas, compatibility readers, cross-target tests, and package checks. Its recorded local acceptance gate passed. On 2026-08-20, issue #120 remains open and the preview.4 Model/Codecs artifacts are not indexed on NuGet, npm, or PyPI. |
+| Step 2 — AVPR #121 | **Implementation done; external acceptance pending** | Commit `5d3ff2d` is on `origin/dev` and implements the service, generated client, Interop, AVPRCI, documentation, and local tests/packs. The recorded `TestSolution`, portable/client, release-metadata, and available local checks passed. On 2026-08-20, issue #121 remains open, the preview.4 Client/Interop NuGets are not indexed, and the focused PostgreSQL check, service-container build, coordinated preview publication, and deployed AVPR-dev route verification remain the documented external gate. |
+| Step 3 — arc-validate #253 | **Implementation done; live acceptance pending** | Adjacent-workspace commit `3cb0aa4` is on `origin/dev`. The CLI pins the exact preview.4 AVPR artifacts, implements one-index exact/patch/minor/legacy resolution, caps exact metadata preflight at four requests, emits the strict CLI-owned `validation_plan.json`, ships its Draft 2020-12 schema, and returns stable configuration/registry exit codes. The previously recorded automated checks passed. On 2026-08-20, issue #253 remains open and the AVPR-dev integration gate cannot complete before Step 2's artifacts and service are available. |
+| Steps 4–7 | **Not started** | These steps remain blocked by the incomplete Step 2 publication and deployment acceptance gate. On 2026-08-20, all four linked issues (#254, ARC-specification #183, DataHUB #73, and AVPR #122) remain open. |
 
-The closure assessment above was checked against the live linked issues,
-package registries, and AVPR dev service on 2026-08-14. No issue was closed or
-otherwise modified. The EPIC and every downstream or rollout issue remain open.
+The linked issue states and required NuGet/npm/PyPI preview versions were
+checked live on 2026-08-20. The deployed AVPR-dev service was not rechecked
+because this repository does not record its URL; the missing required preview
+artifacts already leave Step 2's acceptance gate incomplete. No issue,
+registry, or deployed service was modified.
 
 The design extends `.arc/validation_packages.yml` with typed package input
 values and replaces shell/YAML processing in DataHUB CI with an explicit,

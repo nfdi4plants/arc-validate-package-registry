@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for
+**Done.** Implemented for
 [AVPR #113](https://github.com/nfdi4plants/arc-validate-package-registry/issues/113).
 
 ## Objective

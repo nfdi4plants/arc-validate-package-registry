@@ -2,19 +2,19 @@
 
 ## Status and scope
 
+**Done (superseded implementation history).** The planned code, automated
+verification, staging-package, cleanup, release-note, and documentation work
+was completed. This dev-only contract was replaced before release, so its
+production-connected dry-run and PostgreSQL inspection are closed as
+not-applicable rather than remaining implementation work.
+
 > Superseded for the unreleased command-input contract by
 > [`validation-packages-config.md`](validation-packages-config.md). The current
 > contract requires a unique prefix, does not support positional bindings, and
 > always emits non-boolean prefixes and values as distinct argv elements. This
 > document remains as implementation history for the earlier dev-only shape.
 
-Implementation status as of 2026-07-24:
-
-**Current stage: implementation and automated verification complete.** All
-planned implementation, staging-package, cleanup, release-note, and
-documentation slices are complete. The production-connected AVPRCI dry-run and
-real PostgreSQL migration/backfill inspection remain environment-dependent
-manual checks.
+Implementation status recorded on 2026-07-24:
 
 - [x] `AVPRIndex` domain model (`CwlPrimitive`, `CommandInputType`,
   `CommandInputBinding`, `CommandInputParameter`, and

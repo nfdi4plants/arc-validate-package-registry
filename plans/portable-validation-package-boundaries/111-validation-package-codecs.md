@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented delivery plan for the codec slice of
+**Done.** Implemented delivery plan for the codec slice of
 [AVPR #111](https://github.com/nfdi4plants/arc-validate-package-registry/issues/111).
 
 This phase creates and proves the portable codec package. It is additive:
