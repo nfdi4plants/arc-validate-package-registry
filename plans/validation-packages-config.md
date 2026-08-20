@@ -4,8 +4,8 @@
 
 **Accepted in design on 2026-08-13, including the machine-readable schema
 revision. As of 2026-08-20, Steps 1–4 are DONE and their issues are closed.
-Step 5 is CURRENT/NEXT and has not been implemented. Steps 6–7 have not
-started.**
+Step 5 is IMPLEMENTED and awaiting normative review/approval in
+ARC-specification PR #184. Steps 6–7 have not started.**
 
 This plan records implementation state but does not itself authorize package
 publication, service deployment, issue closure, or DataHUB changes. Begin each
@@ -31,7 +31,7 @@ Current implementation state:
 | Step 2 — AVPR #121 | **DONE — issue closed** | Commit `5d3ff2d` implements the service/client/Interop/AVPRCI work; `2da28f0` corrected the PyPI publisher. Client `0.3.0-preview.4` and Interop `0.1.0-preview.4` were published by [32393190585](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32393190585) and [32393194304](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32393194304). An isolated PostgreSQL 16 migration/backfill/storage/round-trip gate and local service-image build passed. Every AVPR-dev deployment/live check is **SCRATCHED by user instruction — not passed**. |
 | Step 3 — arc-validate #253 | **DONE — issue closed** | Commit `3cb0aa4` implements exact/patch/minor/legacy resolution, bounded metadata preflight, strict `validation_plan.json`, its schema, and stable exit codes. `eded32a` has green [build/test 32397177695](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177695), [documentation 32397177573](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177573), and [container 32397177548](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177548) gates. The AVPR-dev integration check is **SCRATCHED by user instruction — not passed**. |
 | Step 4 — arc-validate #254 | **DONE — issue closed** | Commit `0d25a4b` implements safe configured child execution and ARCExpect alignment; `eded32a` fixes CLI publication and produced `ghcr.io/nfdi4plants/arc-validate:sha-eded32a` at immutable digest `sha256:8f14e791723dfa187d66f93574b536318143967171f0d6f3afe553e9d1b9d665`. `ce5f9d2` fixes the Linux packed-wheel smoke. [Release run 32399194175, attempt 2](https://github.com/nfdi4plants/arc-validate/actions/runs/32399194175/attempts/2) reused the verified artifacts and published ARCExpect `7.0.0-preview.4` to NuGet/npm and `7.0.0a4` to PyPI; only the previously failed NuGet job was rerun after `Mutagene` became a package owner. Configured execution against AVPR dev is **SCRATCHED by user instruction — not passed**. |
-| Step 5 — ARC-specification #183 | **CURRENT / NEXT — NOT IMPLEMENTED** | The issue remains open. The normative specification update is now the active implementation step. |
+| Step 5 — ARC-specification #183 | **IMPLEMENTED — REVIEW / APPROVAL PENDING** | ARC-specification commit `0839e49` implements the normative contract and executable released-Codecs/schema example check in [PR #184](https://github.com/nfdi4plants/ARC-specification/pull/184). Local Markdown, spelling, link, Python, schema, and codec checks pass. The issue remains open until review and merge. |
 | Step 6 — DataHUB #73 | **NOT STARTED** | The issue remains open and blocked by Step 5. No DataHUB template or pipeline change has been made. |
 | Step 7 — AVPR #122 | **NOT STARTED** | The production rollout issue remains open and waits for Steps 5–6. |
 
@@ -923,9 +923,17 @@ production DataHUB yet.
 
 ### Step 5 — Update the normative ARC specification
 
-Status: **CURRENT / NEXT — NOT IMPLEMENTED**
+Status: **IMPLEMENTED — REVIEW / APPROVAL PENDING**
 
 Tracking issue: [ARC-specification #183](https://github.com/nfdi4plants/ARC-specification/issues/183)
+
+Implementation: ARC-specification commit `0839e49`, proposed in
+[ARC-specification PR #184](https://github.com/nfdi4plants/ARC-specification/pull/184).
+The canonical example passes the released `ValidationPackage.Codecs`
+`0.1.0a4` decoder and the exact bundled v1 schema (SHA-256
+`724a13ae20b5925a40c054290d5d62e0e78d2c60307d302411d0d0d242858914`).
+Markdown, link, spelling, Ruff, and diff checks pass. The normative approval
+and merge gate remains open, so Step 6 is still blocked.
 
 Implement this step in `nfdi4plants/ARC-specification` after Steps 1–4 have
 stabilized the executable behavior, so normative prose and examples describe
