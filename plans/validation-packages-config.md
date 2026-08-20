@@ -3,10 +3,10 @@
 ## Status
 
 **Accepted in design on 2026-08-13, including the machine-readable schema
-revision. Implementation is in progress as of 2026-08-20: Steps 1–3 are code
-complete in the current AVPR and `arc-validate` workspaces, while Steps 4–7
-have not started. The acceptance sequence remains at Step 2's external
-publication and deployment gate.**
+revision. As of 2026-08-20, Steps 1–3 are DONE and their issues are closed.
+Step 4 implementation is DONE; its release acceptance is CURRENT and blocked
+only by the existing NuGet package-owner mismatch described below. Steps 5–7
+have not started.**
 
 This plan records implementation state but does not itself authorize package
 publication, service deployment, issue closure, or DataHUB changes. Begin each
@@ -28,16 +28,23 @@ Current implementation state:
 
 | Step | State on 2026-08-20 | Evidence and remaining gate |
 | --- | --- | --- |
-| Step 1 — AVPR #120 | **Implementation done; issue open** | Commit `c0b9ccb` is on `origin/dev` and implements the portable Model/Codecs contracts, schemas, compatibility readers, cross-target tests, and package checks. Its recorded local acceptance gate passed. On 2026-08-20, issue #120 remains open and the preview.4 Model/Codecs artifacts are not indexed on NuGet, npm, or PyPI. |
-| Step 2 — AVPR #121 | **Implementation done; external acceptance pending** | Commit `5d3ff2d` is on `origin/dev` and implements the service, generated client, Interop, AVPRCI, documentation, and local tests/packs. The recorded `TestSolution`, portable/client, release-metadata, and available local checks passed. On 2026-08-20, issue #121 remains open, the preview.4 Client/Interop NuGets are not indexed, and the focused PostgreSQL check, service-container build, coordinated preview publication, and deployed AVPR-dev route verification remain the documented external gate. |
-| Step 3 — arc-validate #253 | **Implementation done; live acceptance pending** | Adjacent-workspace commit `3cb0aa4` is on `origin/dev`. The CLI pins the exact preview.4 AVPR artifacts, implements one-index exact/patch/minor/legacy resolution, caps exact metadata preflight at four requests, emits the strict CLI-owned `validation_plan.json`, ships its Draft 2020-12 schema, and returns stable configuration/registry exit codes. The previously recorded automated checks passed. On 2026-08-20, issue #253 remains open and the AVPR-dev integration gate cannot complete before Step 2's artifacts and service are available. |
-| Steps 4–7 | **Not started** | These steps remain blocked by the incomplete Step 2 publication and deployment acceptance gate. On 2026-08-20, all four linked issues (#254, ARC-specification #183, DataHUB #73, and AVPR #122) remain open. |
+| Step 1 — AVPR #120 | **DONE — issue closed** | Commit `c0b9ccb` implements the portable contracts, schemas, compatibility readers, cross-target tests, and package checks. Model and Codecs preview.4 are indexed on NuGet/npm and as PyPI `0.1.0a4`; final release runs were [Model 32394298070](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32394298070) and [Codecs 32394301300](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32394301300). |
+| Step 2 — AVPR #121 | **DONE — issue closed** | Commit `5d3ff2d` implements the service/client/Interop/AVPRCI work; `2da28f0` corrected the PyPI publisher. Client `0.3.0-preview.4` and Interop `0.1.0-preview.4` were published by [32393190585](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32393190585) and [32393194304](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32393194304). An isolated PostgreSQL 16 migration/backfill/storage/round-trip gate and local service-image build passed. Every AVPR-dev deployment/live check is **SCRATCHED by user instruction — not passed**. |
+| Step 3 — arc-validate #253 | **DONE — issue closed** | Commit `3cb0aa4` implements exact/patch/minor/legacy resolution, bounded metadata preflight, strict `validation_plan.json`, its schema, and stable exit codes. `eded32a` has green [build/test 32397177695](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177695), [documentation 32397177573](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177573), and [container 32397177548](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177548) gates. The AVPR-dev integration check is **SCRATCHED by user instruction — not passed**. |
+| Step 4 — arc-validate #254 | **IMPLEMENTATION DONE; RELEASE ACCEPTANCE CURRENT/BLOCKED** | Commit `0d25a4b` implements safe configured child execution and ARCExpect alignment; `eded32a` fixes CLI publication and produced `ghcr.io/nfdi4plants/arc-validate:sha-eded32a` at immutable digest `sha256:8f14e791723dfa187d66f93574b536318143967171f0d6f3afe553e9d1b9d665`. `ce5f9d2` fixes the Linux packed-wheel smoke. [Release run 32399194175](https://github.com/nfdi4plants/arc-validate/actions/runs/32399194175) passed verification and published npm `7.0.0-preview.4` plus PyPI `7.0.0a4`; NuGet alone returned 403 because `NUGET_USER=Mutagene` is not an owner of the existing `ARCExpect` package. The issue remains open until an owner adds `Mutagene` and only the failed NuGet job is rerun. Configured execution against AVPR dev is **SCRATCHED by user instruction — not passed**. |
+| Step 5 — ARC-specification #183 | **NOT STARTED — NEXT AFTER STEP 4** | The issue remains open. Begin the normative specification update after Step 4's NuGet release acceptance completes. |
+| Step 6 — DataHUB #73 | **NOT STARTED** | The issue remains open and blocked by Step 5. No DataHUB template or pipeline change has been made. |
+| Step 7 — AVPR #122 | **NOT STARTED** | The production rollout issue remains open and waits for Steps 5–6. |
 
-The linked issue states and required NuGet/npm/PyPI preview versions were
-checked live on 2026-08-20. The deployed AVPR-dev service was not rechecked
-because this repository does not record its URL; the missing required preview
-artifacts already leave Step 2's acceptance gate incomplete. No issue,
-registry, or deployed service was modified.
+The AVPR preview releases were orchestrated through
+[release-all 32394250238](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32394250238).
+The focused PostgreSQL fixture/container cleanup completed, and local AVPR
+image `avpr-local-check:2da28f06539c` built successfully with image ID
+`sha256:ae00bbdb877519a14170da6501a961f88dd65e4a53f5258dd34a5537d289b51f`;
+it was not pushed. Every AVPR-dev deployment, route verification, or live
+integration check in this plan is **SCRATCHED by explicit user instruction
+because `avpr-dev.nfdi4plants.org` is down — it was not attempted and did not
+pass**. This status update does not mark those checks successful.
 
 The design extends `.arc/validation_packages.yml` with typed package input
 values and replaces shell/YAML processing in DataHUB CI with an explicit,
@@ -178,6 +185,8 @@ does not silently fall back to downloading every package.
 ## 3. Implementation plan
 
 ### Step 1 — Finalize the portable declaration and configuration contracts in AVPR
+
+Status: **DONE**
 
 Tracking issue: [AVPR #120](https://github.com/nfdi4plants/arc-validate-package-registry/issues/120)
 
@@ -474,6 +483,8 @@ a missing package version. Legacy execution semantics are defined in Step 3.
 
 ### Step 2 — Add efficient AVPR discovery/metadata APIs and release the shared artifacts
 
+Status: **DONE**
+
 Tracking issue: [AVPR #121](https://github.com/nfdi4plants/arc-validate-package-registry/issues/121)
 
 Implement this step in the AVPR registry service, generated client, interop,
@@ -564,12 +575,14 @@ After all AVPR gates pass:
 1. publish coordinated preview versions of Model and Codecs for NuGet, npm,
    and PyPI;
 2. publish preview versions of AVPRClient and AVPRClient.Interop;
-3. deploy the compatible registry service to the AVPR dev environment; and
-4. record the exact artifact versions and dev API image/version for the
-   `arc-validate` issue.
+3. **SCRATCHED by user instruction — not passed:** deploy the compatible
+   registry service to the AVPR dev environment; and
+4. record the exact artifact versions. Recording a deployed dev API
+   image/version is likewise **SCRATCHED by user instruction — not passed**.
 
-Release Model before Codecs; release generated Client before Interop. Do not
-deploy the resolver or DataHUB changes before the new service is reachable.
+Release Model before Codecs; release generated Client before Interop. The
+former AVPR-dev reachability/deployment sequencing check is **SCRATCHED by
+user instruction — not passed**. Production ordering remains part of Step 7.
 
 #### Validation — Step 2 acceptance gate
 
@@ -589,13 +602,15 @@ deploy the resolver or DataHUB changes before the new service is reachable.
   every package.
 - `TestSolution`, portable targets, client packs, release-metadata validation,
   and a service container build pass.
-- Published previews are indexed on every required package registry and the
-  deployed dev service successfully serves the three new API endpoints and two
-  schema routes.
+- Published previews are indexed on every required package registry.
+- **SCRATCHED by user instruction — not passed:** verify that the deployed
+  AVPR-dev service serves the three new API endpoints and two schema routes.
 
 ---
 
 ### Step 3 — Implement configuration resolution and the versioned execution plan in `arc-validate`
+
+Status: **DONE**
 
 Tracking issue: [arc-validate #253](https://github.com/nfdi4plants/arc-validate/issues/253)
 
@@ -769,12 +784,14 @@ without echoing secrets or turning values into shell text.
 - Full preflight rejects every declaration/value mismatch before plan output.
 - Focused package-management and CLI test projects plus
   `RunAutomatedTests` pass without a live registry dependency.
-- An integration test against AVPR dev resolves known fixtures using the exact
-  preview client/model pins.
+- **SCRATCHED by user instruction — not passed:** an integration test against
+  AVPR dev resolves known fixtures using the exact preview client/model pins.
 
 ---
 
 ### Step 4 — Implement safe config-driven child execution and align ARCExpect
+
+Status: **IMPLEMENTATION DONE; RELEASE ACCEPTANCE CURRENT/BLOCKED**
 
 Tracking issue: [arc-validate #254](https://github.com/nfdi4plants/arc-validate/issues/254)
 
@@ -900,12 +917,14 @@ production DataHUB yet.
   generated native APIs are inspected for portable shape regressions.
 - Focused CLI/package-runner tests, `TestPortableARCExpect`, packed-consumer
   checks, docs samples, and `RunAutomatedTests` pass.
-- The preview CLI/container executes a configured package successfully against
-  AVPR dev.
+- **SCRATCHED by user instruction — not passed:** the preview CLI/container
+  executes a configured package successfully against AVPR dev.
 
 ---
 
 ### Step 5 — Update the normative ARC specification
+
+Status: **NOT STARTED — NEXT AFTER STEP 4**
 
 Tracking issue: [ARC-specification #183](https://github.com/nfdi4plants/ARC-specification/issues/183)
 
@@ -966,8 +985,9 @@ coordination with the ARC specification.
 - Every normative YAML example parses through the released preview
   `ValidationPackage.Codecs` implementation.
 - Every canonical normative example validates against the exact versioned
-  `validation-packages.schema.json` linked by the specification, and the AVPR
-  dev route returns that file as `application/schema+json`.
+  `validation-packages.schema.json` linked by the specification.
+- **SCRATCHED by user instruction — not passed:** verify that the AVPR-dev
+  route returns that file as `application/schema+json`.
 - Positive and negative examples agree with the Step 1 codec fixtures and the
   Step 3 resolver behavior.
 - Review confirms the document uses only `arc_specification`, never presents a
@@ -980,11 +1000,13 @@ coordination with the ARC specification.
 
 ### Step 6 — Replace DataHUB YAML processing with plan-driven child jobs
 
+Status: **NOT STARTED**
+
 Tracking issue: [DataHUB #73](https://github.com/nfdi4plants/DataHUB/issues/73)
 
 Implement this step in the DataHUB CI runner/template repository identified on
-the tracking issue. Use the preview AVPR dev service and preview
-`arc-validate` artifact first.
+the tracking issue. Use the exact preview `arc-validate` artifact first. Using
+the preview AVPR-dev service is **SCRATCHED by user instruction — not passed**.
 
 #### 6.1 Parent job
 
@@ -1059,6 +1081,8 @@ artifact collection unchanged.
 ---
 
 ### Step 7 — Roll out, observe, and close compatibility work
+
+Status: **NOT STARTED**
 
 Tracking issue: [AVPR #122](https://github.com/nfdi4plants/arc-validate-package-registry/issues/122)
 
