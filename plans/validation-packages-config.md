@@ -3,9 +3,17 @@
 ## Status
 
 **Accepted in design on 2026-08-13, including the machine-readable schema
-revision. As of 2026-08-20, Steps 1–4 are DONE and their issues are closed.
-Step 5 is IMPLEMENTED and awaiting normative review/approval in
-ARC-specification PR #184. Steps 6–7 have not started.**
+revision. As of 2026-08-21, Steps 1–4 are DONE and their issues are closed.
+The monolithic Step 5 proposal is SUPERSEDED before normative acceptance.
+Steps 6–7 have not started and are BLOCKED by its replacement.**
+
+> **Architecture amendment — 2026-08-21:** Validation specifications and their
+> canonical schemas will move to independently versioned modules in
+> ARC-specification. The replacement architecture and implementation sequence
+> are recorded in
+> [`modular-validation-specifications.md`](modular-validation-specifications.md).
+> Dated notes below preserve the completed implementation history while marking
+> ownership, identifiers, and rollout instructions that are no longer current.
 
 This plan records implementation state but does not itself authorize package
 publication, service deployment, issue closure, or DataHUB changes. Begin each
@@ -25,15 +33,15 @@ GitHub tracking:
 
 Current implementation state:
 
-| Step | State on 2026-08-20 | Evidence and remaining gate |
+| Step | State on 2026-08-21 | Evidence and remaining gate |
 | --- | --- | --- |
 | Step 1 — AVPR #120 | **DONE — issue closed** | Commit `c0b9ccb` implements the portable contracts, schemas, compatibility readers, cross-target tests, and package checks. Model and Codecs preview.4 are indexed on NuGet/npm and as PyPI `0.1.0a4`; final release runs were [Model 32394298070](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32394298070) and [Codecs 32394301300](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32394301300). |
 | Step 2 — AVPR #121 | **DONE — issue closed** | Commit `5d3ff2d` implements the service/client/Interop/AVPRCI work; `2da28f0` corrected the PyPI publisher. Client `0.3.0-preview.4` and Interop `0.1.0-preview.4` were published by [32393190585](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32393190585) and [32393194304](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32393194304). An isolated PostgreSQL 16 migration/backfill/storage/round-trip gate and local service-image build passed. Every AVPR-dev deployment/live check is **SCRATCHED by user instruction — not passed**. |
 | Step 3 — arc-validate #253 | **DONE — issue closed** | Commit `3cb0aa4` implements exact/patch/minor/legacy resolution, bounded metadata preflight, strict `validation_plan.json`, its schema, and stable exit codes. `eded32a` has green [build/test 32397177695](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177695), [documentation 32397177573](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177573), and [container 32397177548](https://github.com/nfdi4plants/arc-validate/actions/runs/32397177548) gates. The AVPR-dev integration check is **SCRATCHED by user instruction — not passed**. |
 | Step 4 — arc-validate #254 | **DONE — issue closed** | Commit `0d25a4b` implements safe configured child execution and ARCExpect alignment; `eded32a` fixes CLI publication and produced `ghcr.io/nfdi4plants/arc-validate:sha-eded32a` at immutable digest `sha256:8f14e791723dfa187d66f93574b536318143967171f0d6f3afe553e9d1b9d665`. `ce5f9d2` fixes the Linux packed-wheel smoke. [Release run 32399194175, attempt 2](https://github.com/nfdi4plants/arc-validate/actions/runs/32399194175/attempts/2) reused the verified artifacts and published ARCExpect `7.0.0-preview.4` to NuGet/npm and `7.0.0a4` to PyPI; only the previously failed NuGet job was rerun after `Mutagene` became a package owner. Configured execution against AVPR dev is **SCRATCHED by user instruction — not passed**. |
-| Step 5 — ARC-specification #183 | **IMPLEMENTED — REVIEW / APPROVAL PENDING** | ARC-specification commit `0839e49` implements the normative contract and executable released-Codecs/schema example check in [PR #184](https://github.com/nfdi4plants/ARC-specification/pull/184). Local Markdown, spelling, link, Python, schema, and codec checks pass. The issue remains open until review and merge. |
-| Step 6 — DataHUB #73 | **NOT STARTED** | The issue remains open and blocked by Step 5. No DataHUB template or pipeline change has been made. |
-| Step 7 — AVPR #122 | **NOT STARTED** | The production rollout issue remains open and waits for Steps 5–6. |
+| Step 5 — ARC-specification #183 | **SUPERSEDED — NOT ACCEPTED** | Commit `0839e49` and [PR #184](https://github.com/nfdi4plants/ARC-specification/pull/184) record the implemented monolithic proposal, but that proposal was not normatively accepted and will be replaced by the modular specification plan. |
+| Step 6 — DataHUB #73 | **NOT STARTED — BLOCKED** | No DataHUB template or pipeline change has been made. Work waits for the replacement specifications and their later implementation amendments. |
+| Step 7 — AVPR #122 | **NOT STARTED — BLOCKED** | No production rollout has started. Work waits for the replacement specifications, implementation amendments, and DataHUB step. |
 
 The AVPR preview releases were orchestrated through
 [release-all 32394250238](https://github.com/nfdi4plants/arc-validate-package-registry/actions/runs/32394250238).
@@ -66,6 +74,15 @@ Normative and related references:
 ---
 
 ## 1. Preamble: moving parts and ownership boundaries
+
+> **Ownership amendment — 2026-08-21:** This section describes the boundaries
+> used to implement Steps 1–4. Under the replacement plan, ARC-specification is
+> the normative owner of the validation-package, configuration, execution-plan,
+> validation-summary, and CQC-profile documents and schemas. AVPR remains
+> authoritative for registry records and artifacts and supplies reference
+> Model/Codecs implementations; `arc-validate` and ARCExpect remain reference
+> consumers. The formats do not require those implementations or their
+> programming languages.
 
 ### ARC specification repository
 
@@ -160,6 +177,13 @@ or dual-write path is part of this plan.
 ---
 
 ## 2. Proposed changes and owners
+
+> **Ownership amendment — 2026-08-21:** Rows assigning canonical JSON Schema
+> ownership to AVPR Codecs or `arc-validate` are superseded. The existing schema
+> shapes will seed independently versioned ARC-specification modules. The
+> implementation repositories will later carry manually copied, non-authoritative
+> snapshots for offline use; no Git submodules or build-time downloads will be
+> introduced.
 
 | Change | Owner |
 | --- | --- |
@@ -340,6 +364,14 @@ CLI performs process execution.
 
 #### 1.5 Add machine-readable schemas for both YAML contracts
 
+> **Schema-location amendment — 2026-08-21:** This subsection remains evidence
+> of the completed Step 1 implementation. Its AVPR ownership and
+> `https://avpr.nfdi4plants.org/schemas/v1/` identities are superseded by
+> [`modular-validation-specifications.md`](modular-validation-specifications.md).
+> The two existing schemas will be moved without redesigning their wire shapes;
+> only after the specification reorganization is accepted will its final files
+> be copied back into AVPR for offline Codecs packaging.
+
 Commit two standalone [JSON Schema Draft
 2020-12](https://json-schema.org/draft/2020-12) documents under AVPR's
 top-level `schemas/` directory:
@@ -490,6 +522,12 @@ Implement this step in the AVPR registry service, generated client, interop,
 AVPRCI, persistence model, website where applicable, and API/client tests.
 
 #### 2.1 Add additive v1 endpoints
+
+> **Schema-route amendment — 2026-08-21:** The three discovery endpoints below
+> remain completed service behavior. The two dev-only `/schemas/v1/` routes are
+> not future canonical schema locations: canonical resolution moves to W3ID and
+> ARC-specification. Their later removal and the corresponding service tests are
+> part of the replacement plan, not a reopening of the discovery endpoint work.
 
 Retain `GET /api/v1/packages` for compatibility, document it as deprecated in
 OpenAPI, and do not change its response shape in place.
@@ -709,6 +747,12 @@ Rules:
 
 #### 3.3 Add the execution-plan JSON Schema
 
+> **Schema-ownership amendment — 2026-08-21:** The existing
+> `validation_plan.schema.json` shape and completed CLI behavior remain valid,
+> but `arc-validate` will no longer be its normative owner. The schema becomes an
+> independently versioned ARC-specification document with a W3ID; a final copy
+> will remain in `arc-validate` for offline validation and distribution.
+
 Commit the CLI-owned standalone Draft 2020-12 schema as:
 
 ```text
@@ -891,6 +935,13 @@ required boolean is observed as false. The stricter requirement that a boolean
 key be explicitly present applies to config preflight, where author intent can
 be validated before a CI child is created.
 
+> **Validation-summary amendment — 2026-08-21:** Step 4 is still DONE for safe
+> configured execution, argument materialization, and ARCExpect alignment. It
+> did not record the validated input map in `validation_summary.json`. The new
+> validation-summary specification will require top-level `Inputs` provenance;
+> its ARCExpect/arc-validate implementation is explicitly deferred to the
+> replacement plan and is not claimed by this step's completed acceptance gate.
+
 #### 4.5 Release the CLI integration artifact
 
 After validation, pin final compatible AVPR preview versions, update release
@@ -923,7 +974,14 @@ production DataHUB yet.
 
 ### Step 5 — Update the normative ARC specification
 
-Status: **IMPLEMENTED — REVIEW / APPROVAL PENDING**
+Status: **SUPERSEDED — NOT ACCEPTED**
+
+> **Replacement — 2026-08-21:** The monolithic specification change below and
+> PR #184 are retained as historical implementation evidence, but must not be
+> merged as the normative result. Replace them with the independently versioned
+> validation-package, configuration, execution-plan, validation-summary, and
+> CQC provenance modules defined in
+> [`modular-validation-specifications.md`](modular-validation-specifications.md).
 
 Tracking issue: [ARC-specification #183](https://github.com/nfdi4plants/ARC-specification/issues/183)
 
@@ -1007,7 +1065,12 @@ coordination with the ARC specification.
 
 ### Step 6 — Replace DataHUB YAML processing with plan-driven child jobs
 
-Status: **NOT STARTED**
+Status: **NOT STARTED — BLOCKED**
+
+> **Dependency amendment — 2026-08-21:** Do not begin this step from the
+> monolithic Step 5 proposal. It waits for the replacement modular
+> specifications and the coordinated implementation updates, including the
+> final execution-plan schema PID. AVPR-dev work remains scratched.
 
 Tracking issue: [DataHUB #73](https://github.com/nfdi4plants/DataHUB/issues/73)
 
@@ -1089,7 +1152,12 @@ artifact collection unchanged.
 
 ### Step 7 — Roll out, observe, and close compatibility work
 
-Status: **NOT STARTED**
+Status: **NOT STARTED — BLOCKED**
+
+> **Dependency amendment — 2026-08-21:** This deployment order is historical
+> planning and must be revised only after the modular specifications, W3IDs,
+> one-time schema copies, validation-summary input provenance, and DataHUB work
+> are accepted. No deployment is authorized by either plan.
 
 Tracking issue: [AVPR #122](https://github.com/nfdi4plants/arc-validate-package-registry/issues/122)
 
@@ -1149,6 +1217,12 @@ fallback.
 ---
 
 ## 4. GitHub issue structure
+
+> **Tracking amendment — 2026-08-21:** The linear graph below records the
+> original issue structure. ARC-specification #183/PR #184 no longer satisfies
+> the gate between Step 4 and DataHUB. Link the replacement modular plan and its
+> resulting specification/implementation issues before updating the blocked
+> edges or starting Steps 6–7.
 
 The cross-repository hierarchy is tracked by [AVPR
 #119](https://github.com/nfdi4plants/arc-validate-package-registry/issues/119).
